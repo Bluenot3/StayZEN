@@ -1,0 +1,160 @@
+<html><head><base href="https://zen-ai.io/ai-arena/" />
+<title>ZEN AI Arena - Game Selection</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Orbitron', sans-serif;
+    color: #00ffff;
+    background: #000011;
+    overflow: hidden;
+  }
+
+  .game-interface {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+    padding: 20px;
+    height: 100vh;
+    box-sizing: border-box;
+  }
+
+  .game-tile {
+    background: rgba(0, 255, 255, 0.1);
+    border: 2px solid #00ffff;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .game-tile:hover {
+    background: rgba(0, 255, 255, 0.3);
+    box-shadow: 0 0 30px #00ffff;
+    transform: scale(1.05);
+  }
+
+  .game-icon {
+    font-size: 3em;
+    margin-bottom: 10px;
+  }
+
+  .game-text {
+    font-size: 1.2em;
+    text-align: center;
+  }
+
+  #ai-opponent {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 255, 255, 0.1);
+    border: 2px solid #00ffff;
+    border-radius: 15px;
+    padding: 10px;
+    max-width: 300px;
+  }
+
+  #ai-opponent h3 {
+    margin-top: 0;
+    text-align: center;
+  }
+
+  #ai-message {
+    margin-top: 10px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="game-interface">
+  <div class="game-tile" onclick="startGame('coin-bubble')">
+    <div class="game-icon">💰</div>
+    <div class="game-text">Coin Bubble</div>
+  </div>
+  <div class="game-tile" onclick="startGame('zen-labs')">
+    <div class="game-icon">🧪</div>
+    <div class="game-text">ZEN Labs</div>
+  </div>
+  <div class="game-tile" onclick="startGame('ai-arena')">
+    <div class="game-icon">🤖</div>
+    <div class="game-text">AI Arena</div>
+  </div>
+  <div class="game-tile" onclick="startGame('ai-ml-apps')">
+    <div class="game-icon">📱</div>
+    <div class="game-text">AI/ML Apps</div>
+  </div>
+  <div class="game-tile" onclick="startGame('join')">
+    <div class="game-icon">🔗</div>
+    <div class="game-text">Join</div>
+  </div>
+  <div class="game-tile" onclick="startGame('defi-games')">
+    <div class="game-icon">🎮</div>
+    <div class="game-text">DeFi Games</div>
+  </div>
+  <div class="game-tile" onclick="startGame('enroll')">
+    <div class="game-icon">📚</div>
+    <div class="game-text">Enroll</div>
+  </div>
+  <div class="game-tile" onclick="startGame('courses')">
+    <div class="game-icon">🎓</div>
+    <div class="game-text">Courses</div>
+  </div>
+  <div class="game-tile" onclick="startGame('services')">
+    <div class="game-icon">🛠️</div>
+    <div class="game-text">Services</div>
+  </div>
+</div>
+
+<div id="ai-opponent">
+  <h3>AI Opponent: Claude 3.5 Sonnet</h3>
+  <div id="ai-message">Hello! I'm ready to play any game you choose. Which one shall we start with?</div>
+</div>
+
+<script>
+function startGame(gameType) {
+  const aiMessage = document.getElementById('ai-message');
+  switch(gameType) {
+    case 'coin-bubble':
+      aiMessage.textContent = "Coin Bubble? Excellent choice! I'll try to pop more bubbles than you. Ready to start?";
+      break;
+    case 'zen-labs':
+      aiMessage.textContent = "ZEN Labs it is! Let's conduct some fascinating experiments together.";
+      break;
+    case 'ai-arena':
+      aiMessage.textContent = "AI Arena - my favorite! Which AI challenge would you like to tackle first?";
+      break;
+    case 'ai-ml-apps':
+      aiMessage.textContent = "AI/ML Apps - a great way to explore practical AI applications. What kind of app shall we build?";
+      break;
+    case 'join':
+      aiMessage.textContent = "Join selected. I'm excited to collaborate with you on this platform!";
+      break;
+    case 'defi-games':
+      aiMessage.textContent = "DeFi Games - combining finance and fun! Let's see who can build the most successful virtual economy.";
+      break;
+    case 'enroll':
+      aiMessage.textContent = "Enrolling in a course? Fantastic! I'd be happy to be your study buddy.";
+      break;
+    case 'courses':
+      aiMessage.textContent = "Browsing courses? I can help recommend some based on your interests and goals.";
+      break;
+    case 'services':
+      aiMessage.textContent = "Looking for AI services? I can assist in finding the perfect solution for your needs.";
+      break;
+    default:
+      aiMessage.textContent = "Interesting choice! I'm ready to engage in whatever activity you've selected.";
+  }
+}
+</script>
+</body></html>
