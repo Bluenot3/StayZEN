@@ -1,0 +1,250 @@
+<html><head><base href="https://zen-ai.io/ai-arena/ai-ml-apps/" />
+<title>ZEN AI Arena - AI/ML Apps Workshop - Testing</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Orbitron', sans-serif;
+    color: #00ffff;
+    background: #000011;
+    overflow: hidden;
+  }
+
+  .app-workshop {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-gap: 20px;
+    padding: 20px;
+    height: 100vh;
+    box-sizing: border-box;
+  }
+
+  .app-selection {
+    background: rgba(0, 255, 255, 0.1);
+    border: 2px solid #00ffff;
+    border-radius: 15px;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  .app-tile {
+    background: rgba(0, 255, 255, 0.2);
+    border: 1px solid #00ffff;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .app-tile:hover {
+    background: rgba(0, 255, 255, 0.3);
+    box-shadow: 0 0 15px #00ffff;
+  }
+
+  .app-workspace {
+    background: rgba(0, 255, 255, 0.05);
+    border: 2px solid #00ffff;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #app-preview {
+    flex-grow: 1;
+    background: #001a33;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  #test-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(0, 255, 255, 0.1);
+    border: 1px solid #00ffff;
+    border-radius: 5px;
+    color: #00ffff;
+  }
+
+  #test-output {
+    background: rgba(0, 255, 255, 0.05);
+    border: 1px solid #00ffff;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+    min-height: 100px;
+  }
+
+  #app-controls {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .control-button {
+    padding: 10px 20px;
+    font-size: 1em;
+    background: rgba(0, 255, 255, 0.2);
+    border: 2px solid #00ffff;
+    border-radius: 5px;
+    color: #00ffff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .control-button:hover {
+    background: rgba(0, 255, 255, 0.4);
+    box-shadow: 0 0 15px #00ffff;
+  }
+
+  #ai-assistant {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 255, 255, 0.1);
+    border: 2px solid #00ffff;
+    border-radius: 15px;
+    padding: 10px;
+    max-width: 300px;
+  }
+
+  #ai-assistant h3 {
+    margin-top: 0;
+    text-align: center;
+  }
+
+  #ai-message {
+    margin-top: 10px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="app-workshop">
+  <div class="app-selection">
+    <h2>AI/ML App Types</h2>
+    <div class="app-tile" onclick="selectApp('image-recognition')">Image Recognition</div>
+    <div class="app-tile" onclick="selectApp('natural-language-processing')">Natural Language Processing</div>
+    <div class="app-tile" onclick="selectApp('predictive-analytics')">Predictive Analytics</div>
+    <div class="app-tile" onclick="selectApp('recommendation-system')">Recommendation System</div>
+    <div class="app-tile" onclick="selectApp('chatbot')">AI Chatbot</div>
+    <div class="app-tile" onclick="selectApp('anomaly-detection')">Anomaly Detection</div>
+  </div>
+  <div class="app-workspace">
+    <h2>App Testing Environment</h2>
+    <div id="app-preview">
+      <h3>Test Your AI/ML App</h3>
+      <textarea id="test-input" rows="4" placeholder="Enter test data here..."></textarea>
+      <button class="control-button" onclick="runTest()">Run Test</button>
+      <div id="test-output"></div>
+    </div>
+    <div id="app-controls">
+      <button class="control-button" onclick="modifyModel()">Modify Model</button>
+      <button class="control-button" onclick="analyzePerformance()">Analyze Performance</button>
+      <button class="control-button" onclick="deployApp()">Deploy App</button>
+    </div>
+  </div>
+</div>
+
+<div id="ai-assistant">
+  <h3>AI Assistant: Claude 3.5 Sonnet</h3>
+  <div id="ai-message">Ready to test your AI/ML app! What kind of test data would you like to use? I can help you generate appropriate samples or interpret the results.</div>
+</div>
+
+<script>
+let currentApp = 'natural-language-processing'; // Default app type
+
+function selectApp(appType) {
+  currentApp = appType;
+  const preview = document.getElementById('app-preview');
+  const aiMessage = document.getElementById('ai-message');
+  const testInput = document.getElementById('test-input');
+  
+  switch(appType) {
+    case 'image-recognition':
+      testInput.placeholder = "Enter image URL or base64 encoded image data";
+      aiMessage.textContent = "For image recognition, you can test with image URLs or encoded image data. What kind of images would you like to classify?";
+      break;
+    case 'natural-language-processing':
+      testInput.placeholder = "Enter text for NLP analysis";
+      aiMessage.textContent = "Great! For NLP, you can input any text. We can perform sentiment analysis, entity recognition, or language translation. What's your preference?";
+      break;
+    case 'predictive-analytics':
+      testInput.placeholder = "Enter comma-separated numerical data for prediction";
+      aiMessage.textContent = "For predictive analytics, input your numerical data. We can forecast trends or predict outcomes. What specific prediction are you interested in?";
+      break;
+    case 'recommendation-system':
+      testInput.placeholder = "Enter user preferences or item features";
+      aiMessage.textContent = "Testing a recommendation system? Input user preferences or item features, and we'll generate recommendations. What domain are we working with?";
+      break;
+    case 'chatbot':
+      testInput.placeholder = "Start a conversation with the chatbot";
+      aiMessage.textContent = "Time to chat with our AI! Start a conversation and see how it responds. What kind of personality or knowledge base should it have?";
+      break;
+    case 'anomaly-detection':
+      testInput.placeholder = "Enter data points to check for anomalies";
+      aiMessage.textContent = "For anomaly detection, input your data points. We'll identify any outliers or unusual patterns. What type of anomalies are you looking for?";
+      break;
+  }
+}
+
+function runTest() {
+  const input = document.getElementById('test-input').value;
+  const output = document.getElementById('test-output');
+  const aiMessage = document.getElementById('ai-message');
+
+  // Simulate processing time
+  output.innerHTML = "Processing...";
+  setTimeout(() => {
+    let result;
+    switch(currentApp) {
+      case 'image-recognition':
+        result = "Detected objects: person (0.95), car (0.87), tree (0.76)";
+        break;
+      case 'natural-language-processing':
+        result = "Sentiment: Positive (0.8), Entities: [Person: John, Location: New York]";
+        break;
+      case 'predictive-analytics':
+        result = "Predicted value: 42.5, Confidence: 0.89";
+        break;
+      case 'recommendation-system':
+        result = "Top recommendations: Item A (0.95), Item B (0.92), Item C (0.88)";
+        break;
+      case 'chatbot':
+        result = "Chatbot: Hello! How can I assist you today?";
+        break;
+      case 'anomaly-detection':
+        result = "Anomalies detected at data points: 3, 7, 12";
+        break;
+    }
+    output.innerHTML = result;
+    aiMessage.textContent = "Interesting results! Would you like me to explain the output or suggest ways to improve the model's performance?";
+  }, 1500);
+}
+
+function modifyModel() {
+  const aiMessage = document.getElementById('ai-message');
+  aiMessage.textContent = "Certainly! We can fine-tune the model parameters or architecture. What specific aspects of the " + currentApp + " model would you like to modify?";
+}
+
+function analyzePerformance() {
+  const aiMessage = document.getElementById('ai-message');
+  aiMessage.textContent = "Let's dive into the performance metrics of your " + currentApp + " model. We can look at accuracy, precision, recall, or other relevant measures. What's your primary concern?";
+}
+
+function deployApp() {
+  const aiMessage = document.getElementById('ai-message');
+  aiMessage.textContent = "Exciting! Your " + currentApp + " app is ready for deployment. Would you like to publish it on the ZEN AI marketplace or integrate it into your own systems? Let's discuss the best deployment strategy.";
+}
+
+// Initialize with NLP app
+selectApp('natural-language-processing');
+</script>
+</body></html>
