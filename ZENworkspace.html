@@ -1,0 +1,190 @@
+<html><head><base href="https://zen-ai.io/ai-arena/ai-ml-apps/" />
+<title>ZEN AI Arena - AI/ML Apps Workshop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Orbitron', sans-serif;
+    color: #00ffff;
+    background: #000011;
+    overflow: hidden;
+  }
+
+  .app-workshop {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-gap: 20px;
+    padding: 20px;
+    height: 100vh;
+    box-sizing: border-box;
+  }
+
+  .app-selection {
+    background: rgba(0, 255, 255, 0.1);
+    border: 2px solid #00ffff;
+    border-radius: 15px;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  .app-tile {
+    background: rgba(0, 255, 255, 0.2);
+    border: 1px solid #00ffff;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .app-tile:hover {
+    background: rgba(0, 255, 255, 0.3);
+    box-shadow: 0 0 15px #00ffff;
+  }
+
+  .app-workspace {
+    background: rgba(0, 255, 255, 0.05);
+    border: 2px solid #00ffff;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #app-preview {
+    flex-grow: 1;
+    background: #001a33;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+  }
+
+  #app-controls {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .control-button {
+    padding: 10px 20px;
+    font-size: 1em;
+    background: rgba(0, 255, 255, 0.2);
+    border: 2px solid #00ffff;
+    border-radius: 5px;
+    color: #00ffff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .control-button:hover {
+    background: rgba(0, 255, 255, 0.4);
+    box-shadow: 0 0 15px #00ffff;
+  }
+
+  #ai-assistant {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 255, 255, 0.1);
+    border: 2px solid #00ffff;
+    border-radius: 15px;
+    padding: 10px;
+    max-width: 300px;
+  }
+
+  #ai-assistant h3 {
+    margin-top: 0;
+    text-align: center;
+  }
+
+  #ai-message {
+    margin-top: 10px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="app-workshop">
+  <div class="app-selection">
+    <h2>Choose an AI/ML App</h2>
+    <div class="app-tile" onclick="selectApp('image-recognition')">Image Recognition</div>
+    <div class="app-tile" onclick="selectApp('natural-language-processing')">Natural Language Processing</div>
+    <div class="app-tile" onclick="selectApp('predictive-analytics')">Predictive Analytics</div>
+    <div class="app-tile" onclick="selectApp('recommendation-system')">Recommendation System</div>
+    <div class="app-tile" onclick="selectApp('chatbot')">AI Chatbot</div>
+    <div class="app-tile" onclick="selectApp('anomaly-detection')">Anomaly Detection</div>
+  </div>
+  <div class="app-workspace">
+    <h2>App Workspace</h2>
+    <div id="app-preview">Select an app to start building</div>
+    <div id="app-controls">
+      <button class="control-button" onclick="trainModel()">Train Model</button>
+      <button class="control-button" onclick="testApp()">Test App</button>
+      <button class="control-button" onclick="deployApp()">Deploy App</button>
+    </div>
+  </div>
+</div>
+
+<div id="ai-assistant">
+  <h3>AI Assistant: Claude 3.5 Sonnet</h3>
+  <div id="ai-message">Welcome to the AI/ML Apps workshop! Which type of app would you like to build today?</div>
+</div>
+
+<script>
+let currentApp = '';
+
+function selectApp(appType) {
+  currentApp = appType;
+  const preview = document.getElementById('app-preview');
+  const aiMessage = document.getElementById('ai-message');
+  
+  switch(appType) {
+    case 'image-recognition':
+      preview.innerHTML = 'Image Recognition App<br>Upload an image to classify';
+      aiMessage.textContent = "Great choice! Image recognition can be used for object detection, facial recognition, and more. Shall we start with a basic classifier?";
+      break;
+    case 'natural-language-processing':
+      preview.innerHTML = 'NLP App<br>Enter text for analysis';
+      aiMessage.textContent = "NLP is fascinating! We can build apps for sentiment analysis, language translation, or even text generation. What's your specific interest?";
+      break;
+    case 'predictive-analytics':
+      preview.innerHTML = 'Predictive Analytics App<br>Input data for forecasting';
+      aiMessage.textContent = "Predictive analytics can be powerful for business insights. Are you thinking of financial forecasting, demand prediction, or something else?";
+      break;
+    case 'recommendation-system':
+      preview.innerHTML = 'Recommendation System<br>Rate items to get recommendations';
+      aiMessage.textContent = "Recommendation systems are everywhere these days! We could build one for movies, products, or even job matches. What domain interests you?";
+      break;
+    case 'chatbot':
+      preview.innerHTML = 'AI Chatbot<br>Start a conversation';
+      aiMessage.textContent = "Chatbots are versatile! We could create a customer service bot, a therapy chatbot, or even a storytelling AI. What kind of personality should our bot have?";
+      break;
+    case 'anomaly-detection':
+      preview.innerHTML = 'Anomaly Detection App<br>Monitor data streams for outliers';
+      aiMessage.textContent = "Anomaly detection is crucial for many systems. Are you thinking of fraud detection, system health monitoring, or another application?";
+      break;
+  }
+}
+
+function trainModel() {
+  const aiMessage = document.getElementById('ai-message');
+  aiMessage.textContent = `Training the ${currentApp} model. This might take a while, but I'll guide you through the process and explain the key concepts.`;
+}
+
+function testApp() {
+  const aiMessage = document.getElementById('ai-message');
+  aiMessage.textContent = `Let's test our ${currentApp} app! What kind of test data should we use? I can help you generate or find appropriate datasets.`;
+}
+
+function deployApp() {
+  const aiMessage = document.getElementById('ai-message');
+  aiMessage.textContent = `Fantastic! Your ${currentApp} app is ready for deployment. Would you like to publish it on the ZEN AI marketplace or integrate it into your own systems?`;
+}
+</script>
+</body></html>
