@@ -1,0 +1,430 @@
+<html><head><base href="https://tankwarfare3d.com" /><title>Tank Warfare 3D - Multiplayer Military Game</title><style>
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+  #game-container {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    position: relative;
+  }
+  #hud {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: #fff;
+    font-size: 18px;
+    text-shadow: 2px 2px 2px #000;
+  }
+  #crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  #game-over {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  #restart-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  #controls {
+    position: absolute;
+    bottom: 40px; /* Moved a tiny bit up */
+    left: 10px;
+    color: #fff;
+    font-size: 14px;
+    text-shadow: 1px 1px 1px #000;
+  }
+  #logo {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: #fff;
+    font-size: 36px;
+    text-shadow: 4px 4px 4px #000;
+  }
+  #instructions {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    font-size: 20px;
+    text-shadow: 2px 2px 2px #000;
+  }
+</style></head><body>
+<div id="game-container">
+  <canvas id="gameCanvas"></canvas>
+  <div id="logo">Tank Warfare 3D</div>
+  <div id="hud">
+    Health: <span id="health">100</span> | Score: <span id="score">0</span> | Personal Best: <span id="best-score">0</span>
+  </div>
+  <img id="crosshair" src="crosshair.png" alt="Crosshair">
+  <div id="game-over">
+    <h2>Game Over</h2>
+    <p>Your final score: <span id="final-score"></span></p>
+    <p>Personal Best: <span id="final-best-score"></span></p>
+    <button id="restart-btn">Restart</button>
+  </div>
+  <div id="controls">
+    Controls: W (forward), S (backward), A (rotate left), D (rotate right) | Click to shoot
+  </div>
+  <div id="instructions">
+    Shoot the blue enemy tanks and hide in the bulletproof brown bases until they find you. Try to get the highest score.
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+  // Initialize ThreeJS scene
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gameCanvas') });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  // Store personal best score in localStorage
+  let bestScore = localStorage.getItem('bestScore') || 0;
+  document.getElementById('best-score').textContent = bestScore;
+
+  // Create player tank with gun
+  function createTank(color) {
+    const tank = new THREE.Group();
+
+    const bodyMaterial = new THREE.MeshPhongMaterial({ color: color });
+    const gunMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
+
+    const body = new THREE.Mesh(new THREE.BoxGeometry(2, 1, 3), bodyMaterial);
+    body.position.y = 0.5;
+    tank.add(body);
+
+    const gunBase = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.2, 8), bodyMaterial);
+    gunBase.position.y = 1.1;
+    gunBase.rotation.x = Math.PI / 2;
+    tank.add(gunBase);
+
+    const gunBarrel = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 1.5, 8), gunMaterial);
+    gunBarrel.position.set(0, 1.2, -0.75);
+    tank.add(gunBarrel);
+
+    return tank;
+  }
+
+  const playerTank = createTank(0x4B5320);  // Camouflage green
+  scene.add(playerTank);
+  camera.position.set(0, 3, -4); // Lowered camera height and moved it closer
+  camera.lookAt(playerTank.position);
+
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0x404040);
+  scene.add(ambientLight);
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+  directionalLight.position.set(1, 1, 1);
+  scene.add(directionalLight);
+
+  // Adding sky
+  const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
+  const skyMaterial = new THREE.MeshBasicMaterial({ color: 0x87CEEB, side: THREE.BackSide });
+  const sky = new THREE.Mesh(skyGeometry, skyMaterial);
+  scene.add(sky);
+
+  // Create larger ground with biomes
+  const groundSize = 500;
+  const groundGeometry = new THREE.PlaneGeometry(groundSize, groundSize);
+  const groundMaterial = new THREE.MeshPhongMaterial({ vertexColors: true });
+  const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+  ground.rotation.x = -Math.PI / 2;
+  scene.add(ground);
+
+  // Define biomes
+  const biomes = [
+    { name: 'grassland', color: new THREE.Color(0x7CFC00) },
+    { name: 'desert', color: new THREE.Color(0xFFD700) },
+    { name: 'forest', color: new THREE.Color(0x228B22) },
+    { name: 'snow', color: new THREE.Color(0xFFFAFA) }
+  ];
+
+  // Apply biome colors to ground
+  const groundColors = [];
+  for (let i = 0; i < ground.geometry.attributes.position.count; i++) {
+    const x = ground.geometry.attributes.position.getX(i);
+    const y = ground.geometry.attributes.position.getY(i);
+    const biomeIndex = Math.floor(Math.random() * biomes.length);
+    groundColors.push(biomes[biomeIndex].color.r, biomes[biomeIndex].color.g, biomes[biomeIndex].color.b);
+  }
+  ground.geometry.setAttribute('color', new THREE.Float32BufferAttribute(groundColors, 3));
+
+  // Create trees and plants
+  function createTree(x, z) {
+    const trunkGeometry = new THREE.CylinderGeometry(0.2, 0.2, 2, 8);
+    const trunkMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+    const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+    trunk.position.set(x, 1, z);
+
+    const leavesGeometry = new THREE.ConeGeometry(1, 2, 8);
+    const leavesMaterial = new THREE.MeshPhongMaterial({ color: 0x228B22 });
+    const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
+    leaves.position.set(0, 2, 0);
+
+    trunk.add(leaves);
+    scene.add(trunk);
+  }
+
+  function createPlant(x, z) {
+    const plantGeometry = new THREE.SphereGeometry(0.5, 8, 8);
+    const plantMaterial = new THREE.MeshPhongMaterial({ color: 0x32CD32 });
+    const plant = new THREE.Mesh(plantGeometry, plantMaterial);
+    plant.position.set(x, 0.25, z);
+    scene.add(plant);
+  }
+
+  // Add trees and plants to the scene
+  for (let i = 0; i < 200; i++) {
+    const x = Math.random() * groundSize - groundSize / 2;
+    const z = Math.random() * groundSize - groundSize / 2;
+    if (Math.random() < 0.7) {
+      createTree(x, z);
+    } else {
+      createPlant(x, z);
+    }
+  }
+
+  // Create hiding spots
+  const hidingSpots = [];
+  function createHidingSpot(x, z) {
+    const geometry = new THREE.BoxGeometry(5, 3, 5);
+    const material = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+    const hidingSpot = new THREE.Mesh(geometry, material);
+    hidingSpot.position.set(x, 1.5, z);
+    scene.add(hidingSpot);
+    hidingSpots.push(hidingSpot);
+  }
+
+  for (let i = 0; i < 10; i++) {
+    const x = Math.random() * (groundSize - 10) - (groundSize / 2 - 5);
+    const z = Math.random() * (groundSize - 10) - (groundSize / 2 - 5);
+    createHidingSpot(x, z);
+  }
+
+  // Game state
+  let health = 100;
+  let score = 0;
+  let enemyTanks = [];
+  let gameOver = false;
+
+  // Healing mechanism
+  setInterval(() => {
+    if (!gameOver && health < 100) {
+      health = Math.min(health + 5, 100);
+      document.getElementById('health').textContent = health;
+    }
+  }, 2000);
+
+  // Create enemy tank function
+  function createEnemyTank() {
+    const tank = createTank(0x0000FF); // Blue color
+    tank.position.set(
+      Math.random() * (groundSize - 10) - (groundSize / 2 - 5),
+      0.5,
+      Math.random() * (groundSize - 10) - (groundSize / 2 - 5)
+    );
+    scene.add(tank);
+    enemyTanks.push(tank);
+    
+    // Enemy AI for hiding
+    setInterval(() => {
+      if (Math.random() < 0.1) { // 10% chance to seek hiding spot
+        const nearestSpot = hidingSpots.reduce((nearest, spot) => {
+          return tank.position.distanceTo(spot.position) < tank.position.distanceTo(nearest.position) ? spot : nearest;
+        });
+        tank.lookAt(nearestSpot.position);
+      } else {
+        tank.lookAt(playerTank.position);
+      }
+    }, 1000);
+  }
+
+  // Create initial enemy tanks
+  for (let i = 0; i < 10; i++) {
+    createEnemyTank();
+  }
+
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // Game loop
+  function animate() {
+    requestAnimationFrame(animate);
+
+    if (!gameOver) {
+      // Move player tank using WASD keys
+      if (keys.KeyW) playerTank.translateZ(0.5);
+      if (keys.KeyS) playerTank.translateZ(-0.5);
+      if (keys.KeyA) playerTank.rotation.y += 0.05;
+      if (keys.KeyD) playerTank.rotation.y -= 0.05;
+
+      // Keep player within bounds
+      playerTank.position.x = Math.max(Math.min(playerTank.position.x, groundSize / 2 - 5), -groundSize / 2 + 5);
+      playerTank.position.z = Math.max(Math.min(playerTank.position.z, groundSize / 2 - 5), -groundSize / 2 + 5);
+
+      // Update camera position
+      const cameraOffset = new THREE.Vector3(0, 3, -4); // Adjusted camera offset
+      cameraOffset.applyQuaternion(playerTank.quaternion);
+      camera.position.copy(playerTank.position).add(cameraOffset);
+      camera.lookAt(playerTank.position);
+
+      // Move enemy tanks
+      enemyTanks.forEach(tank => {
+        tank.translateZ(0.2);
+
+        // Keep enemy tanks within bounds
+        tank.position.x = Math.max(Math.min(tank.position.x, groundSize / 2 - 5), -groundSize / 2 + 5);
+        tank.position.z = Math.max(Math.min(tank.position.z, groundSize / 2 - 5), -groundSize / 2 + 5);
+
+        // Enemy shooting
+        if (Math.random() < 0.01) {
+          const direction = new THREE.Vector3();
+          tank.getWorldDirection(direction);
+          shootProjectile(tank.position, direction, false);
+        }
+      });
+
+      // Update projectiles
+      updateProjectiles();
+
+      // Check for game over
+      if (health <= 0) {
+        gameOver = true;
+        document.getElementById('game-over').style.display = 'block';
+        document.getElementById('final-score').textContent = score;
+        
+        // Update personal best score
+        if (score > bestScore) {
+          bestScore = score;
+          localStorage.setItem('bestScore', bestScore);
+          document.getElementById('best-score').textContent = bestScore;
+        }
+        document.getElementById('final-best-score').textContent = bestScore;
+      }
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  // Keyboard input
+  const keys = {};
+  document.addEventListener('keydown', (e) => keys[e.code] = true);
+  document.addEventListener('keyup', (e) => keys[e.code] = false);
+
+  // Shooting mechanics
+  const projectiles = [];
+  document.addEventListener('click', () => {
+    if (!gameOver) {
+      const direction = new THREE.Vector3();
+      playerTank.getWorldDirection(direction);
+      shootProjectile(playerTank.position, direction, true);
+    }
+  });
+
+  function shootProjectile(startPosition, direction, isPlayer) {
+    const projectile = new THREE.Mesh(
+      new THREE.SphereGeometry(0.1),
+      new THREE.MeshBasicMaterial({ color: isPlayer ? 0xff0000 : 0x0000ff })
+    );
+    projectile.position.copy(startPosition);
+    projectile.position.y += 0.5;
+    projectile.velocity = direction.multiplyScalar(1);
+    projectile.isPlayer = isPlayer;
+    scene.add(projectile);
+    projectiles.push(projectile);
+  }
+
+  function updateProjectiles() {
+    for (let i = projectiles.length - 1; i >= 0; i--) {
+      const projectile = projectiles[i];
+      projectile.position.add(projectile.velocity);
+
+      // Check collisions with hiding spots
+      let hitObstacle = false;
+      for (const spot of hidingSpots) {
+        if (projectile.position.distanceTo(spot.position) < 2.5) {
+          hitObstacle = true;
+          break;
+        }
+      }
+
+      if (!hitObstacle) {
+        // Check collisions with tanks
+        if (projectile.isPlayer) {
+          enemyTanks.forEach((tank, index) => {
+            if (projectile.position.distanceTo(tank.position) < 1) {
+              scene.remove(tank);
+              enemyTanks.splice(index, 1);
+              score += 10;
+              document.getElementById('score').textContent = score;
+              createEnemyTank();
+            }
+          });
+        } else if (projectile.position.distanceTo(playerTank.position) < 1) {
+          health -= 10;
+          document.getElementById('health').textContent = health;
+        }
+      }
+
+      // Remove projectile if it's too far or hit an obstacle
+      if (projectile.position.length() > groundSize / 2 || hitObstacle) {
+        scene.remove(projectile);
+        projectiles.splice(i, 1);
+      }
+    }
+  }
+
+  // Restart game
+  document.getElementById('restart-btn').addEventListener('click', () => {
+    health = 100;
+    score = 0;
+    gameOver = false;
+    document.getElementById('health').textContent = health;
+    document.getElementById('score').textContent = score;
+    document.getElementById('game-over').style.display = 'none';
+    playerTank.position.set(0, 0.5, 0);
+    playerTank.rotation.set(0, 0, 0);
+    enemyTanks.forEach(tank => scene.remove(tank));
+    enemyTanks = [];
+    for (let i = 0; i < 10; i++) {
+      createEnemyTank();
+    }
+  });
+
+  animate();
+</script>
+</body></html>
