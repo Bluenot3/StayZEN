@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZEN AI Developer Tools</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+        :root {
+            --bg-color: #0f0f1a;
+            --text-color: #e0e0e0;
+            --primary-color: #1a1a2e;
+            --secondary-color: #16213e;
+            --accent-color: #4a69bd;
+            --hover-color: #6a89cc;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background-color: var(--primary-color);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: var(--accent-color);
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .tool-card {
+            background-color: var(--secondary-color);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        .tool-icon {
+            font-size: 54px;
+            margin-bottom: 15px;
+        }
+        .tool-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+        .tool-description {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+        .tool-button {
+            background-color: var(--accent-color);
+            color: var(--text-color);
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+        .tool-button:hover {
+            background-color: var(--hover-color);
+            transform: scale(1.05);
+        }
+        .search-bar {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+        .search-bar input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 30px;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+        }
+        .search-bar input::placeholder {
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+        @media (max-width: 768px) {
+            .tool-grid {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ZEN AI Developer Tools</h1>
+    </header>
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" placeholder="Search tools...">
+        </div>
+        <div class="tool-grid">
+            <div class="tool-card">
+                <div class="tool-icon">⚡</div>
+                <div class="tool-name">Code Runner</div>
+                <div class="tool-description">Compile and run code in multiple programming languages.</div>
+                <button class="tool-button">Run Code</button>
+            </div>
+            <div class="tool-card">
+                <div class="tool-icon">🧹</div>
+                <div class="tool-name">Code Formatter</div>
+                <div class="tool-description">Clean and format your code with ease.</div>
+                <button class="tool-button">Format Code</button>
+            </div>
+            <div class="tool-card">
+                <div class="tool-icon">🏷️</div>
+                <div class="tool-name">Class/ID Generator</div>
+                <div class="tool-description">Generate unique and semantic class and ID names for HTML and CSS.</div>
+                <button class="tool-button">Generate Names</button>
+            </div>
+            <div class="tool-card">
+                <div class="tool-icon">🐞</div>
+                <div class="tool-name">Code Debugger</div>
+                <div class="tool-description">Find and fix bugs in your code with advanced debugging tools.</div>
+                <button class="tool-button">Debug Code</button>
+            </div>
+            <div class="tool-card">
+                <div class="tool-icon">💡</div>
+                <div class="tool-name">Prompt Helper</div>
+                <div class="tool-description">Craft better AI prompts for more accurate AI-generated content.</div>
+                <button class="tool-button">Craft Prompt</button>
+            </div>
+            <div class="tool-card">
+                <div class="tool-icon">🔧</div>
+                <div class="tool-name">Tool Generator</div>
+                <div class="tool-description">Create custom development tools tailored to your needs.</div>
+                <button class="tool-button">Create Tool</button>
+            </div>
+            <div class="tool-card">
+                <div class="tool-icon">🔤</div>
+                <div class="tool-name">Font Generator</div>
+                <div class="tool-description">Design and generate custom fonts for your web projects.</div>
+                <button class="tool-button">Generate Font</button>
+            </div>
+            <div class="tool-card">
+                <div class="tool-icon">🖼️</div>
+                <div class="tool-name">Image Generator</div>
+                <div class="tool-description">Create images with AI assistance for your projects.</div>
+                <button class="tool-button">Generate Image</button>
+            </div>
+            <div class="tool-card">
+                <div class="tool-icon">💬</div>
+                <div class="tool-name">AI Assistant</div>
+                <div class="tool-description">Get coding help, project ideas, and more from our AI.</div>
+                <button class="tool-button">Chat Now</button>
+            </div>
+            <div class="tool-card">
+                <div class="tool-icon">💡</div>
+                <div class="tool-name">Idea Generator</div>
+                <div class="tool-description">Get inspired with AI-generated ideas for your next project.</div>
+                <button class="tool-button">Generate Ideas</button>
+            </div>
+            <div class="tool-card">
+                <div class="tool-icon">🔍</div>
+                <div class="tool-name">Site Inspector</div>
+                <div class="tool-description">Analyze and optimize websites for better performance.</div>
+                <button class="tool-button">Inspect Site</button>
+            </div>
+            <div class="tool-card">
+                <div class="tool-icon">📈</div>
+                <div class="tool-name">SEO Optimizer</div>
+                <div class="tool-description">Improve your site's search engine ranking with our tools.</div>
+                <button class="tool-button">Optimize SEO</button>
+            </div>
+            <div class="tool-card">
+                <div class="tool-icon">📁</div>
+                <div class="tool-name">Project Organizer</div>
+                <div class="tool-description">Manage your coding projects efficiently with our tools.</div>
+                <button class="tool-button">Organize Now</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Simple search functionality
+        const searchInput = document.querySelector('.search-bar input');
+        const toolCards = document.querySelectorAll('.tool-card');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            toolCards.forEach(card => {
+                const toolName = card.querySelector('.tool-name').textContent.toLowerCase();
+                const toolDescription = card.querySelector('.tool-description').textContent.toLowerCase();
+                if (toolName.includes(searchTerm) || toolDescription.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
