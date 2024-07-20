@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Logo Animator - Wix Compatible</title>
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --text-color: #ffffff;
+            --background-color: #f0f2f5;
+        }
+
+        body, html {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .sidebar {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            margin: 0 0 15px 0;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .logo-preview {
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            background: radial-gradient(circle, var(--secondary-color), var(--primary-color));
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #logo-display {
+            position: absolute;
+            max-width: 50%;
+            max-height: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.5s ease;
+        }
+
+        .panel {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button, .file-input-label {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        button:hover, .file-input-label:hover {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            transform: translateY(-2px);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .option {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .option:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .option.selected {
+            background: rgba(103, 126, 234, 0.5);
+            border: 2px solid #667eea;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .slider {
+            flex-grow: 1;
+            -webkit-appearance: none;
+            height: 5px;
+            border-radius: 5px;  
+            background: #d3d3d3;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%; 
+            background: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .color-picker {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 50px;
+            height: 50px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .color-picker::-webkit-color-swatch {
+            border-radius: 50%;
+            border: none;
+        }
+
+        .color-picker::-moz-color-swatch {
+            border-radius: 50%;
+            border: none;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+            }
+
+            .sidebar {
+                width: 350px;
+            }
+
+            .main-content {
+                flex-grow: 1;
+            }
+        }
+
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translate(-50%, -50%); }
+            50% { transform: translate(-50%, -70%); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(-50%, -50%); }
+            25% { transform: translate(-60%, -50%); }
+            75% { transform: translate(-40%, -50%); }
+        }
+
+        @keyframes flip {
+            0% { transform: translate(-50%, -50%) perspective(400px) rotateY(0); }
+            100% { transform: translate(-50%, -50%) perspective(400px) rotateY(360deg); }
+        }
+
+        @keyframes morph {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+        }
+
+        @keyframes swing {
+            20% { transform: translate(-50%, -50%) rotate(15deg); }
+            40% { transform: translate(-50%, -50%) rotate(-10deg); }
+            60% { transform: translate(-50%, -50%) rotate(5deg); }
+            80% { transform: translate(-50%, -50%) rotate(-5deg); }
+            100% { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+
+        @keyframes wobble {
+            0% { transform: translate(-50%, -50%); }
+            15% { transform: translate(-75%, -50%) rotate(-5deg); }
+            30% { transform: translate(-30%, -50%) rotate(3deg); }
+            45% { transform: translate(-65%, -50%) rotate(-3deg); }
+            60% { transform: translate(-40%, -50%) rotate(2deg); }
+            75% { transform: translate(-55%, -50%) rotate(-1deg); }
+            100% { transform: translate(-50%, -50%); }
+        }
+
+        @keyframes float {
+            0% { transform: translate(-50%, -50%); }
+            50% { transform: translate(-50%, -60%); }
+            100% { transform: translate(-50%, -50%); }
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(-50%, -50%); }
+            20% { transform: translate(-55%, -45%); }
+            40% { transform: translate(-55%, -55%); }
+            60% { transform: translate(-45%, -45%); }
+            80% { transform: translate(-45%, -55%); }
+            100% { transform: translate(-50%, -50%); }
+        }
+
+        @keyframes spiral {
+            0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+            50% { transform: translate(-50%, -50%) rotate(180deg) scale(0.5); }
+            100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
+        }
+
+        @keyframes zoom {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.5); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h1>3D Logo Animator</h1>
+            
+            <div class="panel">
+                <h3>Upload Logo</h3>
+                <div class="controls">
+                    <label for="file-input" class="file-input-label">Choose PNG File</label>
+                    <input type="file" id="file-input" class="file-input" accept=".png">
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h3>PNG Modifications</h3>
+                <div class="options-grid">
+                    <div class="option" data-mod="hue-rotate">Hue Rotate</div>
+                    <div class="option" data-mod="invert">Invert Colors</div>
+                    <div class="option" data-mod="grayscale">Grayscale</div>
+                    <div class="option" data-mod="sepia">Sepia</div>
+                </div>
+                <div class="slider-container">
+                    <span>Opacity:</span>
+                    <input type="range" min="0" max="1" step="0.1" value="1" class="slider" id="opacity-slider">
+                </div>
+                <div class="slider-container">
+                    <span>Blur:</span>
+                    <input type="range" min="0" max="10" step="0.5" value="0" class="slider" id="blur-slider">
+                </div>
+                <div>
+                    <span>Background Color:</span>
+                    <input type="color" id="bg-color-picker" class="color-picker" value="#764ba2">
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h3>Effects</h3>
+                <div class="options-grid" id="effects-grid">
+                    <div class="option" data-effect="3d">3D Rotation</div>
+                    <div class="option" data-effect="relief">Relief</div>
+                    <div class="option" data-effect="thickness">Thickness</div>
+                    <div class="option" data-effect="glow">Glow</div>
+                    <div class="option" data-effect="shadow">Dynamic Shadow</div>
+                    <div class="option" data-effect="particles">Particles</div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h3>Animations</h3>
+                <div class="options-grid" id="animations-grid">
+                    <div class="option" data-anim="rotate">Rotate</div>
+                    <div class="option" data-anim="bounce">Bounce</div>
+                    <div class="option" data-anim="pulse">Pulse</div>
+                    <div class="option" data-anim="shake">Shake</div>
+                    <div class="option" data-anim="flip">Flip</div>
+                    <div class="option" data-anim="morph">Morph</div>
+                    <div class="option" data-anim="swing">Swing</div>
+                    <div class="option" data-anim="wobble">Wobble</div>
+                    <div class="option" data-anim="float">Float</div>
+                    <div class="option" data-anim="glitch">Glitch</div>
+                    <div class="option" data-anim="spiral">Spiral</div>
+                    <div class="option" data-anim="zoom">Zoom</div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h3>Animation Speed</h3>
+                <div class="slider-container">
+                    <input type="range" min="0.1" max="3" step="0.1" value="1" class="slider" id="speed-slider">
+                    <span id="speed-value">1x</span>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="reset-btn">Reset All</button>
+                <button id="export-btn">Export as MP4</button>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="logo-preview">
+                <img id="logo-display" alt="Your logo will appear here" src="https://via.placeholder.com/300x300.png?text=Sample+Logo">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoDisplay = document.getElementById('logo-display');
+            const speedSlider = document.getElementById('speed-slider');
+            const speedValue = document.getElementById('speed-value');
+            const opacitySlider = document.getElementById('opacity-slider');
+            const blurSlider = document.getElementById('blur-slider');
+            const bgColorPicker = document.getElementById('bg-color-picker');
+            const fileInput = document.getElementById('file-input');
+            const resetBtn = document.getElementById('reset-btn');
+            const exportBtn = document.getElementById('export-btn');
+
+            let selectedEffects = [];
+            let selectedAnimation = '';
+
+            function handleFileSelect(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        logoDisplay.src = e.target.result;
+                        applyEffectsAndAnimation();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            function toggleEffect(effect) {
+                const index = selectedEff
