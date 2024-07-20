@@ -1,0 +1,471 @@
+<html><head><base href="https://websimsuite.com/"><title>WebSim Enterprise Automation Simulator</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>
+:root {
+    --primary-bg: #121212;
+    --automated-bg: #1a237e;
+    --manual-bg: #4a148c;
+    --text-color: #ffffff;
+    --node-auto: #00bcd4;
+    --node-manual: #ff4081;
+    --customer-data: #76ff03;
+    --lead-data: #ffd600;
+    --employee-data: #ff6e40;
+    --marketing-data: #e040fb;
+    --financial-data: #00e5ff;
+    --button-bg: #3f51b5;
+    --button-hover: #5c6bc0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+#simulation-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.process-view {
+    flex: 1;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    min-height: 50vh;
+}
+
+#automated-process { background-color: var(--automated-bg); }
+#manual-process { background-color: var(--manual-bg); }
+
+h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.node {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    font-size: 0.7rem;
+    text-align: center;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.node:hover {
+    transform: scale(1.1);
+}
+
+.automated-node { background-color: var(--node-auto); }
+.manual-node { background-color: var(--node-manual); }
+
+.data-object {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    transition: all 0.2s linear;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #000;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover { background-color: var(--button-hover); }
+
+#speed-display {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.task-counter {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.legend {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.connection-line {
+    position: absolute;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.3);
+    transform-origin: left center;
+    z-index: 1;
+}
+
+@media (min-width: 768px) {
+    #simulation-container {
+        flex-direction: row;
+    }
+
+    .process-view {
+        min-height: 100vh;
+    }
+
+    .node {
+        width: 100px;
+        height: 100px;
+        font-size: 0.8rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* New animations for data objects */
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); }
+}
+
+.data-object {
+    animation: rotate 4s linear infinite, bounce 2s ease-in-out infinite, glow 3s ease-in-out infinite;
+}
+
+/* Faster animations for automated process */
+#automated-process .data-object {
+    animation-duration: 2s, 1s, 1.5s;
+}
+
+</style></head>
+<body>
+<div id="simulation-container">
+    <div id="automated-process" class="process-view">
+        <h2>Automated Process</h2>
+        <div class="task-counter" id="auto-counter">Tasks: 0</div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color">📧</div>Email</div>
+            <div class="legend-item"><div class="legend-color">📊</div>Report</div>
+            <div class="legend-item"><div class="legend-color">📁</div>Document</div>
+            <div class="legend-item"><div class="legend-color">💼</div>Task</div>
+            <div class="legend-item"><div class="legend-color">💡</div>Idea</div>
+        </div>
+    </div>
+    <div id="manual-process" class="process-view">
+        <h2>Manual Process</h2>
+        <div class="task-counter" id="manual-counter">Tasks: 0</div>
+    </div>
+</div>
+<div id="controls">
+    <button id="slow-down">Slow Down</button>
+    <button id="speed-up">Speed Up</button>
+    <button id="toggle-simulation">Pause</button>
+</div>
+<div id="speed-display">Speed: 1x</div>
+
+<script>
+const automatedProcess = document.getElementById('automated-process');
+const manualProcess = document.getElementById('manual-process');
+const slowDownBtn = document.getElementById('slow-down');
+const speedUpBtn = document.getElementById('speed-up');
+const toggleBtn = document.getElementById('toggle-simulation');
+const speedDisplay = document.getElementById('speed-display');
+const autoCounter = document.getElementById('auto-counter');
+const manualCounter = document.getElementById('manual-counter');
+
+let speed = 1;
+let autoTaskCount = 0;
+let manualTaskCount = 0;
+let isSimulationRunning = true;
+
+function createNode(process, x, y, label, isAutomated) {
+    const node = document.createElement('div');
+    node.className = `node ${isAutomated ? 'automated-node' : 'manual-node'}`;
+    node.style.left = `${x}%`;
+    node.style.top = `${y}%`;
+    node.textContent = label;
+    node.addEventListener('click', () => {
+        node.classList.toggle('pulse');
+    });
+    process.appendChild(node);
+    return node;
+}
+
+function createDataObject(process, type) {
+    const object = document.createElement('div');
+    object.className = 'data-object';
+    let icon;
+    switch(type) {
+        case 'email': icon = '📧'; break;
+        case 'report': icon = '📊'; break;
+        case 'document': icon = '📁'; break;
+        case 'task': icon = '💼'; break;
+        case 'idea': icon = '💡'; break;
+    }
+    object.textContent = icon;
+    process.appendChild(object);
+    return object;
+}
+
+function createConnectionLine(startNode, endNode) {
+    const line = document.createElement('div');
+    line.className = 'connection-line';
+    updateConnectionLine(line, startNode, endNode);
+    startNode.parentElement.appendChild(line);
+    return line;
+}
+
+function updateConnectionLine(line, startNode, endNode) {
+    const startRect = startNode.getBoundingClientRect();
+    const endRect = endNode.getBoundingClientRect();
+    const containerRect = startNode.parentElement.getBoundingClientRect();
+
+    const startX = startRect.left + startRect.width / 2 - containerRect.left;
+    const startY = startRect.top + startRect.height / 2 - containerRect.top;
+    const endX = endRect.left + endRect.width / 2 - containerRect.left;
+    const endY = endRect.top + endRect.height / 2 - containerRect.top;
+
+    const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+    const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
+
+    line.style.width = `${length}px`;
+    line.style.left = `${startX}px`;
+    line.style.top = `${startY}px`;
+    line.style.transform = `rotate(${angle}deg)`;
+}
+
+// Create nodes for automated process
+const autoCRM = createNode(automatedProcess, 10, 30, 'CRM System', true);
+const autoMarketing = createNode(automatedProcess, 40, 15, 'Marketing Automation', true);
+const autoHR = createNode(automatedProcess, 70, 30, 'HR Management', true);
+const autoFinance = createNode(automatedProcess, 40, 75, 'Financial Analytics', true);
+const autoBI = createNode(automatedProcess, 90, 50, 'Business Intelligence', true);
+
+// Create nodes for manual process
+const manualCRM = createNode(manualProcess, 20, 50, 'Manual CRM', false);
+const manualMarketing = createNode(manualProcess, 50, 50, 'Traditional Marketing', false);
+const manualHR = createNode(manualProcess, 80, 50, 'HR Department', false);
+
+// Create connection lines
+const autoConnections = [
+    createConnectionLine(autoCRM, autoMarketing),
+    createConnectionLine(autoMarketing, autoBI),
+    createConnectionLine(autoHR, autoBI),
+    createConnectionLine(autoFinance, autoBI),
+    createConnectionLine(autoCRM, autoFinance)
+];
+
+const manualConnections = [
+    createConnectionLine(manualCRM, manualMarketing),
+    createConnectionLine(manualMarketing, manualHR),
+    createConnectionLine(manualHR, manualCRM)
+];
+
+function updateConnectionLines() {
+    autoConnections.forEach(line => {
+        updateConnectionLine(line, ...line.nodes);
+    });
+    manualConnections.forEach(line => {
+        updateConnectionLine(line, ...line.nodes);
+    });
+}
+
+window.addEventListener('resize', updateConnectionLines);
+
+function moveDataObject(object, startNode, endNode, duration) {
+    return new Promise(resolve => {
+        const startTime = performance.now();
+        const startRect = startNode.getBoundingClientRect();
+        const endRect = endNode.getBoundingClientRect();
+        const containerRect = startNode.parentElement.getBoundingClientRect();
+
+        const startX = startRect.left + startRect.width / 2 - containerRect.left;
+        const startY = startRect.top + startRect.height / 2 - containerRect.top;
+        const endX = endRect.left + endRect.width / 2 - containerRect.left;
+        const endY = endRect.top + endRect.height / 2 - containerRect.top;
+
+        function animate(currentTime) {
+            if (!isSimulationRunning) {
+                requestAnimationFrame(animate);
+                return;
+            }
+
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            object.style.left = `${startX + (endX - startX) * progress}px`;
+            object.style.top = `${startY + (endY - startY) * progress}px`;
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                object.remove();
+                resolve();
+            }
+        }
+
+        requestAnimationFrame(animate);
+    });
+}
+
+async function simulateAutomatedProcess() {
+    const processes = [
+        { start: autoCRM, end: autoMarketing, type: 'email' },
+        { start: autoMarketing, end: autoBI, type: 'report' },
+        { start: autoHR, end: autoBI, type: 'document' },
+        { start: autoFinance, end: autoBI, type: 'task' },
+        { start: autoCRM, end: autoFinance, type: 'idea' }
+    ];
+
+    while (true) {
+        if (!isSimulationRunning) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            continue;
+        }
+
+        const process = processes[Math.floor(Math.random() * processes.length)];
+        const dataObject = createDataObject(automatedProcess, process.type);
+        await moveDataObject(dataObject, process.start, process.end, 2000 / speed);
+        autoTaskCount++;
+        autoCounter.textContent = `Tasks: ${autoTaskCount}`;
+        await new Promise(resolve => setTimeout(resolve, 500 / speed));
+    }
+}
+
+async function simulateManualProcess() {
+    const processes = [
+        { start: manualCRM, end: manualMarketing, type: 'email' },
+        { start: manualMarketing, end: manualHR, type: 'document' },
+        { start: manualHR, end: manualCRM, type: 'task' }
+    ];
+
+    while (true) {
+        if (!isSimulationRunning) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            continue;
+        }
+
+        const process = processes[Math.floor(Math.random() * processes.length)];
+        const dataObject = createDataObject(manualProcess, process.type);
+        await moveDataObject(dataObject, process.start, process.end, 5000 / speed);
+        manualTaskCount++;
+        manualCounter.textContent = `Tasks: ${manualTaskCount}`;
+        await new Promise(resolve => setTimeout(resolve, 2000 / speed));
+    }
+}
+
+slowDownBtn.addEventListener('click', () => {
+    if (speed > 0.25) {
+        speed /= 2;
+        speedDisplay.textContent = `Speed: ${speed}x`;
+    }
+});
+
+speedUpBtn.addEventListener('click', () => {
+    if (speed < 8) {
+        speed *= 2;
+        speedDisplay.textContent = `Speed: ${speed}x`;
+    }
+});
+
+toggleBtn.addEventListener('click', () => {
+    isSimulationRunning = !isSimulationRunning;
+    toggleBtn.textContent = isSimulationRunning ? 'Pause' : 'Resume';
+});
+
+simulateAutomatedProcess();
+simulateManualProcess();
+</script>
+</body></html>
