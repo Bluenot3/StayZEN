@@ -1,0 +1,736 @@
+<html><head><base href="https://websimsuite.com/">
+<title>Zero Effort Network - AI vs Non-AI Business Comparison</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+    --primary-bg: #0a0a1a;
+    --automated-bg: #1a237e;
+    --manual-bg: #4a148c;
+    --text-color: #ffffff;
+    --node-auto: #00bcd4;
+    --node-manual: #ff4081;
+    --customer-data: #76ff03;
+    --lead-data: #ffd600;
+    --employee-data: #ff6e40;
+    --marketing-data: #e040fb;
+    --financial-data: #00e5ff;
+    --button-bg: #3f51b5;
+    --button-hover: #5c6bc0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+#simulation-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.process-view {
+    flex: 1;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    min-height: 50vh;
+}
+
+#automated-process { background-color: var(--automated-bg); }
+#manual-process { background-color: var(--manual-bg); }
+
+h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin: 20px 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #4caf50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.node {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    font-size: 0.7rem;
+    text-align: center;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.node:hover {
+    transform: scale(1.1);
+}
+
+.automated-node { background-color: var(--node-auto); }
+.manual-node { background-color: var(--node-manual); }
+
+.data-object {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    transition: all 0.2s linear;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #000;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover { background-color: var(--button-hover); }
+
+#speed-display {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.task-counter {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.legend {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.connection-line {
+    position: absolute;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.3);
+    transform-origin: left center;
+    z-index: 1;
+}
+
+#metrics-display {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    width: 90%;
+    max-width: 1200px;
+    z-index: 1000;
+}
+
+.metric-column {
+    flex: 1;
+    min-width: 300px;
+    margin: 0 10px;
+}
+
+.metric-header {
+    text-align: center;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #4caf50;
+}
+
+.metric {
+    text-align: center;
+    margin: 5px 0;
+    padding: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.metric-value {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #4caf50;
+}
+
+#control-panel {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1000;
+}
+
+#control-panel h3 {
+    margin-bottom: 10px;
+    color: #4caf50;
+}
+
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.control-group input[type="range"] {
+    width: 100%;
+}
+
+@media (max-width: 1200px) {
+    #metrics-display {
+        flex-direction: column;
+    }
+
+    .metric-column {
+        margin-bottom: 20px;
+    }
+}
+
+</style>
+</head>
+<body>
+<h1>Zero Effort Network - AI vs Non-AI Business Comparison</h1>
+<div id="simulation-container">
+    <div id="automated-process" class="process-view">
+        <h2>AI-Powered Business</h2>
+        <div class="task-counter" id="auto-counter">Tasks: 0</div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color">📧</div>Email</div>
+            <div class="legend-item"><div class="legend-color">📊</div>Report</div>
+            <div class="legend-item"><div class="legend-color">📁</div>Document</div>
+            <div class="legend-item"><div class="legend-color">💼</div>Task</div>
+            <div class="legend-item"><div class="legend-color">💡</div>Idea</div>
+        </div>
+    </div>
+    <div id="manual-process" class="process-view">
+        <h2>Non-AI Business</h2>
+        <div class="task-counter" id="manual-counter">Tasks: 0</div>
+    </div>
+</div>
+<div id="controls">
+    <button id="slow-down">Slow Down</button>
+    <button id="speed-up">Speed Up</button>
+    <button id="toggle-simulation">Pause</button>
+</div>
+<div id="speed-display">Speed: 1x</div>
+<div id="metrics-display">
+    <div class="metric-column">
+        <div class="metric-header">AI-Powered Business</div>
+        <div class="metric">
+            <div>Tasks Completed</div>
+            <div id="ai-tasks-completed" class="metric-value">0</div>
+        </div>
+        <div class="metric">
+            <div>Revenue Generated</div>
+            <div id="ai-revenue" class="metric-value">$0</div>
+        </div>
+        <div class="metric">
+            <div>Efficiency</div>
+            <div id="ai-efficiency" class="metric-value">0%</div>
+        </div>
+        <div class="metric">
+            <div>Employee Satisfaction</div>
+            <div id="ai-employee-satisfaction" class="metric-value">0%</div>
+        </div>
+        <div class="metric">
+            <div>Customer Satisfaction</div>
+            <div id="ai-customer-satisfaction" class="metric-value">0%</div>
+        </div>
+        <div class="metric">
+            <div>Innovation Index</div>
+            <div id="ai-innovation" class="metric-value">0</div>
+        </div>
+    </div>
+    <div class="metric-column">
+        <div class="metric-header">Non-AI Business</div>
+        <div class="metric">
+            <div>Tasks Completed</div>
+            <div id="non-ai-tasks-completed" class="metric-value">0</div>
+        </div>
+        <div class="metric">
+            <div>Revenue Generated</div>
+            <div id="non-ai-revenue" class="metric-value">$0</div>
+        </div>
+        <div class="metric">
+            <div>Efficiency</div>
+            <div id="non-ai-efficiency" class="metric-value">0%</div>
+        </div>
+        <div class="metric">
+            <div>Employee Satisfaction</div>
+            <div id="non-ai-employee-satisfaction" class="metric-value">0%</div>
+        </div>
+        <div class="metric">
+            <div>Customer Satisfaction</div>
+            <div id="non-ai-customer-satisfaction" class="metric-value">0%</div>
+        </div>
+        <div class="metric">
+            <div>Innovation Index</div>
+            <div id="non-ai-innovation" class="metric-value">0</div>
+        </div>
+    </div>
+    <div class="metric-column">
+        <div class="metric-header">Comparison</div>
+        <div class="metric">
+            <div>Task Completion Difference</div>
+            <div id="task-difference" class="metric-value">0</div>
+        </div>
+        <div class="metric">
+            <div>Revenue Difference</div>
+            <div id="revenue-difference" class="metric-value">$0</div>
+        </div>
+        <div class="metric">
+            <div>Efficiency Difference</div>
+            <div id="efficiency-difference" class="metric-value">0%</div>
+        </div>
+        <div class="metric">
+            <div>Employee Satisfaction Difference</div>
+            <div id="employee-satisfaction-difference" class="metric-value">0%</div>
+        </div>
+        <div class="metric">
+            <div>Customer Satisfaction Difference</div>
+            <div id="customer-satisfaction-difference" class="metric-value">0%</div>
+        </div>
+        <div class="metric">
+            <div>Innovation Difference</div>
+            <div id="innovation-difference" class="metric-value">0</div>
+        </div>
+    </div>
+</div>
+
+<div id="control-panel">
+    <h3>Simulation Controls</h3>
+    <div class="control-group">
+        <label for="ai-efficiency">AI Efficiency</label>
+        <input type="range" id="ai-efficiency-control" min="1" max="10" value="7">
+    </div>
+    <div class="control-group">
+        <label for="non-ai-efficiency">Non-AI Efficiency</label>
+        <input type="range" id="non-ai-efficiency-control" min="1" max="10" value="5">
+    </div>
+    <div class="control-group">
+        <label for="market-conditions">Market Conditions</label>
+        <input type="range" id="market-conditions" min="1" max="10" value="5">
+    </div>
+    <div class="control-group">
+        <label for="innovation-rate">Innovation Rate</label>
+        <input type="range" id="innovation-rate" min="1" max="10" value="5">
+    </div>
+</div>
+
+<script>
+const automatedProcess = document.getElementById('automated-process');
+const manualProcess = document.getElementById('manual-process');
+const slowDownBtn = document.getElementById('slow-down');
+const speedUpBtn = document.getElementById('speed-up');
+const toggleBtn = document.getElementById('toggle-simulation');
+const speedDisplay = document.getElementById('speed-display');
+const autoCounter = document.getElementById('auto-counter');
+const manualCounter = document.getElementById('manual-counter');
+
+// AI-Powered Business Metrics
+const aiTasksCompletedEl = document.getElementById('ai-tasks-completed');
+const aiRevenueEl = document.getElementById('ai-revenue');
+const aiEfficiencyEl = document.getElementById('ai-efficiency');
+const aiEmployeeSatisfactionEl = document.getElementById('ai-employee-satisfaction');
+const aiCustomerSatisfactionEl = document.getElementById('ai-customer-satisfaction');
+const aiInnovationEl = document.getElementById('ai-innovation');
+
+// Non-AI Business Metrics
+const nonAiTasksCompletedEl = document.getElementById('non-ai-tasks-completed');
+const nonAiRevenueEl = document.getElementById('non-ai-revenue');
+const nonAiEfficiencyEl = document.getElementById('non-ai-efficiency');
+const nonAiEmployeeSatisfactionEl = document.getElementById('non-ai-employee-satisfaction');
+const nonAiCustomerSatisfactionEl = document.getElementById('non-ai-customer-satisfaction');
+const nonAiInnovationEl = document.getElementById('non-ai-innovation');
+
+// Comparison Metrics
+const taskDifferenceEl = document.getElementById('task-difference');
+const revenueDifferenceEl = document.getElementById('revenue-difference');
+const efficiencyDifferenceEl = document.getElementById('efficiency-difference');
+const employeeSatisfactionDifferenceEl = document.getElementById('employee-satisfaction-difference');
+const customerSatisfactionDifferenceEl = document.getElementById('customer-satisfaction-difference');
+const innovationDifferenceEl = document.getElementById('innovation-difference');
+
+// Control panel elements
+const aiEfficiencyControl = document.getElementById('ai-efficiency-control');
+const nonAiEfficiencyControl = document.getElementById('non-ai-efficiency-control');
+const marketConditionsControl = document.getElementById('market-conditions');
+const innovationRateControl = document.getElementById('innovation-rate');
+
+let speed = 1;
+let isSimulationRunning = true;
+let simulationStartTime = Date.now();
+
+// Metrics
+let aiMetrics = {
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 70,
+    employeeSatisfaction: 70,
+    customerSatisfaction: 70,
+    innovation: 7
+};
+
+let nonAiMetrics = {
+    tasksCompleted: 0,
+    revenue: 0,
+    efficiency: 50,
+    employeeSatisfaction: 50,
+    customerSatisfaction: 50,
+    innovation: 5
+};
+
+function createNode(process, x, y, label, isAutomated) {
+    const node = document.createElement('div');
+    node.className = `node ${isAutomated ? 'automated-node' : 'manual-node'}`;
+    node.style.left = `${x}%`;
+    node.style.top = `${y}%`;
+    node.textContent = label;
+    node.addEventListener('click', () => {
+        node.classList.toggle('pulse');
+    });
+    process.appendChild(node);
+    return node;
+}
+
+function createDataObject(process, type) {
+    const object = document.createElement('div');
+    object.className = 'data-object';
+    let icon;
+    switch(type) {
+        case 'email': icon = '📧'; break;
+        case 'report': icon = '📊'; break;
+        case 'document': icon = '📁'; break;
+        case 'task': icon = '💼'; break;
+        case 'idea': icon = '💡'; break;
+    }
+    object.textContent = icon;
+    process.appendChild(object);
+    return object;
+}
+
+function createConnectionLine(startNode, endNode) {
+    const line = document.createElement('div');
+    line.className = 'connection-line';
+    updateConnectionLine(line, startNode, endNode);
+    startNode.parentElement.appendChild(line);
+    return line;
+}
+
+function updateConnectionLine(line, startNode, endNode) {
+    const startRect = startNode.getBoundingClientRect();
+    const endRect = endNode.getBoundingClientRect();
+    const containerRect = startNode.parentElement.getBoundingClientRect();
+
+    const startX = startRect.left + startRect.width / 2 - containerRect.left;
+    const startY = startRect.top + startRect.height / 2 - containerRect.top;
+    const endX = endRect.left + endRect.width / 2 - containerRect.left;
+    const endY = endRect.top + endRect.height / 2 - containerRect.top;
+
+    const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+    const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
+
+    line.style.width = `${length}px`;
+    line.style.left = `${startX}px`;
+    line.style.top = `${startY}px`;
+    line.style.transform = `rotate(${angle}deg)`;
+}
+
+// Create nodes for AI-Powered Business
+const aiCRM = createNode(automatedProcess, 10, 30, 'AI CRM', true);
+const aiMarketing = createNode(automatedProcess, 40, 15, 'AI Marketing', true);
+const aiHR = createNode(automatedProcess, 70, 30, 'AI HR', true);
+const aiFinance = createNode(automatedProcess, 40, 75, 'AI Finance', true);
+const aiBI = createNode(automatedProcess, 90, 50, 'AI BI', true);
+
+// Create nodes for Non-AI Business
+const nonAiCRM = createNode(manualProcess, 20, 50, 'CRM', false);
+const nonAiMarketing = createNode(manualProcess, 50, 50, 'Marketing', false);
+const nonAiHR = createNode(manualProcess, 80, 50, 'HR', false);
+
+// Create connection lines
+const aiConnections = [
+    createConnectionLine(aiCRM, aiMarketing),
+    createConnectionLine(aiMarketing, aiBI),
+    createConnectionLine(aiHR, aiBI),
+    createConnectionLine(aiFinance, aiBI),
+    createConnectionLine(aiCRM, aiFinance)
+];
+
+const nonAiConnections = [
+    createConnectionLine(nonAiCRM, nonAiMarketing),
+    createConnectionLine(nonAiMarketing, nonAiHR),
+    createConnectionLine(nonAiHR, nonAiCRM)
+];
+
+function updateConnectionLines() {
+    aiConnections.forEach(line => {
+        updateConnectionLine(line, ...line.nodes);
+    });
+    nonAiConnections.forEach(line => {
+        updateConnectionLine(line, ...line.nodes);
+    });
+}
+
+window.addEventListener('resize', updateConnectionLines);
+
+function moveDataObject(object, startNode, endNode, duration, isAI) {
+    return new Promise(resolve => {
+        const startTime = performance.now();
+        const startRect = startNode.getBoundingClientRect();
+        const endRect = endNode.getBoundingClientRect();
+        const containerRect = startNode.parentElement.getBoundingClientRect();
+
+        const startX = startRect.left + startRect.width / 2 - containerRect.left;
+        const startY = startRect.top + startRect.height / 2 - containerRect.top;
+        const endX = endRect.left + endRect.width / 2 - containerRect.left;
+        const endY = endRect.top + endRect.height / 2 - containerRect.top;
+
+        startNode.classList.add('node-active');
+        endNode.classList.add('node-active');
+
+        const connectionLine = (isAI ? aiConnections : nonAiConnections).find(conn => 
+            (conn.startNode === startNode && conn.endNode === endNode) ||
+            (conn.startNode === endNode && conn.endNode === startNode)
+        );
+        if (connectionLine) {
+            connectionLine.classList.add('line-active');
+        }
+
+        function animate(currentTime) {
+            if (!isSimulationRunning) {
+                requestAnimationFrame(animate);
+                return;
+            }
+
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            object.style.left = `${startX + (endX - startX) * progress}px`;
+            object.style.top = `${startY + (endY - startY) * progress}px`;
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                object.remove();
+                startNode.classList.remove('node-active');
+                endNode.classList.remove('node-active');
+                if (connectionLine) {
+                    connectionLine.classList.remove('line-active');
+                }
+                resolve();
+            }
+        }
+
+        requestAnimationFrame(animate);
+    });
+}
+
+function updateMetrics() {
+    const marketConditions = parseInt(marketConditionsControl.value);
+    const innovationRate = parseInt(innovationRateControl.value);
+
+    // Update AI metrics
+    aiMetrics.efficiency = Math.min(100, Math.max(0, parseInt(aiEfficiencyControl.value) * 10));
+    aiMetrics.employeeSatisfaction = Math.min(100, Math.max(0, aiMetrics.employeeSatisfaction + (aiMetrics.efficiency / 100) - (100 - aiMetrics.efficiency) / 100));
+    aiMetrics.customerSatisfaction = Math.min(100, Math.max(0, aiMetrics.customerSatisfaction + (aiMetrics.efficiency / 100) - (100 - aiMetrics.efficiency) / 200));
+    aiMetrics.innovation += (innovationRate / 100) * (aiMetrics.efficiency / 100);
+    aiMetrics.revenue = aiMetrics.tasksCompleted * (marketConditions / 5) * (aiMetrics.efficiency / 50);
+
+    // Update Non-AI metrics
+    nonAiMetrics.efficiency = Math.min(100, Math.max(0, parseInt(nonAiEfficiencyControl.value) * 10));
+    nonAiMetrics.employeeSatisfaction = Math.min(100, Math.max(0, nonAiMetrics.employeeSatisfaction + (nonAiMetrics.efficiency / 100) - (100 - nonAiMetrics.efficiency) / 100));
+    nonAiMetrics.customerSatisfaction = Math.min(100, Math.max(0, nonAiMetrics.customerSatisfaction + (nonAiMetrics.efficiency / 100) - (100 - nonAiMetrics.efficiency) / 200));
+    nonAiMetrics.innovation += (innovationRate / 200) * (nonAiMetrics.efficiency / 100);
+    nonAiMetrics.revenue = nonAiMetrics.tasksCompleted * (marketConditions / 5) * (nonAiMetrics.efficiency / 50);
+
+    // Update display
+    aiTasksCompletedEl.textContent = aiMetrics.tasksCompleted;
+    aiRevenueEl.textContent = `$${aiMetrics.revenue.toFixed(2)}`;
+    aiEfficiencyEl.textContent = `${aiMetrics.efficiency.toFixed(1)}%`;
+    aiEmployeeSatisfactionEl.textContent = `${aiMetrics.employeeSatisfaction.toFixed(1)}%`;
+    aiCustomerSatisfactionEl.textContent = `${aiMetrics.customerSatisfaction.toFixed(1)}%`;
+    aiInnovationEl.textContent = aiMetrics.innovation.toFixed(2);
+
+    nonAiTasksCompletedEl.textContent = nonAiMetrics.tasksCompleted;
+    nonAiRevenueEl.textContent = `$${nonAiMetrics.revenue.toFixed(2)}`;
+    nonAiEfficiencyEl.textContent = `${nonAiMetrics.efficiency.toFixed(1)}%`;
+    nonAiEmployeeSatisfactionEl.textContent = `${nonAiMetrics.employeeSatisfaction.toFixed(1)}%`;
+    nonAiCustomerSatisfactionEl.textContent = `${nonAiMetrics.customerSatisfaction.toFixed(1)}%`;
+    nonAiInnovationEl.textContent = nonAiMetrics.innovation.toFixed(2);
+
+    // Update comparison metrics
+    taskDifferenceEl.textContent = (aiMetrics.tasksCompleted - nonAiMetrics.tasksCompleted).toString();
+    revenueDifferenceEl.textContent = `$${(aiMetrics.revenue - nonAiMetrics.revenue).toFixed(2)}`;
+    efficiencyDifferenceEl.textContent = `${(aiMetrics.efficiency - nonAiMetrics.efficiency).toFixed(1)}%`;
+    employeeSatisfactionDifferenceEl.textContent = `${(aiMetrics.employeeSatisfaction - nonAiMetrics.employeeSatisfaction).toFixed(1)}%`;
+    customerSatisfactionDifferenceEl.textContent = `${(aiMetrics.customerSatisfaction - nonAiMetrics.customerSatisfaction).toFixed(1)}%`;
+    innovationDifferenceEl.textContent = (aiMetrics.innovation - nonAiMetrics.innovation).toFixed(2);
+}
+
+async function simulateAIProcess() {
+    const processes = [
+        { start: aiCRM, end: aiMarketing, type: 'email' },
+        { start: aiMarketing, end: aiBI, type: 'report' },
+        { start: aiHR, end: aiBI, type: 'document' },
+        { start: aiFinance, end: aiBI, type: 'task' },
+        { start: aiCRM, end: aiFinance, type: 'idea' }
+    ];
+
+    while (true) {
+        if (!isSimulationRunning) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            continue;
+        }
+
+        const process = processes[Math.floor(Math.random() * processes.length)];
+        const dataObject = createDataObject(automatedProcess, process.type);
+        await moveDataObject(dataObject, process.start, process.end, 2000 / speed / (aiMetrics.efficiency / 50), true);
+        aiMetrics.tasksCompleted++;
+        autoCounter.textContent = `Tasks: ${aiMetrics.tasksCompleted}`;
+        updateMetrics();
+        await new Promise(resolve => setTimeout(resolve, 500 / speed));
+    }
+}
+
+async function simulateNonAIProcess() {
+    const processes = [
+        { start: nonAiCRM, end: nonAiMarketing, type: 'email' },
+        { start: nonAiMarketing, end: nonAiHR, type: 'document' },
+        { start: nonAiHR, end: nonAiCRM, type: 'task' }
+    ];
+
+    while (true) {
+        if (!isSimulationRunning) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            continue;
+        }
+
+        const process = processes[Math.floor(Math.random() * processes.length)];
+        const dataObject = createDataObject(manualProcess, process.type);
+        await moveDataObject(dataObject, process.start, process.end, 5000 / speed / (nonAiMetrics.efficiency / 50), false);
+        nonAiMetrics.tasksCompleted++;
+        manualCounter.textContent = `Tasks: ${nonAiMetrics.tasksCompleted}`;
+        updateMetrics();
+        await new Promise(resolve => setTimeout(resolve, 2000 / speed));
+    }
+}
+
+slowDownBtn.addEventListener('click', () => {
+    if (speed > 0.25) {
+        speed /= 2;
+        speedDisplay.textContent = `Speed: ${speed}x`;
+    }
+});
+
+speedUpBtn.addEventListener('click', () => {
+    if (speed < 8) {
+        speed *= 2;
+        speedDisplay.textContent = `Speed: ${speed}x`;
+    }
+});
+
+toggleBtn.addEventListener('click', () => {
+    isSimulationRunning = !isSimulationRunning;
+    toggleBtn.textContent = isSimulationRunning ? 'Pause' : 'Resume';
+});
+
+// Event listeners for control panel inputs
+aiEfficiencyControl.addEventListener('input', updateMetrics);
+nonAiEfficiencyControl.addEventListener('input', updateMetrics);
+marketConditionsControl.addEventListener('input', updateMetrics);
+innovationRateControl.addEventListener('input', updateMetrics);
+
+simulateAIProcess();
+simulateNonAIProcess();
+
+// Update metrics every second
+setInterval(updateMetrics, 1000);
+</script>
+</body>
+</html>
