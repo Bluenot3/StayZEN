@@ -1,0 +1,316 @@
+<html><head><base href="https://websim.ai" />
+<title>Enterprise Automation Simulator: Automated vs. Manual Processes</title>
+<style>
+  body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #121212;
+    color: #ffffff;
+    overflow: hidden;
+  }
+  #simulation-container {
+    display: flex;
+    height: 100vh;
+  }
+  .process-view {
+    flex: 1;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  #automated-process {
+    background-color: #1a237e;
+  }
+  #manual-process {
+    background-color: #4a148c;
+  }
+  h2 {
+    text-align: center;
+    color: #ffffff;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  .node {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    font-size: 12px;
+    text-align: center;
+  }
+  .automated-node {
+    background-color: #00bcd4;
+    color: #ffffff;
+  }
+  .manual-node {
+    background-color: #ff4081;
+    color: #ffffff;
+  }
+  .data-packet {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    transition: all 0.2s linear;
+  }
+  .customer-data { background-color: #76ff03; }
+  .lead-data { background-color: #ffd600; }
+  .employee-data { background-color: #ff6e40; }
+  .marketing-data { background-color: #e040fb; }
+  .financial-data { background-color: #00e5ff; }
+  #controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+  }
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #3f51b5;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #5c6bc0;
+  }
+  #speed-display {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18px;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+  }
+  .task-counter {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .node-label {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .legend {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  .legend-color {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+</style>
+</head>
+<body>
+  <div id="simulation-container">
+    <div id="automated-process" class="process-view">
+      <h2>Automated Process</h2>
+      <div class="task-counter" id="auto-counter">Tasks: 0</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-color customer-data"></div>Customer</div>
+        <div class="legend-item"><div class="legend-color lead-data"></div>Lead</div>
+        <div class="legend-item"><div class="legend-color employee-data"></div>Employee</div>
+        <div class="legend-item"><div class="legend-color marketing-data"></div>Marketing</div>
+        <div class="legend-item"><div class="legend-color financial-data"></div>Financial</div>
+      </div>
+    </div>
+    <div id="manual-process" class="process-view">
+      <h2>Manual Process</h2>
+      <div class="task-counter" id="manual-counter">Tasks: 0</div>
+    </div>
+  </div>
+  <div id="controls">
+    <button id="slow-down">Slow Down</button>
+    <button id="speed-up">Speed Up</button>
+  </div>
+  <div id="speed-display">Speed: 1x</div>
+
+  <script>
+    const automatedProcess = document.getElementById('automated-process');
+    const manualProcess = document.getElementById('manual-process');
+    const slowDownBtn = document.getElementById('slow-down');
+    const speedUpBtn = document.getElementById('speed-up');
+    const speedDisplay = document.getElementById('speed-display');
+    const autoCounter = document.getElementById('auto-counter');
+    const manualCounter = document.getElementById('manual-counter');
+
+    let speed = 1;
+    let autoTaskCount = 0;
+    let manualTaskCount = 0;
+
+    function createNode(process, x, y, label, isAutomated) {
+      const node = document.createElement('div');
+      node.className = `node ${isAutomated ? 'automated-node' : 'manual-node'}`;
+      node.style.left = `${x}px`;
+      node.style.top = `${y}px`;
+      node.textContent = label;
+      process.appendChild(node);
+      return node;
+    }
+
+    function createDataPacket(process, type) {
+      const packet = document.createElement('div');
+      packet.className = `data-packet ${type}-data`;
+      process.appendChild(packet);
+      return packet;
+    }
+
+    // Create nodes for automated process
+    const autoCRM = createNode(automatedProcess, 50, 100, 'CRM System', true);
+    const autoMarketing = createNode(automatedProcess, 200, 50, 'Marketing Automation', true);
+    const autoHR = createNode(automatedProcess, 350, 100, 'HR Management', true);
+    const autoFinance = createNode(automatedProcess, 200, 250, 'Financial Analytics', true);
+    const autoBI = createNode(automatedProcess, 500, 175, 'Business Intelligence', true);
+
+    // Create nodes for manual process
+    const manualCRM = createNode(manualProcess, 50, 150, 'Manual CRM', false);
+    const manualMarketing = createNode(manualProcess, 250, 150, 'Traditional Marketing', false);
+    const manualHR = createNode(manualProcess, 450, 150, 'HR Department', false);
+
+    function movePacket(packet, startNode, endNode, duration) {
+      const startTime = performance.now();
+      const startX = parseInt(startNode.style.left) + 50;
+      const startY = parseInt(startNode.style.top) + 50;
+      const endX = parseInt(endNode.style.left) + 50;
+      const endY = parseInt(endNode.style.top) + 50;
+
+      function animate(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        packet.style.left = `${startX + (endX - startX) * progress}px`;
+        packet.style.top = `${startY + (endY - startY) * progress}px`;
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          packet.remove();
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function simulateAutomatedProcess() {
+      const processes = [
+        { start: autoCRM, end: autoMarketing, type: 'customer' },
+        { start: autoMarketing, end: autoBI, type: 'marketing' },
+        { start: autoHR, end: autoBI, type: 'employee' },
+        { start: autoFinance, end: autoBI, type: 'financial' },
+        { start: autoCRM, end: autoFinance, type: 'lead' }
+      ];
+
+      for (let i = 0; i < 100; i++) {
+        setTimeout(() => {
+          const process = processes[Math.floor(Math.random() * processes.length)];
+          const packet = createDataPacket(automatedProcess, process.type);
+          movePacket(packet, process.start, process.end, 1000 / speed);
+          autoTaskCount++;
+          autoCounter.textContent = `Tasks: ${autoTaskCount}`;
+        }, i * (50 / speed));
+      }
+    }
+
+    function simulateManualProcess() {
+      const packet = createDataPacket(manualProcess, 'customer');
+      movePacket(packet, manualCRM, manualMarketing, 3000 / speed);
+      setTimeout(() => {
+        const packet2 = createDataPacket(manualProcess, 'lead');
+        movePacket(packet2, manualMarketing, manualCRM, 2000 / speed);
+        setTimeout(() => {
+          const packet3 = createDataPacket(manualProcess, 'employee');
+          movePacket(packet3, manualHR, manualCRM, 3000 / speed);
+          manualTaskCount++;
+          manualCounter.textContent = `Tasks: ${manualTaskCount}`;
+        }, 2000 / speed);
+      }, 3000 / speed);
+    }
+
+    function startSimulation() {
+      simulateAutomatedProcess();
+      simulateManualProcess();
+      setTimeout(startSimulation, 5000 / speed);
+    }
+
+    startSimulation();
+
+    slowDownBtn.addEventListener('click', () => {
+      if (speed > 0.25) {
+        speed /= 2;
+        updateSpeedDisplay();
+      }
+    });
+
+    speedUpBtn.addEventListener('click', () => {
+      if (speed < 4) {
+        speed *= 2;
+        updateSpeedDisplay();
+      }
+    });
+
+    function updateSpeedDisplay() {
+      speedDisplay.textContent = `Speed: ${speed}x`;
+    }
+
+    // Add pulsing effect to nodes
+    function pulseNodes() {
+      const nodes = document.querySelectorAll('.node');
+      nodes.forEach(node => {
+        node.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+          node.style.transform = 'scale(1)';
+        }, 500);
+      });
+    }
+
+    setInterval(pulseNodes, 2000);
+
+    // Add particle effect for automated process
+    function createParticle() {
+      const types = ['customer', 'lead', 'employee', 'marketing', 'financial'];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const particle = createDataPacket(automatedProcess, type);
+      particle.style.left = `${Math.random() * automatedProcess.offsetWidth}px`;
+      particle.style.top = `${Math.random() * automatedProcess.offsetHeight}px`;
+
+      setTimeout(() => {
+        particle.remove();
+      }, 1000);
+    }
+
+    setInterval(createParticle, 100);
+  </script>
+</body></html>
