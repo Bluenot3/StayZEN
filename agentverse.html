@@ -1,0 +1,302 @@
+  <html><head><base href="https://agentverse.ai" />
+    <title>AgentVerse - Immersive AI Agent Selector</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Orbitron', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+        @keyframes starfield {
+            0% {transform: translateZ(0);}
+            100% {transform: translateZ(400px);}
+        }
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            animation: starfield 10s linear infinite;
+        }
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;}
+            50% {text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;}
+            100% {text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;}
+        }
+        #carousel {
+            width: 100%;
+            height: 80%;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+        .carousel-item {
+            position: absolute;
+            width: 400px;
+            height: 600px;
+            left: 50%;
+            top: 50%;
+            transform-style: preserve-3d;
+            transition: transform 1s;
+            cursor: pointer;
+        }
+        .carousel-item-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+        .carousel-item iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0,255,255,0.5);
+            pointer-events: none;
+        }
+        @keyframes glowFrame {
+            0% {box-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;}
+            50% {box-shadow: 0 0 30px #00ffff, 0 0 40px #00ffff, 0 0 50px #00ffff;}
+            100% {box-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;}
+        }
+        .glow-frame {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid #00ffff;
+            border-radius: 25px;
+            animation: glowFrame 2s infinite;
+        }
+        @keyframes orbit {
+            0% {transform: rotateY(0deg) translateX(50px) rotateY(0deg);}
+            100% {transform: rotateY(360deg) translateX(50px) rotateY(-360deg);}
+        }
+        .orbiting-particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #00ffff;
+            border-radius: 50%;
+            animation: orbit 5s linear infinite;
+        }
+        #selected-agent {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #selected-agent iframe {
+            width: 90%;
+            height: 90%;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0,255,255,0.7);
+        }
+        #close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            color: #00ffff;
+            cursor: pointer;
+            z-index: 1001;
+            text-shadow: 0 0 10px #00ffff;
+        }
+        .agent-name {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 16px;
+            white-space: nowrap;
+            text-shadow: 0 0 5px #00ffff;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="starfield" id="starfield"></div>
+    <div class="container">
+        <h1>AgentVerse AI Selector</h1>
+        <div id="carousel"></div>
+    </div>
+    <div id="selected-agent">
+        <span id="close-button">&times;</span>
+    </div>
+
+    <script>
+        const agents = [
+            {id: "Your_Businesses_Agent_S954L", name: "Business Agent"},
+            {id: "ZENX_HCYZ5", name: "ZenX"},
+            {id: "VisionX_67B29", name: "VisionX"},
+            {id: "Collective_AGI_8RIRC", name: "Collective AGI"},
+            {id: "Visionary_Pixel_Magician_UNL5E", name: "Pixel Magician"},
+            {id: "Claude_35_Sonnet_74WG1", name: "Claude 3.5 Sonnet"},
+            {id: "CCTV_GPT_I2EGT", name: "CCTV GPT"}
+        ];
+
+        const carousel = document.getElementById('carousel');
+        const selectedAgent = document.getElementById('selected-agent');
+        const closeButton = document.getElementById('close-button');
+        let angle = 0;
+        let autoRotateInterval;
+
+        function createStarfield() {
+            const starfield = document.getElementById('starfield');
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 10}s`;
+                starfield.appendChild(star);
+            }
+        }
+
+        function createCarousel() {
+            agents.forEach((agent, index) => {
+                const item = document.createElement('div');
+                item.className = 'carousel-item';
+                item.innerHTML = `
+                    <div class="carousel-item-inner">
+                        <iframe src="https://embed.pickaxeproject.com/axe?id=${agent.id}&mode=embed_gold&host=beta&theme=custom&opacity=100&font_header=Libre+Franklin&size_header=32&font_body=Quicksand&size_body=16&font_labels=Quicksand&size_labels=20&font_button=Quicksand&size_button=16&c_fb=040101&c_ff=01070E&c_fbd=FFFFFF&c_rb=019FEF&c_bb=FFFFFF&c_bt=000000&c_t=FFFFFF&s_ffo=100&s_rbo=100&s_bbo=100&s_f=minimalist&s_b=filled&s_t=0.5&s_to=1&s_r=3"></iframe>
+                        <div class="glow-frame"></div>
+                        <div class="orbiting-particle" style="animation-delay: 0s;"></div>
+                        <div class="orbiting-particle" style="animation-delay: 1.67s;"></div>
+                        <div class="orbiting-particle" style="animation-delay: 3.33s;"></div>
+                        <div class="agent-name">${agent.name}</div>
+                    </div>
+                `;
+                carousel.appendChild(item);
+
+                item.addEventListener('click', () => selectAgent(agent.id));
+            });
+            positionItems();
+            startAutoRotate();
+        }
+
+        function positionItems() {
+            const radius = 800;
+            const items = document.querySelectorAll('.carousel-item');
+            items.forEach((item, index) => {
+                const theta = (index / items.length) * 2 * Math.PI;
+                const x = Math.sin(theta + angle) * radius;
+                const z = Math.cos(theta + angle) * radius - radius;
+                item.style.transform = `translate3d(${x}px, 0, ${z}px) rotateY(${-theta - angle}rad)`;
+            });
+        }
+
+        function startAutoRotate() {
+            autoRotateInterval = setInterval(() => {
+                angle += 0.005;
+                positionItems();
+            }, 30);
+        }
+
+        function stopAutoRotate() {
+            clearInterval(autoRotateInterval);
+        }
+
+        function selectAgent(id) {
+            selectedAgent.style.display = 'flex';
+            selectedAgent.innerHTML = `
+                <span id="close-button">&times;</span>
+                <iframe src="https://embed.pickaxeproject.com/axe?id=${id}&mode=embed_gold&host=beta&theme=custom&opacity=100&font_header=Libre+Franklin&size_header=32&font_body=Quicksand&size_body=16&font_labels=Quicksand&size_labels=20&font_button=Quicksand&size_button=16&c_fb=040101&c_ff=01070E&c_fbd=FFFFFF&c_rb=019FEF&c_bb=FFFFFF&c_bt=000000&c_t=FFFFFF&s_ffo=100&s_rbo=100&s_bbo=100&s_f=minimalist&s_b=filled&s_t=0.5&s_to=1&s_r=3"></iframe>
+            `;
+            document.getElementById('close-button').addEventListener('click', closeSelectedAgent);
+            stopAutoRotate();
+        }
+
+        function closeSelectedAgent() {
+            selectedAgent.style.display = 'none';
+            startAutoRotate();
+        }
+
+        createStarfield();
+        createCarousel();
+
+        // Add mouse drag functionality
+        let isDragging = false;
+        let startX;
+        let startAngle;
+
+        carousel.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startAngle = angle;
+            stopAutoRotate();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const deltaX = e.clientX - startX;
+                angle = startAngle + deltaX * 0.005;
+                positionItems();
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            startAutoRotate();
+        });
+
+        // Prevent iframe interaction when rotating
+        const iframes = document.querySelectorAll('.carousel-item iframe');
+        iframes.forEach(iframe => {
+            iframe.addEventListener('mouseenter', () => {
+                if (!isDragging) {
+                    iframe.style.pointerEvents = 'auto';
+                }
+            });
+            iframe.addEventListener('mouseleave', () => {
+                iframe.style.pointerEvents = 'none';
+            });
+        });
+
+        // Add immersive background music
+        const audio = new Audio('https://example.com/immersive-background.mp3');
+        audio.loop = true;
+        audio.volume = 0.3;
+        document.body.addEventListener('click', () => {
+            audio.play();
+        }, { once: true });
+    </script>
+</body></html>
