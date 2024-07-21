@@ -192,6 +192,10 @@
         </div>
 
         <div class="game-interface">
+            <a href="https://www.zenai.biz/ai-literacy" class="game-tile">
+                <div class="game-icon">🧠</div>
+                <div class="game-text">AI Literacy</div>
+            </a>
             <a href="https://www.zenai.biz/coin-bubble" class="game-tile">
                 <div class="game-icon">🪙</div>
                 <div class="game-text">Coin Bubble</div>
