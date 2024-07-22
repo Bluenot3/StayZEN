@@ -1,0 +1,672 @@
+<html><head><base href="https://websim.ai/c/website-designer?site_name=app.thegptgods.com&website_type=portfolio&color_scheme=vibrant&design_style=retro&features=affiliate+marketing%252C+ai+affiliate+marketing+strategies%252C+ai+affiliate+marketing+assistant+agents%252C+database+of+Affiliate+AI+programs+&resolution=8&description=Full+feature+rich+high+quality+UI+and+responsive+design+webapp+with+react-flow+and+D3.js+capability+and+expandability%250A#dashboard+#crm+#Workstation+#Labs+#Analytics+#Settings+Add-full-advanced-logic%25to-ensure-full-functionality-of-the-webapp=implement-each-feature-with-the-HIGHEST-quality-outputs%25fully.functoinal-webapp">
+<title>ZEN Smart Business Solutions Sample Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="ZEN Smart Business Solutions Sample Dashboard - Comprehensive data visualization and analytics platform">
+<style>
+:root {
+  --primary-color: #1a237e;
+  --secondary-color: #283593;
+  --text-color: #ffffff;
+  --background-color: #0a0a1a;
+  --card-bg: #1c1c2f;
+  --card-border: 1px solid #3f51b5;
+  --chart-color-1: #42a5f5;
+  --chart-color-2: #66bb6a;
+  --chart-color-3: #ef5350;
+  --chart-color-4: #ffa726;
+  --chart-color-5: #ab47bc;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.container {
+  width: 95%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  background-color: var(--primary-color);
+  padding: 20px 0;
+  color: #fff;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+h1 {
+  font-size: 36px;
+  margin-bottom: 0;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  animation: glowing 2s ease-in-out infinite;
+}
+
+@keyframes glowing {
+  0% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #42a5f5, 0 0 35px #42a5f5, 0 0 40px #42a5f5, 0 0 50px #42a5f5, 0 0 75px #42a5f5; }
+  50% { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #42a5f5, 0 0 70px #42a5f5, 0 0 80px #42a5f5, 0 0 100px #42a5f5, 0 0 150px #42a5f5; }
+  100% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #42a5f5, 0 0 35px #42a5f5, 0 0 40px #42a5f5, 0 0 50px #42a5f5, 0 0 75px #42a5f5; }
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.dashboard-card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  border: var(--card-border);
+}
+
+.dashboard-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+}
+
+.dashboard-card h3 {
+  color: var(--text-color);
+  font-size: 22px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.metric {
+  font-size: 42px;
+  font-weight: bold;
+  color: var(--chart-color-1);
+  margin-bottom: 15px;
+}
+
+.chart-container {
+  height: 300px;
+  margin-top: 20px;
+}
+
+#lineChart, #barChart, #donutChart, #columnChart {
+  width: 100%;
+  height: 100%;
+}
+
+.metric-selector, .time-selector {
+  margin-top: 15px;
+}
+
+.metric-selector select, .time-selector select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #3f51b5;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-card {
+    margin-bottom: 30px;
+  }
+  
+  .metric {
+    font-size: 36px;
+  }
+  
+  .chart-container {
+    height: 250px;
+  }
+}
+
+#pickaxe-inline-action-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://embed.pickaxeproject.com/axe/scripts/inline-button/styles.css">
+<script src="https://embed.pickaxeproject.com/axe/scripts/inline-button/bundle.js"></script>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>ZEN Smart Business Solutions Sample Dashboard</h1>
+    </div>
+  </header>
+  
+  <main class="container">
+    <div class="dashboard">
+      <div class="dashboard-card">
+        <h3>Users</h3>
+        <div class="metric" id="userMetricValue">3987</div>
+        <div class="chart-container">
+          <canvas id="lineChart"></canvas>
+        </div>
+        <div class="metric-selector">
+          <select id="userMetric">
+            <option value="total">Total Users</option>
+            <option value="active">Active Users</option>
+            <option value="new">New Users</option>
+          </select>
+        </div>
+        <div class="time-selector">
+          <select id="userTimeframe">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+      <div class="dashboard-card">
+        <h3>Revenue Plan</h3>
+        <div class="metric" id="revenueMetricValue">41%</div>
+        <div class="chart-container">
+          <canvas id="lineChart2"></canvas>
+        </div>
+        <div class="metric-selector">
+          <select id="revenueMetric">
+            <option value="plan">Revenue Plan</option>
+            <option value="actual">Actual Revenue</option>
+            <option value="forecast">Revenue Forecast</option>
+          </select>
+        </div>
+        <div class="time-selector">
+          <select id="revenueTimeframe">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+      <div class="dashboard-card">
+        <h3>Conversion</h3>
+        <div class="metric" id="conversionMetricValue">5%</div>
+        <div class="chart-container">
+          <canvas id="lineChart3"></canvas>
+        </div>
+        <div class="metric-selector">
+          <select id="conversionMetric">
+            <option value="overall">Overall Conversion</option>
+            <option value="product">Product Conversion</option>
+            <option value="checkout">Checkout Conversion</option>
+          </select>
+        </div>
+        <div class="time-selector">
+          <select id="conversionTimeframe">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+      <div class="dashboard-card">
+        <h3>Sales</h3>
+        <div class="metric" id="salesMetricValue">$435k</div>
+        <div class="chart-container">
+          <canvas id="lineChart4"></canvas>
+        </div>
+        <div class="metric-selector">
+          <select id="salesMetric">
+            <option value="total">Total Sales</option>
+            <option value="product">Product Sales</option>
+            <option value="region">Regional Sales</option>
+          </select>
+        </div>
+        <div class="time-selector">
+          <select id="salesTimeframe">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+      <div class="dashboard-card">
+        <h3>Orders</h3>
+        <div class="metric" id="orderMetricValue">385</div>
+        <div class="chart-container">
+          <canvas id="lineChart5"></canvas>
+        </div>
+        <div class="metric-selector">
+          <select id="orderMetric">
+            <option value="total">Total Orders</option>
+            <option value="completed">Completed Orders</option>
+            <option value="pending">Pending Orders</option>
+          </select>
+        </div>
+        <div class="time-selector">
+          <select id="orderTimeframe">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+      <div class="dashboard-card">
+        <h3>Visits</h3>
+        <div class="metric" id="visitMetricValue">334</div>
+        <div class="chart-container">
+          <canvas id="lineChart6"></canvas>
+        </div>
+        <div class="metric-selector">
+          <select id="visitMetric">
+            <option value="total">Total Visits</option>
+            <option value="unique">Unique Visits</option>
+            <option value="returning">Returning Visits</option>
+          </select>
+        </div>
+        <div class="time-selector">
+          <select id="visitTimeframe">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dashboard" style="margin-top: 30px;">
+      <div class="dashboard-card" style="grid-column: span 2;">
+        <h3>Site Traffic</h3>
+        <div class="chart-container" style="height: 400px;">
+          <canvas id="lineChart7"></canvas>
+        </div>
+        <div class="metric-selector">
+          <select id="trafficMetric">
+            <option value="all">All Traffic</option>
+            <option value="organic">Organic Traffic</option>
+            <option value="paid">Paid Traffic</option>
+          </select>
+        </div>
+        <div class="time-selector">
+          <select id="trafficTimeframe">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+      <div class="dashboard-card">
+        <h3>Sales by Country</h3>
+        <div class="chart-container" style="height: 400px;">
+          <canvas id="barChart"></canvas>
+        </div>
+        <div class="metric-selector">
+          <select id="countryMetric">
+            <option value="sales">Sales</option>
+            <option value="orders">Orders</option>
+            <option value="customers">Customers</option>
+          </select>
+        </div>
+        <div class="time-selector">
+          <select id="countryTimeframe">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dashboard" style="margin-top: 30px;">
+      <div class="dashboard-card">
+        <h3>Traffic Sources</h3>
+        <div class="chart-container" style="height: 400px;">
+          <canvas id="donutChart"></canvas>
+        </div>
+        <div class="metric-selector">
+          <select id="sourceMetric">
+            <option value="visits">Visits</option>
+            <option value="conversions">Conversions</option>
+            <option value="revenue">Revenue</option>
+          </select>
+        </div>
+        <div class="time-selector">
+          <select id="sourceTimeframe">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+      <div class="dashboard-card" style="grid-column: span 2;">
+        <h3>Monthly Sales</h3>
+        <div class="chart-container" style="height: 400px;">
+          <canvas id="columnChart"></canvas>
+        </div>
+        <div class="metric-selector">
+          <select id="monthlySalesMetric">
+            <option value="revenue">Revenue</option>
+            <option value="units">Units Sold</option>
+            <option value="profit">Profit</option>
+          </select>
+        </div>
+        <div class="time-selector">
+          <select id="monthlySalesTimeframe">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="pickaxe-inline-action-btn" data-formid="Enterprise_Agent_5M1QO" data-frame-source="https://embed.pickaxeproject.com/axe?id=Enterprise_Agent_5M1QO&mode=embed_gold&host=beta&theme=custom&opacity=100&font_header=Libre+Franklin&size_header=32&font_body=Quicksand&size_body=16&font_labels=Quicksand&size_labels=20&font_button=Quicksand&size_button=16&c_fb=142257&c_ff=01070E&c_fbd=FFFFFF&c_rb=019FEF&c_bb=FFFFFF&c_bt=000000&c_t=FFFFFF&s_ffo=100&s_rbo=100&s_bbo=100&s_f=minimalist&s_b=filled&s_t=0.5&s_to=1&s_r=3" data-title="Enterprise Agent" data-btn-color="FFFFFF" data-btn-style="filled" data-border-radius="3" data-border-width="0.5" data-font-color="000000"></div>
+
+  <script>
+    // Helper function to create line charts
+    function createLineChart(canvasId, label, data, color) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      return new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: label,
+            data: data,
+            borderColor: color,
+            tension: 0.4,
+            fill: false,
+            borderWidth: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              },
+              ticks: {
+                color: 'rgba(255, 255, 255, 0.7)'
+              }
+            },
+            x: {
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              },
+              ticks: {
+                color: 'rgba(255, 255, 255, 0.7)'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+
+    // Create line charts for each metric
+    let userChart = createLineChart('lineChart', 'Users', [3200, 3400, 3600, 3800, 3900, 3987], '#42a5f5');
+    let revenueChart = createLineChart('lineChart2', 'Revenue Plan', [30, 34, 36, 38, 40, 41], '#66bb6a');
+    let conversionChart = createLineChart('lineChart3', 'Conversion', [3, 3.5, 4, 4.5, 4.8, 5], '#ef5350');
+    let salesChart = createLineChart('lineChart4', 'Sales', [300000, 350000, 380000, 400000, 420000, 435000], '#ffa726');
+    let orderChart = createLineChart('lineChart5', 'Orders', [320, 340, 355, 370, 380, 385], '#ab47bc');
+    let visitChart = createLineChart('lineChart6', 'Visits', [280, 300, 310, 320, 328, 334], '#26c6da');
+
+    // Create line chart for site traffic
+    const ctx7 = document.getElementById('lineChart7').getContext('2d');
+    let trafficChart = new Chart(ctx7, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [{
+          label: 'New Visitor',
+          data: [30, 35, 40, 38, 42, 45, 43, 40, 42, 38, 40, 35],
+          borderColor: '#42a5f5',
+          tension: 0.4,
+          fill: false,
+          borderWidth: 4
+        },
+        {
+          label: 'Returning Visitor',
+          data: [20, 25, 30, 28, 32, 35, 33, 30, 32, 28, 30, 25],
+          borderColor: '#ef5350',
+          tension: 0.4,
+          fill: false,
+          borderWidth: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.7)'
+            }
+          },
+          x: {
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.7)'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: 'rgba(255, 255, 255, 0.7)'
+            }
+          }
+        }
+      }
+    });
+
+    // Create bar chart for sales by country
+    const ctxBar = document.getElementById('barChart').getContext('2d');
+    let countryChart = new Chart(ctxBar, {
+      type: 'bar',
+      data: {
+        labels: ['United States', 'United Kingdom', 'India', 'Brazil', 'Canada'],
+        datasets: [{
+          label: 'Sales',
+          data: [5173, 3479, 2139, 1398, 1098],
+          backgroundColor: ['#42a5f5', '#66bb6a', '#ef5350', '#ffa726', '#ab47bc']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.7)'
+            }
+          },
+          x: {
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.7)'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+
+    // Create donut chart for traffic sources
+    const ctxDonut = document.getElementById('donutChart').getContext('2d');
+    let sourceChart = new Chart(ctxDonut, {
+      type: 'doughnut',
+      data: {
+        labels: ['Organic', 'Direct', 'Referral'],
+        datasets: [{
+          data: [60, 25, 15],
+          backgroundColor: ['#42a5f5', '#66bb6a', '#ef5350']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: 'rgba(255, 255, 255, 0.7)'
+            }
+          }
+        }
+      }
+    });
+
+    // Create column chart for monthly sales
+    const ctxColumn = document.getElementById('columnChart').getContext('2d');
+    let monthlySalesChart = new Chart(ctxColumn, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [{
+          label: 'Sales',
+          data: [65, 59, 80, 81, 56, 55, 40, 65, 59, 80, 81, 56],
+          backgroundColor: '#42a5f5'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.7)'
+            }
+          },
+          x: {
+            grid: {
+              color: 'rgba(255, 255, 255, 0.1)'
+            },
+            ticks: {
+              color: 'rgba(255, 255, 255, 0.7)'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+
+    // Function to generate random data
+    function generateRandomData(min, max, count) {
+      return Array.from({length: count}, () => Math.floor(Math.random() * (max - min + 1)) + min);
+    }
+
+    // Function to update chart data and metric value
+    function updateChartAndMetric(chart, metricElement, newData, metricValue) {
+      chart.data.datasets[0].data = newData;
+      chart.update();
+      metricElement.textContent = metricValue;
+    }
+
+    // Add event listeners for metric and timeframe selectors
+    document.querySelectorAll('.metric-selector select, .time-selector select').forEach(select => {
+      select.addEventListener('change', function() {
+        const metricType = this.id.replace('Metric', '').replace('Timeframe', '');
+        const metricValue = document.getElementById(metricType + 'Metric').value;
+        const timeframe = document.getElementById(metricType + 'Timeframe').value;
+        
+        let newData, newMetricValue;
+        
+        switch(metricType) {
+          case 'user':
+            newData = generateRandomData(3000, 4000, 6);
+            newMetricValue = newData[newData.length - 1];
+            updateChartAndMetric(userChart, document.getElementById('userMetricValue'), newData, newMetricValue);
+            break;
+          case 'revenue':
+            newData = generateRandomData(30, 50, 6);
+            newMetricValue = newData[newData.length - 1] + '%';
+            updateChartAndMetric(revenueChart, document.getElementById('revenueMetricValue'), newData, newMetricValue);
+            break;
+          case 'conversion':
+            newData = generateRandomData(3, 7, 6);
+            newMetricValue = newData[newData.length - 1] + '%';
+            updateChartAndMetric(conversionChart, document.getElementById('conversionMetricValue'), newData, newMetricValue);
+            break;
+          case 'sales':
+            newData = generateRandomData(300000, 500000, 6);
+            newMetricValue = '$' + (newData[newData.length - 1] / 1000).toFixed(0) + 'k';
+            updateChartAndMetric(salesChart, document.getElementById('salesMetricValue'), newData, newMetricValue);
+            break;
+          case 'order':
+            newData = generateRandomData(300, 400, 6);
+            newMetricValue = newData[newData.length - 1];
+            updateChartAndMetric(orderChart, document.getElementById('orderMetricValue'), newData, newMetricValue);
+            break;
+          case 'visit':
+            newData = generateRandomData(250, 350, 6);
+            newMetricValue = newData[newData.length - 1];
+            updateChartAndMetric(visitChart, document.getElementById('visitMetricValue'), newData, newMetricValue);
+            break;
+          case 'traffic':
+            trafficChart.data.datasets[0].data = generateRandomData(30, 50, 12);
+            trafficChart.data.datasets[1].data = generateRandomData(20, 40, 12);
+            trafficChart.update();
+            break;
+          case 'country':
+            countryChart.data.datasets[0].data = generateRandomData(1000, 6000, 5);
+            countryChart.update();
+            break;
+          case 'source':
+            sourceChart.data.datasets[0].data = generateRandomData(10, 70, 3);
+            sourceChart.update();
+            break;
+          case 'monthlySales':
+            monthlySalesChart.data.datasets[0].data = generateRandomData(40, 90, 12);
+            monthlySalesChart.update();
+            break;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
