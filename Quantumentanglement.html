@@ -1,0 +1,185 @@
+<html><head><base href="https://example.com/audio-visualizer"><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Audio Visualizer Dreams</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            background-color: #000;
+            color: #fff;
+        }
+        #visualizer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        button, input[type="file"] {
+            margin: 5px;
+            padding: 10px;
+            background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover, input[type="file"]:hover {
+            background: #555;
+        }
+        #songInfo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            font-size: 18px;
+            text-shadow: 2px 2px 4px #000;
+        }
+    </style>
+</head>
+<body>
+    <div id="visualizer"></div>
+    <div id="songInfo">Upload a song to begin</div>
+    <div id="controls">
+        <input type="file" id="audioUpload" accept="audio/*">
+        <button id="playPause">Play/Pause</button>
+    </div>
+
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('visualizer').appendChild(renderer.domElement);
+
+        const geometry = new THREE.SphereGeometry(5, 32, 32);
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
+        const sphere = new THREE.Mesh(geometry, material);
+        scene.add(sphere);
+
+        camera.position.z = 10;
+
+        const particles = [];
+        for (let i = 0; i < 1000; i++) {
+            const particle = new THREE.Vector3(
+                Math.random() * 400 - 200,
+                Math.random() * 400 - 200,
+                Math.random() * 400 - 200
+            );
+            particles.push(particle);
+        }
+
+        const particleGeometry = new THREE.BufferGeometry().setFromPoints(particles);
+        const particleMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 2 });
+        const particleSystem = new THREE.Points(particleGeometry, particleMaterial);
+        scene.add(particleSystem);
+
+        let audioContext, analyser, source;
+        let isPlaying = false;
+
+        document.getElementById('audioUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const arrayBuffer = e.target.result;
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                audioContext.decodeAudioData(arrayBuffer, function(buffer) {
+                    if (source) {
+                        source.disconnect();
+                    }
+                    source = audioContext.createBufferSource();
+                    source.buffer = buffer;
+
+                    analyser = audioContext.createAnalyser();
+                    analyser.fftSize = 256;
+
+                    source.connect(analyser);
+                    analyser.connect(audioContext.destination);
+
+                    source.start(0);
+                    isPlaying = true;
+
+                    document.getElementById('songInfo').textContent = `Now playing: ${file.name}`;
+                });
+            };
+
+            reader.readAsArrayBuffer(file);
+        });
+
+        document.getElementById('playPause').addEventListener('click', function() {
+            if (audioContext) {
+                if (isPlaying) {
+                    audioContext.suspend();
+                    isPlaying = false;
+                } else {
+                    audioContext.resume();
+                    isPlaying = true;
+                }
+            }
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (analyser) {
+                const dataArray = new Uint8Array(analyser.frequencyBinCount);
+                analyser.getByteFrequencyData(dataArray);
+
+                const avg = dataArray.reduce((a, b) => a + b) / dataArray.length;
+
+                sphere.scale.set(1 + avg / 128, 1 + avg / 128, 1 + avg / 128);
+
+                for (let i = 0; i < particleSystem.geometry.attributes.position.array.length; i += 3) {
+                    const x = particleSystem.geometry.attributes.position.array[i];
+                    const y = particleSystem.geometry.attributes.position.array[i + 1];
+                    const z = particleSystem.geometry.attributes.position.array[i + 2];
+
+                    const distance = Math.sqrt(x * x + y * y + z * z);
+                    const normalizedDistance = distance / 200;
+                    const frequencyIndex = Math.floor(normalizedDistance * dataArray.length);
+                    const frequency = dataArray[frequencyIndex] / 256;
+
+                    particleSystem.geometry.attributes.position.array[i] += (Math.random() - 0.5) * frequency * 2;
+                    particleSystem.geometry.attributes.position.array[i + 1] += (Math.random() - 0.5) * frequency * 2;
+                    particleSystem.geometry.attributes.position.array[i + 2] += (Math.random() - 0.5) * frequency * 2;
+
+                    if (Math.abs(x) > 200 || Math.abs(y) > 200 || Math.abs(z) > 200) {
+                        particleSystem.geometry.attributes.position.array[i] = (Math.random() * 400 - 200) * 0.1;
+                        particleSystem.geometry.attributes.position.array[i + 1] = (Math.random() * 400 - 200) * 0.1;
+                        particleSystem.geometry.attributes.position.array[i + 2] = (Math.random() * 400 - 200) * 0.1;
+                    }
+                }
+
+                particleSystem.geometry.attributes.position.needsUpdate = true;
+            }
+
+            sphere.rotation.x += 0.01;
+            sphere.rotation.y += 0.01;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', function() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body></html>
