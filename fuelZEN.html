@@ -1,0 +1,402 @@
+<html><head><base href="https://websimcreationengine.com/zen_tools_presentation_enhanced_v2/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Fuel behind the Tools at ZEN</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+        :root {
+            --primary-color: #4df0ff;
+            --background-color: #1e3c72;
+            --text-color: #ffffff;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            overflow: hidden;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-45deg, #1e3c72, #2a5298, #2980b9, #4ca1af);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            z-index: -2;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .data-visualization {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 0.5em;
+            animation: glowText 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glowText {
+            from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--primary-color), 0 0 20px var(--primary-color); }
+            to { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--primary-color), 0 0 40px var(--primary-color); }
+        }
+
+        h2 {
+            font-size: 2.5em;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: -10px;
+            left: 50%;
+            background-color: var(--primary-color);
+            transition: all 0.8s ease;
+        }
+
+        .active h2::after {
+            width: 100%;
+            left: 0;
+        }
+
+        ul {
+            text-align: left;
+            max-width: 800px;
+            margin: 20px auto;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-size: 1.5em;
+            line-height: 1;
+        }
+
+        .active li {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .nav-buttons {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            padding: 12px 24px;
+            background-color: rgba(77, 240, 255, 0.3);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-size: 1em;
+        }
+
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease, height 0.5s ease;
+        }
+
+        .nav-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .nav-button:hover {
+            background-color: rgba(77, 240, 255, 0.5);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            h2 { font-size: 1.8em; }
+            li { font-size: 1em; }
+            .nav-button { padding: 10px 20px; font-size: 0.9em; }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.5em; }
+            li { font-size: 0.9em; }
+            .nav-button { padding: 8px 16px; font-size: 0.8em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <svg class="data-visualization" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <filter id="glow">
+                <feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
+                <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+        <g filter="url(#glow)">
+            <!-- Dynamic lines representing technological growth -->
+            <path d="M0,100 Q25,80 50,85 T100,60" stroke="#4df0ff" stroke-width="2" fill="none">
+                <animate attributeName="d" 
+                    values="M0,100 Q25,80 50,85 T100,60;
+                            M0,110 Q25,90 50,95 T100,70;
+                            M0,100 Q25,80 50,85 T100,60" 
+                    dur="10s" repeatCount="indefinite"/>
+            </path>
+            <path d="M0,150 Q35,140 70,145 T140,130" stroke="#4df0ff" stroke-width="2" fill="none">
+                <animate attributeName="d" 
+                    values="M0,150 Q35,140 70,145 T140,130;
+                            M0,160 Q35,150 70,155 T140,140;
+                            M0,150 Q35,140 70,145 T140,130" 
+                    dur="15s" repeatCount="indefinite"/>
+            </path>
+        </g>
+        <g>
+            <!-- Efficiency data points -->
+            <circle cx="20%" cy="30%" r="5" fill="#4df0ff">
+                <animate attributeName="r" values="5;7;5" dur="3s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="40%" cy="60%" r="4" fill="#4df0ff">
+                <animate attributeName="r" values="4;6;4" dur="4s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="60%" cy="40%" r="6" fill="#4df0ff">
+                <animate attributeName="r" values="6;8;6" dur="5s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="80%" cy="70%" r="5" fill="#4df0ff">
+                <animate attributeName="r" values="5;7;5" dur="3.5s" repeatCount="indefinite"/>
+            </circle>
+        </g>
+    </svg>
+    
+    <div class="content">
+        <div class="slide" id="slide1">
+            <h1>Advanced Fuel behind the Tools at ZEN</h1>
+            <p>Harnessing the power of cutting-edge AI models</p>
+        </div>
+
+        <div class="slide" id="slide2">
+            <h2>Claude 3.5 Sonnet (Anthropic)</h2>
+            <ul>
+                <li>Context Window: 200,000 tokens</li>
+                <li>2x faster than predecessor</li>
+                <li>Cost: $3 per million input tokens, $15 per million output tokens</li>
+                <li>Excels in: Large document handling, data analysis, mathematical reasoning</li>
+                <li>How we harness it: Complex data interpretation, academic research support, legal document analysis</li>
+            </ul>
+        </div>
+
+        <div class="slide" id="slide3">
+            <h2>GPT-4 (OpenAI)</h2>
+            <ul>
+                <li>Context Window: 8,192 tokens</li>
+                <li>Superior language understanding and generation</li>
+                <li>Excellent for content creation and conversational AI</li>
+                <li>Extensive knowledge base</li>
+                <li>How we harness it: Content writing, customer support automation, educational tool development</li>
+            </ul>
+        </div>
+
+        <div class="slide" id="slide4">
+            <h2>Llama 3 (Meta)</h2>
+            <ul>
+                <li>Context Window: Varies by model version (8B, 70B, 400B parameters)</li>
+                <li>Strong in language understanding and reasoning</li>
+                <li>Effective in multi-modal and multilingual applications</li>
+                <li>Improved logical and analytical capabilities</li>
+                <li>How we harness it: Multilingual support, multi-modal data processing, scalable AI solutions</li>
+            </ul>
+        </div>
+
+        <div class="slide" id="slide5">
+            <h2>Gemini 1.5 Pro (Google)</h2>
+            <ul>
+                <li>Context Window: 1,000,000 tokens</li>
+                <li>Robust multi-modal capabilities</li>
+                <li>Excels in product visualization and immersive experiences</li>
+                <li>Strong in handling long code blocks</li>
+                <li>How we harness it: 3D modeling applications, virtual reality experiences, extensive code analysis</li>
+            </ul>
+        </div>
+
+        <div class="slide" id="slide6">
+            <h2>Cohere Command R+ (Cohere)</h2>
+            <ul>
+                <li>Advanced retrieval-augmented generation capabilities</li>
+                <li>Excels in information retrieval and question answering</li>
+                <li>Specializes in enterprise-level knowledge management</li>
+                <li>Robust handling of domain-specific queries</li>
+                <li>How we harness it: Intelligent search systems, corporate knowledge bases, custom chatbots</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <button class="nav-button" id="prevBtn">Previous</button>
+        <button class="nav-button" id="nextBtn">Next</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 6;
+
+        function showSlide(slideNumber) {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            const targetSlide = document.getElementById(`slide${slideNumber}`);
+            targetSlide.classList.add('active');
+            animateListItems(targetSlide);
+        }
+
+        function animateListItems(slideElement) {
+            const listItems = slideElement.querySelectorAll('li');
+            listItems.forEach((item, index) => {
+                item.style.transitionDelay = `${index * 0.1}s`;
+            });
+        }
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentSlide > 1) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') document.getElementById('prevBtn').click();
+            if (e.key === 'ArrowRight') document.getElementById('nextBtn').click();
+        });
+
+        // Touch swipe navigation
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX && currentSlide < totalSlides) {
+                currentSlide++;
+                showSlide(currentSlide);
+            } else if (touchEndX > touchStartX && currentSlide > 1) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        // Initial slide
+        showSlide(currentSlide);
+
+        // Resize handler for better mobile experience
+        window.addEventListener('resize', () => {
+            showSlide(currentSlide);
+        });
+    </script>
+</body>
+</html>
