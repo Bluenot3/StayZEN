@@ -1,0 +1,286 @@
+<html><head><base href="https://agentverse.ai" />
+    <title>AgentVerse - Immersive AI Agent Nexus</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Orbitron', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        #main-title {
+            font-size: 8em;
+            margin-bottom: 50px;
+            text-align: center;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotateX(25deg); }
+            50% { transform: translateY(-30px) rotateX(30deg); }
+        }
+        
+        #main-title::before {
+            content: 'ZEN';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: rgba(0, 255, 255, 0.6);
+            text-shadow: 0 0 50px rgba(0, 255, 255, 0.6);
+            transform: translateZ(-15px);
+        }
+        
+        #main-title::after {
+            content: 'ZEN';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: rgba(255, 255, 255, 0.6);
+            text-shadow: 0 0 50px rgba(255, 255, 255, 0.6);
+            transform: translateZ(15px);
+        }
+        
+        #agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 40px;
+            width: 100%;
+        }
+        
+        .agent-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .agent-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.9);
+        }
+        
+        .agent-item iframe {
+            width: 100%;
+            height: 550px;
+            border: none;
+            border-radius: 20px;
+        }
+        
+        .agent-name {
+            margin-top: 25px;
+            font-size: 24px;
+            color: #00ffff;
+        }
+        
+        #selected-agent {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        #selected-agent iframe {
+            width: 95%;
+            height: 95%;
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 0 120px rgba(0,255,255,0.9);
+        }
+        
+        #close-button {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            font-size: 60px;
+            color: #00ffff;
+            cursor: pointer;
+            z-index: 1001;
+            text-shadow: 0 0 25px #00ffff;
+        }
+        
+        #voice-assistant-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #00ffff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        #voice-assistant-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.9);
+        }
+
+        #voice-assistant-button i {
+            color: #000;
+            font-size: 24px;
+        }
+
+        #voice-assistant-modal {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.7);
+            z-index: 1001;
+            overflow: hidden;
+        }
+        
+        @media (max-width: 768px) {
+            #main-title {
+                font-size: 5em;
+            }
+            
+            #agent-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .agent-item iframe {
+                height: 450px;
+            }
+
+            #voice-assistant-modal {
+                width: 90%;
+                height: 80%;
+                bottom: 10%;
+                right: 5%;
+            }
+        }
+    </style>
+    <script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/4.28.3/gradio.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div id="main-title">ZEN</div>
+        <div id="agent-grid"></div>
+    </div>
+    <div id="selected-agent">
+        <span id="close-button">&times;</span>
+    </div>
+    <div id="voice-assistant-button">
+        <i class="fas fa-microphone"></i>
+    </div>
+    <div id="voice-assistant-modal">
+        <gradio-app src="https://luxoai-bgcgw-jarvis.hf.space"></gradio-app>
+    </div>
+
+    <script>
+        const agents = [
+            {id: "Your_Businesses_Agent_S954L", name: "Business Agent"},
+            {id: "ZENX_HCYZ5", name: "ZenX"},
+            {id: "VisionX_67B29", name: "VisionX"},
+            {id: "Collective_AGI_8RIRC", name: "Collective AGI"},
+            {id: "Visionary_Pixel_Magician_UNL5E", name: "Pixel Magician"},
+            {id: "Claude_35_Sonnet_74WG1", name: "Claude 3.5 Sonnet"},
+            {id: "CCTV_GPT_I2EGT", name: "CCTV GPT"},
+            {id: "Masterpiece_Maker_T8XH5", name: "Masterpiece Maker"},
+            {id: "Concpet_Creator_7E8OK", name: "Concept Creator"},
+            {id: "DIY_QME1T", name: "DIY Assistant"},
+            {id: "Digital_Designer_CNQE6", name: "Digital Designer"},
+            {id: "Lego_Image_Converter_IB79H", name: "Lego Image Converter"},
+            {id: "CareerSecure_LO5J5", name: "CareerSecure"},
+            {id: "Text_to_Blueprint_3G2XH", name: "Text to Blueprint"},
+            {id: "Enterprise_Agent_5M1QO", name: "Enterprise Agent"},
+            {id: "Ask_DWXR6", name: "Ask"}
+        ];
+
+        const agentGrid = document.getElementById('agent-grid');
+        const selectedAgent = document.getElementById('selected-agent');
+        const closeButton = document.getElementById('close-button');
+        const voiceAssistantButton = document.getElementById('voice-assistant-button');
+        const voiceAssistantModal = document.getElementById('voice-assistant-modal');
+
+        function createAgentGrid() {
+            agents.forEach(agent => {
+                const item = document.createElement('div');
+                item.className = 'agent-item';
+                item.innerHTML = `
+                    <iframe src="https://embed.pickaxeproject.com/axe?id=${agent.id}&mode=embed_gold&host=beta&theme=custom&opacity=100&font_header=Libre+Franklin&size_header=32&font_body=Quicksand&size_body=16&font_labels=Quicksand&size_labels=20&font_button=Quicksand&size_button=16&c_fb=142257&c_ff=01070E&c_fbd=FFFFFF&c_rb=019FEF&c_bb=FFFFFF&c_bt=000000&c_t=FFFFFF&s_ffo=100&s_rbo=100&s_bbo=100&s_f=minimalist&s_b=filled&s_t=0.5&s_to=1&s_r=3" 
+                            onMouseOver="this.style.boxShadow='0px 6px 20px 0px rgba(0,0,0,0.15)'; this.style.transform = 'translateY(-2px)'; this.style.transition = 'transform 300ms ease'" 
+                            onMouseOut="this.style.boxShadow='none'; this.style.transform = 'translateY(0px)';"
+                            style="border:1px solid rgba(0, 0, 0, 1);transition:.3s;border-radius:4px;" 
+                            frameBorder="0"></iframe>
+                    <div class="agent-name">${agent.name}</div>
+                `;
+                item.addEventListener('click', () => selectAgent(agent.id));
+                agentGrid.appendChild(item);
+            });
+        }
+
+        function selectAgent(id) {
+            selectedAgent.style.display = 'flex';
+            selectedAgent.innerHTML = `
+                <span id="close-button">&times;</span>
+                <iframe src="https://embed.pickaxeproject.com/axe?id=${id}&mode=embed_gold&host=beta&theme=custom&opacity=100&font_header=Libre+Franklin&size_header=32&font_body=Quicksand&size_body=16&font_labels=Quicksand&size_labels=20&font_button=Quicksand&size_button=16&c_fb=142257&c_ff=01070E&c_fbd=FFFFFF&c_rb=019FEF&c_bb=FFFFFF&c_bt=000000&c_t=FFFFFF&s_ffo=100&s_rbo=100&s_bbo=100&s_f=minimalist&s_b=filled&s_t=0.5&s_to=1&s_r=3"
+                        style="border:1px solid rgba(0, 0, 0, 1);transition:.3s;border-radius:4px;"
+                        frameBorder="0"></iframe>
+            `;
+            document.getElementById('close-button').addEventListener('click', closeSelectedAgent);
+        }
+
+        function closeSelectedAgent() {
+            selectedAgent.style.display = 'none';
+        }
+
+        function toggleVoiceAssistant() {
+            voiceAssistantModal.style.display = voiceAssistantModal.style.display === 'none' ? 'block' : 'none';
+        }
+
+        createAgentGrid();
+
+        closeButton.addEventListener('click', closeSelectedAgent);
+        voiceAssistantButton.addEventListener('click', toggleVoiceAssistant);
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                voiceAssistantButton.style.bottom = '30px';
+            } else {
+                voiceAssistantButton.style.bottom = '30px';
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            // Add any necessary resize logic here
+        });
+    </script>
+</body></html>
