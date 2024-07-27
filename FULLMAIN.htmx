@@ -1,0 +1,399 @@
+<html><head><base href="https://zenai.biz/"></head><body><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZEN AI - Animated Integration</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+        :root {
+            --primary-color: #00ffff;
+            --secondary-color: #ff00ff;
+            --background-dark: #1a1a2e;
+            --background-light: #16213e;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #000;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        #canvas-container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1;
+        }
+
+        #animation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .embedded-bot-container {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transition: height 0.5s ease;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        .embedded-bot-container.expanded {
+            height: 700px;
+        }
+
+        .expand-button {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .expand-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .game-interface {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .game-tile {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            text-decoration: none;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .game-tile::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            transform: scale(0.1);
+        }
+
+        .game-tile:hover::before {
+            opacity: 1;
+            transform: scale(1);
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        .game-tile:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .game-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .game-tile:hover .game-icon {
+            transform: scale(1.2) rotate(15deg);
+        }
+
+        .game-text {
+            font-size: 18px;
+            opacity: 0.8;
+            transition: all 0.5s ease;
+            font-weight: 300;
+        }
+
+        .game-tile:hover .game-text {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            #canvas-container {
+                padding: 10px;
+            }
+
+            .embedded-bot-container {
+                height: 200px;
+            }
+
+            .embedded-bot-container.expanded {
+                height: 500px;
+            }
+
+            .game-interface {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-interface {
+                grid-template-columns: 1fr;
+            }
+
+            .embedded-bot-container {
+                height: 150px;
+            }
+
+            .embedded-bot-container.expanded {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="animation-container"></div>
+    <div id="canvas-container">
+        <div class="embedded-bot-container" id="bot-container">
+            <iframe id="IHJHO913T7" loading="eager" src="https://embed.pickaxeproject.com/axe?id=ZENX_HCYZ5&mode=embed_gold&host=beta&theme=custom&opacity=100&font_header=Libre+Franklin&size_header=32&font_body=Quicksand&size_body=16&font_labels=Quicksand&size_labels=20&font_button=Quicksand&size_button=16&c_fb=040101&c_ff=01070E&c_fbd=FFFFFF&c_rb=019FEF&c_bb=FFFFFF&c_bt=000000&c_t=FFFFFF&s_ffo=100&s_rbo=100&s_bbo=100&s_f=minimalist&s_b=filled&s_t=0.5&s_to=1&s_r=3" width="100%" height="100%" style="border:1px solid rgba(0, 0, 0, 1);transition:.3s;border-radius:4px;" frameBorder="0"></iframe>
+            <button class="expand-button" id="expand-button">Expand</button>
+        </div>
+
+        <div class="game-interface">
+            <a href="https://www.zenai.biz/ai-literacy" class="game-tile">
+                <div class="game-icon">🧠</div>
+                <div class="game-text">AI Literacy</div>
+            </a>
+            <a href="https://www.zenai.biz/coin-bubble" class="game-tile">
+                <div class="game-icon">🪙</div>
+                <div class="game-text">Coin Bubble</div>
+            </a>
+            <a href="https://sites.google.com/view/zen-collective/home" class="game-tile">
+                <div class="game-icon">🧬</div>
+                <div class="game-text">ZEN Labs</div>
+            </a>
+            <a href="https://us.zenai.biz" class="game-tile">
+                <div class="game-icon">🤖</div>
+                <div class="game-text">AI Arena</div>
+            </a>
+            <a href="https://www.zenai.biz/account/zenfren" class="game-tile">
+                <div class="game-icon">📱</div>
+                <div class="game-text">AI/ML Apps</div>
+            </a>
+            <a href="https://www.zenai.biz/profile/royaltokens/profile" class="game-tile">
+                <div class="game-icon">🔗</div>
+                <div class="game-text">Join</div>
+            </a>
+            <a href="https://genagi.us" class="game-tile">
+                <div class="game-icon">🎮</div>
+                <div class="game-text">DeFi Games</div>
+            </a>
+            <a href="https://www.zenai.biz/zenu" class="game-tile">
+                <div class="game-icon">🎓</div>
+                <div class="game-text">Enroll</div>
+            </a>
+            <a href="https://www.zenai.biz/zenu" class="game-tile">
+                <div class="game-icon">📚</div>
+                <div class="game-text">Courses</div>
+            </a>
+            <a href="https://www.zenai.biz/zenagents" class="game-tile">
+                <div class="game-icon">⚙️</div>
+                <div class="game-text">Services</div>
+            </a>
+            <a href="https://www.zenai.biz/fuel-of-zen" class="game-tile">
+                <div class="game-icon">⛽️</div>
+                <div class="game-text">ZEN Fuel</div>
+            </a>
+            <a href="https://www.zenai.biz/profile/royaltokens/profile" class="game-tile">
+                <div class="game-icon">📊</div>
+                <div class="game-text">ZENDash</div>
+            </a>
+            <a href="https://www.zenai.biz/zenagents" class="game-tile">
+                <div class="game-icon">💼</div>
+                <div class="game-text">Businesses</div>
+            </a>
+            <a href="https://zenai.biz/legal" class="game-tile">
+                <div class="game-icon">📞</div>
+                <div class="game-text">Contact</div>
+            </a>
+            <a href="https://www.zenai.biz/shop" class="game-tile">
+                <div class="game-icon">🛒</div>
+                <div class="game-text">Shop</div>
+            </a>
+            <a href="https://www.zenai.biz/ai-tv" class="game-tile">
+                <div class="game-icon">📺</div>
+                <div class="game-text">ZEN Stream</div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let scene, camera, renderer, particles, textMesh;
+        const particleCount = 5000;
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 50;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('animation-container').appendChild(renderer.domElement);
+
+            // Particle system
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount * 3; i++) {
+                positions[i] = (Math.random() - 0.5) * 100;
+                colors[i] = Math.random();
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.5,
+                vertexColors: true,
+                blending: THREE.AdditiveBlending,
+                transparent: true
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            // Text
+            const loader = new THREE.FontLoader();
+            loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function(font) {
+                const textGeometry = new THREE.TextGeometry('ZEN AI', {
+                    font: font,
+                    size: 10,
+                    height: 2,
+                    curveSegments: 12,
+                    bevelEnabled: true,
+                    bevelThickness: 0.1,
+                    bevelSize: 0.1,
+                    bevelOffset: 0,
+                    bevelSegments: 5
+                });
+                
+                const textMaterial = new THREE.MeshPhongMaterial({
+                    color: 0xffffff,
+                    emissive: 0x00ffff,
+                    specular: 0x00ffff,
+                    shininess: 100
+                });
+                
+                textMesh = new THREE.Mesh(textGeometry, textMaterial);
+                textMesh.position.set(-20, 0, 0);
+                scene.add(textMesh);
+            });
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0x404040);
+            scene.add(ambientLight);
+
+            const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+            pointLight.position.set(0, 0, 50);
+            scene.add(pointLight);
+
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const time = Date.now() * 0.001;
+            particles.rotation.x = time * 0.1;
+            particles.rotation.y = time * 0.2;
+
+            const positions = particles.geometry.attributes.position.array;
+            const colors = particles.geometry.attributes.color.array;
+
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                positions[i3 + 1] = Math.sin(time + positions[i3]) * 3;
+                colors[i3] = Math.sin(time) * 0.5 + 0.5;
+                colors[i3 + 1] = Math.sin(time + 2) * 0.5 + 0.5;
+                colors[i3 + 2] = Math.sin(time + 4) * 0.5 + 0.5;
+            }
+
+            particles.geometry.attributes.position.needsUpdate = true;
+            particles.geometry.attributes.color.needsUpdate = true;
+
+            if (textMesh) {
+                textMesh.rotation.y = Math.sin(time * 0.5) * 0.1;
+                textMesh.position.y = Math.sin(time) * 2;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        init();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        const botContainer = document.getElementById('bot-container');
+        const expandButton = document.getElementById('expand-button');
+
+        function toggleExpand() {
+            botContainer.classList.toggle('expanded');
+            expandButton.textContent = botContainer.classList.contains('expanded') ? 'Collapse' : 'Expand';
+        }
+
+        botContainer.addEventListener('click', function(event) {
+            if (event.target !== expandButton) {
+                toggleExpand();
+            }
+        });
+
+        expandButton.addEventListener('click', function(event) {
+            event.stopPropagation();
+            toggleExpand();
+        });
+
+        function startGame(game) {
+            console.log(`Starting game: ${game}`);
+            // Add game logic here
+        }
+    </script>
+</body>
+</html>
+</body></html>
