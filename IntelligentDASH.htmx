@@ -1,0 +1,589 @@
+<html><head><base href="https://websim.ai/c/website-designer?site_name=app.thegptgods.com&website_type=portfolio&color_scheme=vibrant&design_style=retro&features=affiliate+marketing%252C+ai+affiliate+marketing+strategies%252C+ai+affiliate+marketing+assistant+agents%252C+database+of+Affiliate+AI+programs+&resolution=8&description=Full+feature+rich+high+quality+UI+and+responsive+design+webapp+with+react-flow+and+D3.js+capability+and+expandability%250A#dashboard+#crm+#Workstation+#Labs+#Analytics+#Settings+Add-full-advanced-logic%25to-ensure-full-functionality-of-the-webapp=implement-each-feature-with-the-HIGHEST-quality-outputs%25fully.functoinal-webapp">
+<title>ZEN AI-Powered Business Intelligence Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="ZEN AI-Powered Business Intelligence Dashboard - Real-time analytics and AI-driven insights for smart business decisions">
+<style>
+:root {
+  --primary-color: #1a237e;
+  --secondary-color: #283593;
+  --text-color: #ffffff;
+  --background-color: #0a0a1a;
+  --card-bg: #1c1c2f;
+  --card-border: 1px solid #3f51b5;
+  --chart-color-1: #42a5f5;
+  --chart-color-2: #66bb6a;
+  --chart-color-3: #ef5350;
+  --chart-color-4: #ffa726;
+  --chart-color-5: #ab47bc;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.container {
+  width: 95%;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  background-color: var(--primary-color);
+  padding: 20px 0;
+  color: #fff;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  animation: glowing 2s ease-in-out infinite;
+}
+
+@keyframes glowing {
+  0% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #42a5f5, 0 0 35px #42a5f5, 0 0 40px #42a5f5, 0 0 50px #42a5f5, 0 0 75px #42a5f5; }
+  50% { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #42a5f5, 0 0 70px #42a5f5, 0 0 80px #42a5f5, 0 0 100px #42a5f5, 0 0 150px #42a5f5; }
+  100% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #42a5f5, 0 0 35px #42a5f5, 0 0 40px #42a5f5, 0 0 50px #42a5f5, 0 0 75px #42a5f5; }
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.dashboard-card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  border: var(--card-border);
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+}
+
+.dashboard-card h3 {
+  color: var(--text-color);
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.metric {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--chart-color-1);
+  margin-bottom: 15px;
+}
+
+.chart-container {
+  height: 250px;
+  margin-top: 20px;
+}
+
+#lineChart, #barChart, #donutChart, #columnChart {
+  width: 100%;
+  height: 100%;
+}
+
+.metric-selector, .time-selector, .display-selector {
+  margin-top: 15px;
+}
+
+.metric-selector select, .time-selector select, .display-selector select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #3f51b5;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.ai-insight {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: rgba(66, 165, 245, 0.1);
+  border-radius: 6px;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: 100%;
+    padding: 10px;
+  }
+  
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-card {
+    margin-bottom: 20px;
+  }
+  
+  .metric {
+    font-size: 1.5rem;
+  }
+  
+  .chart-container {
+    height: 200px;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+}
+
+#pickaxe-inline-action-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+#customization-panel {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  width: 300px;
+  height: 100%;
+  background-color: var(--card-bg);
+  padding: 20px;
+  transition: right 0.3s ease;
+  z-index: 1001;
+  overflow-y: auto;
+}
+
+#customization-panel.open {
+  right: 0;
+}
+
+#customization-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1002;
+}
+
+.color-picker {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.color-picker label {
+  margin-bottom: 5px;
+}
+
+.color-picker input {
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
+}
+
+@media (max-width: 600px) {
+  #customization-panel {
+    width: 100%;
+    right: -100%;
+  }
+  
+  #customization-toggle {
+    top: 10px;
+    right: 10px;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+  }
+}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://embed.pickaxeproject.com/axe/scripts/inline-button/styles.css">
+<script src="https://embed.pickaxeproject.com/axe/scripts/inline-button/bundle.js"></script>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>ZEN AI-Powered Business Intelligence Dashboard</h1>
+    </div>
+  </header>
+  
+  <main class="container">
+    <div class="dashboard" id="dashboard">
+      <!-- Dashboard cards will be dynamically generated here -->
+    </div>
+  </main>
+
+  <div id="pickaxe-inline-action-btn" data-formid="Enterprise_Agent_5M1QO" data-frame-source="https://embed.pickaxeproject.com/axe?id=Enterprise_Agent_5M1QO&mode=embed_gold&host=beta&theme=custom&opacity=100&font_header=Libre+Franklin&size_header=32&font_body=Quicksand&size_body=16&font_labels=Quicksand&size_labels=20&font_button=Quicksand&size_button=16&c_fb=142257&c_ff=01070E&c_fbd=FFFFFF&c_rb=019FEF&c_bb=FFFFFF&c_bt=000000&c_t=FFFFFF&s_ffo=100&s_rbo=100&s_bbo=100&s_f=minimalist&s_b=filled&s_t=0.5&s_to=1&s_r=3" data-title="Enterprise Agent" data-btn-color="FFFFFF" data-btn-style="filled" data-border-radius="3" data-border-width="0.5" data-font-color="000000"></div>
+
+  <button id="customization-toggle">Customize</button>
+
+  <div id="customization-panel">
+    <h3>Dashboard Customization</h3>
+    <div class="color-picker">
+      <label for="primary-color">Primary Color:</label>
+      <input type="color" id="primary-color" value="#1a237e">
+    </div>
+    <div class="color-picker">
+      <label for="secondary-color">Secondary Color:</label>
+      <input type="color" id="secondary-color" value="#283593">
+    </div>
+    <div class="color-picker">
+      <label for="background-color">Background Color:</label>
+      <input type="color" id="background-color" value="#0a0a1a">
+    </div>
+    <div class="color-picker">
+      <label for="text-color">Text Color:</label>
+      <input type="color" id="text-color" value="#ffffff">
+    </div>
+    <button id="add-metric">Add New Metric</button>
+    <button id="save-layout">Save Layout</button>
+    <button id="load-layout">Load Layout</button>
+    <button id="reset-layout">Reset to Default</button>
+  </div>
+
+  <script>
+    // Dashboard configuration
+    const defaultDashboardConfig = [
+      { id: 'revenue', title: 'AI-Optimized Revenue', metric: 'Total Revenue', timeframe: 'Monthly' },
+      { id: 'customerLifetimeValue', title: 'AI-Predicted CLV', metric: 'Average CLV', timeframe: 'Yearly' },
+      { id: 'churnPrediction', title: 'AI Churn Prediction', metric: 'Churn Rate', timeframe: 'Monthly' },
+      { id: 'marketingROI', title: 'AI-Driven Marketing ROI', metric: 'ROI Percentage', timeframe: 'Quarterly' },
+      { id: 'inventoryOptimization', title: 'AI Inventory Optimization', metric: 'Stock Turnover', timeframe: 'Monthly' },
+      { id: 'customerSentiment', title: 'AI Sentiment Analysis', metric: 'Positive Sentiment', timeframe: 'Weekly' },
+      { id: 'salesPrediction', title: 'AI Sales Forecast', metric: 'Predicted Sales', timeframe: 'Monthly' },
+      { id: 'operationalEfficiency', title: 'AI-Enhanced Efficiency', metric: 'Efficiency Score', timeframe: 'Monthly' }
+    ];
+
+    let dashboardConfig = JSON.parse(localStorage.getItem('dashboardConfig')) || defaultDashboardConfig;
+
+    // Function to generate dashboard cards
+    function generateDashboardCards() {
+      const dashboard = document.getElementById('dashboard');
+      dashboard.innerHTML = '';
+
+      dashboardConfig.forEach(card => {
+        const cardHTML = `
+          <div class="dashboard-card" id="${card.id}-card">
+            <h3>${card.title}</h3>
+            <div class="metric" id="${card.id}MetricValue">Loading...</div>
+            <div class="chart-container">
+              <canvas id="${card.id}Chart"></canvas>
+            </div>
+            <div class="metric-selector">
+              <select id="${card.id}Metric">
+                <option value="total">Total ${card.metric}</option>
+                <option value="average">Average ${card.metric}</option>
+                <option value="growth">Growth Rate</option>
+              </select>
+            </div>
+            <div class="time-selector">
+              <select id="${card.id}Timeframe">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="quarterly">Quarterly</option>
+                <option value="yearly">Yearly</option>
+              </select>
+            </div>
+            <div class="display-selector">
+              <select id="${card.id}Display">
+                <option value="line">Line Chart</option>
+                <option value="bar">Bar Chart</option>
+                <option value="pie">Pie Chart</option>
+              </select>
+            </div>
+            <div class="ai-insight" id="${card.id}Insight"></div>
+          </div>
+        `;
+        dashboard.innerHTML += cardHTML;
+      });
+
+      // Initialize charts and add event listeners
+      dashboardConfig.forEach(card => {
+        createChart(card.id, 'line');
+        addEventListeners(card.id);
+        updateChart(card.id);
+      });
+    }
+
+    // Function to create charts
+    function createChart(id, type = 'line') {
+      const ctx = document.getElementById(`${id}Chart`).getContext('2d');
+      const data = generateSynthesizedData(id);
+      
+      return new Chart(ctx, {
+        type: type,
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          datasets: [{
+            label: id,
+            data: data,
+            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-color-1'),
+            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-color-1') + '80',
+            tension: 0.4,
+            fill: type === 'line',
+            borderWidth: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              },
+              ticks: {
+                color: 'rgba(255, 255, 255, 0.7)'
+              }
+            },
+            x: {
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              },
+              ticks: {
+                color: 'rgba(255, 255, 255, 0.7)'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+
+    // Function to add event listeners to selectors
+    function addEventListeners(id) {
+      const metricSelector = document.getElementById(`${id}Metric`);
+      const timeframeSelector = document.getElementById(`${id}Timeframe`);
+      const displaySelector = document.getElementById(`${id}Display`);
+
+      [metricSelector, timeframeSelector, displaySelector].forEach(selector => {
+        selector.addEventListener('change', () => updateChart(id));
+      });
+    }
+
+    // Function to update chart
+    function updateChart(id) {
+      const metricType = document.getElementById(`${id}Metric`).value;
+      const timeframe = document.getElementById(`${id}Timeframe`).value;
+      const displayType = document.getElementById(`${id}Display`).value;
+
+      const chart = Chart.getChart(`${id}Chart`);
+      const newData = generateSynthesizedData(id, timeframe);
+      
+      chart.data.datasets[0].data = newData;
+      chart.config.type = displayType === 'pie' ? 'pie' : displayType;
+      chart.options.scales.y.beginAtZero = displayType !== 'pie';
+      chart.options.scales.x.display = displayType !== 'pie';
+      chart.options.scales.y.display = displayType !== 'pie';
+      
+      chart.update();
+
+      const metricValue = calculateMetricValue(newData, metricType);
+      document.getElementById(`${id}MetricValue`).textContent = formatMetricValue(id, metricValue);
+      
+      generateAIInsight(id, newData, metricValue);
+    }
+
+    // Function to generate synthesized data
+    function generateSynthesizedData(id, timeframe = 'monthly') {
+      const baseValue = getBaseValueForMetric(id);
+      const volatility = getVolatilityForMetric(id);
+      const trendFactor = getTrendFactorForMetric(id);
+      const dataPoints = getDataPointsForTimeframe(timeframe);
+
+      return Array.from({length: dataPoints}, (_, i) => {
+        const trendAdjustment = baseValue * trendFactor * i / dataPoints;
+        const randomFactor = (Math.random() - 0.5) * 2 * volatility * baseValue;
+        return Math.max(0, baseValue + trendAdjustment + randomFactor);
+      });
+    }
+
+    // Helper functions for data generation
+    function getBaseValueForMetric(id) {
+      const baseValues = {
+        revenue: 1000000,
+        customerLifetimeValue: 500,
+        churnPrediction: 5,
+        marketingROI: 200,
+        inventoryOptimization: 12,
+        customerSentiment: 80,
+        salesPrediction: 500000,
+        operationalEfficiency: 85
+      };
+      return baseValues[id] || 100;
+    }
+
+    function getVolatilityForMetric(id) {
+      const volatilities = {
+        revenue: 0.1,
+        customerLifetimeValue: 0.05,
+        churnPrediction: 0.2,
+        marketingROI: 0.15,
+        inventoryOptimization: 0.1,
+        customerSentiment: 0.05,
+        salesPrediction: 0.12,
+        operationalEfficiency: 0.03
+      };
+      return volatilities[id] || 0.1;
+    }
+
+    function getTrendFactorForMetric(id) {
+      const trendFactors = {
+        revenue: 0.02,
+        customerLifetimeValue: 0.01,
+        churnPrediction: -0.01,
+        marketingROI: 0.03,
+        inventoryOptimization: 0.02,
+        customerSentiment: 0.005,
+        salesPrediction: 0.025,
+        operationalEfficiency: 0.01
+      };
+      return trendFactors[id] || 0.01;
+    }
+
+    function getDataPointsForTimeframe(timeframe) {
+      const dataPoints = {
+        daily: 30,
+        weekly: 52,
+        monthly: 12,
+        quarterly: 4,
+        yearly: 5
+      };
+      return dataPoints[timeframe] || 12;
+    }
+
+    // Function to calculate metric value
+    function calculateMetricValue(data, metricType) {
+      switch(metricType) {
+        case 'total':
+          return data.reduce((a, b) => a + b, 0);
+        case 'average':
+          return data.reduce((a, b) => a + b, 0) / data.length;
+        case 'growth':
+          return ((data[data.length - 1] - data[0]) / data[0]) * 100;
+      }
+    }
+
+    // Function to format metric value
+    function formatMetricValue(id, value) {
+      const formatters = {
+        revenue: value => `$${value.toLocaleString(undefined, {maximumFractionDigits: 0})}`,
+        customerLifetimeValue: value => `$${value.toLocaleString(undefined, {maximumFractionDigits: 0})}`,
+        churnPrediction: value => `${value.toFixed(2)}%`,
+        marketingROI: value => `${value.toFixed(2)}%`,
+        inventoryOptimization: value => value.toFixed(2),
+        customerSentiment: value => `${value.toFixed(2)}%`,
+        salesPrediction: value => `$${value.toLocaleString(undefined, {maximumFractionDigits: 0})}`,
+        operationalEfficiency: value => `${value.toFixed(2)}%`
+      };
+      return formatters[id] ? formatters[id](value) : value.toFixed(2);
+    }
+
+    // Function to generate AI insights
+    function generateAIInsight(id, data, metricValue) {
+      const insights = {
+        revenue: `AI analysis suggests a ${data[data.length-1] > data[0] ? 'positive' : 'negative'} revenue trend. Consider ${data[data.length-1] > data[0] ? 'expanding marketing efforts' : 'optimizing costs'}.`,
+        customerLifetimeValue: `AI predicts customer lifetime value is ${metricValue > 450 ? 'increasing' : 'decreasing'}. Focus on ${metricValue > 450 ? 'customer retention strategies' : 'acquisition quality'}.`,
+        churnPrediction: `AI models indicate a ${metricValue > 5 ? 'high' : 'low'} churn risk. ${metricValue > 5 ? 'Implement retention programs' : 'Maintain current strategies'}.`,
+        marketingROI: `AI-driven campaigns show a ${metricValue > 200 ? 'strong' : 'weak'} ROI. ${metricValue > 200 ? 'Increase budget for successful channels' : 'Reallocate resources to better performing areas'}.`,
+        inventoryOptimization: `AI suggests inventory turnover is ${metricValue > 12 ? 'optimal' : 'suboptimal'}. ${metricValue > 12 ? 'Maintain current levels' : 'Adjust stock levels to improve efficiency'}.`,
+        customerSentiment: `AI sentiment analysis shows ${metricValue > 75 ? 'positive' : 'concerning'} trends. ${metricValue > 75 ? 'Leverage in marketing' : 'Address common complaints'}.`,
+        salesPrediction: `AI forecasts ${metricValue > 500000 ? 'strong' : 'challenging'} sales ahead. ${metricValue > 500000 ? 'Prepare inventory for high demand' : 'Focus on sales team training and support'}.`,
+        operationalEfficiency: `AI indicates ${metricValue > 80 ? 'high' : 'low'} operational efficiency. ${metricValue > 80 ? 'Maintain current processes' : 'Identify and address bottlenecks'}.`
+      };
+      
+      document.getElementById(`${id}Insight`).textContent = insights[id] || 'AI is analyzing this metric for insights.';
+    }
+
+    // Customization panel functionality
+    const customizationToggle = document.getElementById('customization-toggle');
+    const customizationPanel = document.getElementById('customization-panel');
+
+    customizationToggle.addEventListener('click', () => {
+      customizationPanel.classList.toggle('open');
+    });
+
+    // Color pickers functionality
+    const colorPickers = document.querySelectorAll('.color-picker input');
+    colorPickers.forEach(picker => {
+      picker.addEventListener('change', (e) => {
+        document.documentElement.style.setProperty(`--${e.target.id}`, e.target.value);
+      });
+    });
+
+    // Add new metric functionality
+    document.getElementById('add-metric').addEventListener('click', () => {
+      const newMetricId = `customMetric${dashboardConfig.length + 1}`;
+      const newMetric = {
+        id: newMetricId,
+        title: `Custom Metric ${dashboardConfig.length + 1}`,
+        metric: 'Value',
+        timeframe: 'Monthly'
+      };
+      dashboardConfig.push(newMetric);
+      generateDashboardCards();
+    });
+
+    // Save layout functionality
+    document.getElementById('save-layout').addEventListener('click', () => {
+      localStorage.setItem('dashboardConfig', JSON.stringify(dashboardConfig));
+      alert('Layout saved successfully!');
+    });
+
+    // Load layout functionality
+    document.getElementById('load-layout').addEventListener('click', () => {
+      const savedConfig = localStorage.getItem('dashboardConfig');
+      if (savedConfig) {
+        dashboardConfig = JSON.parse(savedConfig);
+        generateDashboardCards();
+        alert('Layout loaded successfully!');
+      } else {
+        alert('No saved layout found.');
+      }
+    });
+
+    // Reset layout functionality
+    document.getElementById('reset-layout').addEventListener('click', () => {
+      dashboardConfig = defaultDashboardConfig;
+      generateDashboardCards();
+      alert('Layout reset to default.');
+    });
+
+    // Initial dashboard generation
+    generateDashboardCards();
+  </script>
+</body>
+</html>
