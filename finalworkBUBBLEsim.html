@@ -1,0 +1,764 @@
+<html><head><base href="https://websimsuite.com/"><title>WebSim Enterprise Automation Simulator</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"><style>
+:root {
+    --primary-bg: #121212;
+    --automated-bg: rgba(26, 35, 126, 0.7);
+    --manual-bg: rgba(74, 20, 140, 0.7);
+    --text-color: #ffffff;
+    --node-auto: #00bcd4;
+    --node-manual: #ff4081;
+    --customer-data: #76ff03;
+    --lead-data: #ffd600;
+    --employee-data: #ff6e40;
+    --marketing-data: #e040fb;
+    --financial-data: #00e5ff;
+    --button-bg: #3f51b5;
+    --button-hover: #5c6bc0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#simulation-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+}
+
+.process-view {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+#automated-process { background-color: var(--automated-bg); }
+#manual-process { background-color: var(--manual-bg); }
+
+h2 {
+    text-align: center;
+    font-size: 1.2rem;
+    margin: 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.node {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    font-size: 0.6rem;
+    text-align: center;
+    cursor: pointer;
+    z-index: 10;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1));
+    backdrop-filter: blur(5px);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.node:hover, .node:active {
+    transform: scale(1.1) translateZ(10px);
+}
+
+.automated-node { background-color: var(--node-auto); }
+.manual-node { background-color: var(--node-manual); }
+
+.node-icon {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+}
+
+.data-object {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    transition: all 0.2s linear;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #000;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+#controls {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    z-index: 1000;
+}
+
+button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+button:hover, button:active { 
+    background-color: var(--button-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+#speed-display {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.9rem;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.task-counter {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.legend {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 0.7rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 3px;
+}
+
+.legend-color {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin-right: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.connection-line {
+    position: absolute;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.3);
+    transform-origin: left center;
+    z-index: 1;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1) translateZ(0); }
+    50% { transform: scale(1.1) translateZ(5px); }
+    100% { transform: scale(1) translateZ(0); }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg) translateZ(0); }
+    100% { transform: rotate(360deg) translateZ(0); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0) translateZ(0); }
+    50% { transform: translateY(-5px) translateZ(5px); }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 3px rgba(255, 255, 255, 0.5); }
+    50% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
+}
+
+.data-object {
+    animation: rotate 4s linear infinite, bounce 2s ease-in-out infinite, glow 3s ease-in-out infinite;
+}
+
+#automated-process .data-object {
+    animation-duration: 2s, 1s, 1.5s;
+}
+
+#industry-selector {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    font-size: 0.9rem;
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+}
+
+.dashboard {
+    position: fixed;
+    bottom: 50px;
+    left: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+    z-index: 1000;
+    flex-wrap: wrap;
+}
+
+.metric {
+    text-align: center;
+    flex: 1 1 30%;
+    margin: 5px;
+}
+
+.metric-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.metric-label {
+    font-size: 0.7rem;
+    opacity: 0.7;
+}
+
+.ai-insights {
+    position: fixed;
+    top: 50px;
+    right: 10px;
+    left: 10px;
+    max-height: 30vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    padding: 10px;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.ai-insights h3 {
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+.ai-insights ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.ai-insights li {
+    margin-bottom: 5px;
+    font-size: 0.8rem;
+    line-height: 1.3;
+}
+
+@keyframes progress {
+    0% { width: 0; }
+    100% { width: 100%; }
+}
+
+.progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background-color: #4CAF50;
+    transition: width 0.5s linear;
+}
+
+.automated-node .progress-bar {
+    background-color: #2196F3;
+}
+
+.data-label {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    #simulation-container {
+        flex-direction: row;
+    }
+
+    .node {
+        width: 80px;
+        height: 80px;
+        font-size: 0.8rem;
+    }
+
+    .node-icon {
+        font-size: 2rem;
+    }
+
+    .data-object {
+        width: 25px;
+        height: 25px;
+        font-size: 14px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+
+    #speed-display, .task-counter, #industry-selector {
+        font-size: 1rem;
+    }
+
+    .legend {
+        font-size: 0.8rem;
+    }
+
+    .metric-value {
+        font-size: 1.5rem;
+    }
+
+    .metric-label {
+        font-size: 0.8rem;
+    }
+
+    .ai-insights {
+        max-width: 300px;
+        left: auto;
+    }
+
+    .ai-insights h3 {
+        font-size: 1.2rem;
+    }
+
+    .ai-insights li {
+        font-size: 0.9rem;
+    }
+}
+
+</style></head>
+<body>
+<div id="simulation-container">
+    <div id="automated-process" class="process-view">
+        <h2>Automated Process</h2>
+        <div class="task-counter" id="auto-counter">Tasks: 0</div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color">📧</div>Email</div>
+            <div class="legend-item"><div class="legend-color">📊</div>Report</div>
+            <div class="legend-item"><div class="legend-color">📁</div>Document</div>
+            <div class="legend-item"><div class="legend-color">💼</div>Task</div>
+            <div class="legend-item"><div class="legend-color">💡</div>Idea</div>
+            <div class="legend-item"><div class="legend-color">💰</div>Financial</div>
+            <div class="legend-item"><div class="legend-color">📈</div>Analytics</div>
+        </div>
+    </div>
+    <div id="manual-process" class="process-view">
+        <h2>Manual Process</h2>
+        <div class="task-counter" id="manual-counter">Tasks: 0</div>
+    </div>
+</div>
+<div id="controls">
+    <button id="slow-down">Slow Down</button>
+    <button id="speed-up">Speed Up</button>
+    <button id="toggle-simulation">Pause</button>
+</div>
+<div id="speed-display">Speed: 1x</div>
+
+<select id="industry-selector">
+    <option value="tech">Technology</option>
+    <option value="healthcare">Healthcare</option>
+    <option value="finance">Finance</option>
+    <option value="retail">Retail</option>
+    <option value="manufacturing">Manufacturing</option>
+</select>
+
+<div class="dashboard">
+    <div class="metric">
+        <div class="metric-value" id="efficiency-metric">0%</div>
+        <div class="metric-label">Efficiency</div>
+    </div>
+    <div class="metric">
+        <div class="metric-value" id="cost-saving-metric">$0</div>
+        <div class="metric-label">Cost Savings</div>
+    </div>
+    <div class="metric">
+        <div class="metric-value" id="productivity-metric">0</div>
+        <div class="metric-label">Productivity</div>
+    </div>
+    <div class="metric">
+        <div class="metric-value" id="roi-metric">0%</div>
+        <div class="metric-label">ROI</div>
+    </div>
+    <div class="metric">
+        <div class="metric-value" id="error-rate-metric">0%</div>
+        <div class="metric-label">Error Rate</div>
+    </div>
+</div>
+
+<div class="ai-insights">
+    <h3>AI Insights</h3>
+    <ul id="ai-insights-list">
+        <li>Loading AI insights...</li>
+    </ul>
+</div>
+
+<script>
+const automatedProcess = document.getElementById('automated-process');
+const manualProcess = document.getElementById('manual-process');
+const slowDownBtn = document.getElementById('slow-down');
+const speedUpBtn = document.getElementById('speed-up');
+const toggleBtn = document.getElementById('toggle-simulation');
+const speedDisplay = document.getElementById('speed-display');
+const autoCounter = document.getElementById('auto-counter');
+const manualCounter = document.getElementById('manual-counter');
+const industrySelector = document.getElementById('industry-selector');
+const efficiencyMetric = document.getElementById('efficiency-metric');
+const costSavingMetric = document.getElementById('cost-saving-metric');
+const productivityMetric = document.getElementById('productivity-metric');
+const roiMetric = document.getElementById('roi-metric');
+const errorRateMetric = document.getElementById('error-rate-metric');
+const aiInsightsList = document.getElementById('ai-insights-list');
+
+let speed = 1;
+let autoTaskCount = 0;
+let manualTaskCount = 0;
+let isSimulationRunning = true;
+let selectedIndustry = 'tech';
+
+const industryData = {
+    tech: {
+        nodes: [
+            { name: 'Input', x: 5, y: 20, icon: '💾', dataTypes: ['email', 'document', 'task'] },
+            { name: 'Process', x: 25, y: 40, icon: '⚙️', dataTypes: ['document', 'task', 'analytics'] },
+            { name: 'Analyze', x: 45, y: 60, icon: '📊', dataTypes: ['report', 'idea', 'analytics'] },
+            { name: 'Report', x: 65, y: 40, icon: '📈', dataTypes: ['report', 'email', 'financial'] },
+            { name: 'Decide', x: 85, y: 20, icon: '🧠', dataTypes: ['idea', 'task', 'financial'] }
+        ],
+        efficiency: 0.85,
+        costSavingRate: 500,
+        productivityMultiplier: 1.2,
+        errorRate: 0.02
+    },
+    healthcare: {
+        nodes: [
+            { name: 'Register', x: 5, y: 20, icon: '📋', dataTypes: ['document', 'task', 'email'] },
+            { name: 'Triage', x: 25, y: 40, icon: '🩺', dataTypes: ['task', 'report', 'analytics'] },
+            { name: 'Diagnose', x: 45, y: 60, icon: '🔬', dataTypes: ['report', 'idea', 'analytics'] },
+            { name: 'Treat', x: 65, y: 40, icon: '💊', dataTypes: ['task', 'document', 'financial'] },
+            { name: 'Follow-up', x: 85, y: 20, icon: '📞', dataTypes: ['email', 'task', 'report'] }
+        ],
+        efficiency: 0.75,
+        costSavingRate: 700,
+        productivityMultiplier: 1.1,
+        errorRate: 0.01
+    },
+    finance: {
+        nodes: [
+            { name: 'Input', x: 5, y: 20, icon: '💳', dataTypes: ['document', 'email', 'financial'] },
+            { name: 'Verify', x: 25, y: 40, icon: '✅', dataTypes: ['task', 'document', 'analytics'] },
+            { name: 'Assess', x: 45, y: 60, icon: '⚖️', dataTypes: ['report', 'idea', 'analytics'] },
+            { name: 'Process', x: 65, y: 40, icon: '🏦', dataTypes: ['task', 'document', 'financial'] },
+            { name: 'Report', x: 85, y: 20, icon: '📊', dataTypes: ['report', 'email', 'financial'] }
+        ],
+        efficiency: 0.9,
+        costSavingRate: 1000,
+        productivityMultiplier: 1.3,
+        errorRate: 0.005
+    },
+    retail: {
+        nodes: [
+            { name: 'Check', x: 5, y: 20, icon: '📦', dataTypes: ['document', 'task', 'analytics'] },
+            { name: 'Order', x: 25, y: 40, icon: '🛒', dataTypes: ['task', 'email', 'financial'] },
+            { name: 'Fulfill', x: 45, y: 60, icon: '📦', dataTypes: ['task', 'document', 'analytics'] },
+            { name: 'Ship', x: 65, y: 40, icon: '🚚', dataTypes: ['document', 'email', 'task'] },
+            { name: 'Support', x: 85, y: 20, icon: '🙋', dataTypes: ['email', 'task', 'report'] }
+        ],
+        efficiency: 0.8,
+        costSavingRate: 600,
+        productivityMultiplier: 1.15,
+        errorRate: 0.03
+    },
+    manufacturing: {
+        nodes: [
+            { name: 'Source', x: 5, y: 20, icon: '🏭', dataTypes: ['document', 'email', 'financial'] },
+            { name: 'Plan', x: 25, y: 40, icon: '📅', dataTypes: ['task', 'report', 'analytics'] },
+            { name: 'Assemble', x: 45, y: 60, icon: '🔧', dataTypes: ['task', 'document', 'analytics'] },
+            { name: 'QC', x: 65, y: 40, icon: '🔍', dataTypes: ['report', 'task', 'analytics'] },
+            { name: 'Distribute', x: 85, y: 20, icon: '📦', dataTypes: ['document', 'email', 'financial'] }
+        ],
+        efficiency: 0.85,
+        costSavingRate: 800,
+        productivityMultiplier: 1.25,
+        errorRate: 0.015
+    }
+};
+
+function createNode(process, x, y, label, icon, isAutomated) {
+    const node = document.createElement('div');
+    node.className = `node ${isAutomated ? 'automated-node' : 'manual-node'}`;
+    node.style.left = `${x}%`;
+    node.style.top = `${y}%`;
+    node.innerHTML = `
+        <div class="node-icon">${icon}</div>
+        ${label}
+        <div class="progress-bar"></div>
+    `;
+    node.addEventListener('click', () => {
+        node.classList.toggle('pulse');
+    });
+    process.appendChild(node);
+    return node;
+}
+
+function createDataObject(process, type) {
+    const object = document.createElement('div');
+    object.className = 'data-object';
+    let icon;
+    switch(type) {
+        case 'email': icon = '📧'; break;
+        case 'report': icon = '📊'; break;
+        case 'document': icon = '📁'; break;
+        case 'task': icon = '💼'; break;
+        case 'idea': icon = '💡'; break;
+        case 'financial': icon = '💰'; break;
+        case 'analytics': icon = '📈'; break;
+    }
+    object.textContent = icon;
+    
+    const label = document.createElement('div');
+    label.className = 'data-label';
+    label.textContent = type;
+    object.appendChild(label);
+    
+    process.appendChild(object);
+    return object;
+}
+
+function createConnectionLine(startNode, endNode) {
+    const line = document.createElement('div');
+    line.className = 'connection-line';
+    updateConnectionLine(line, startNode, endNode);
+    startNode.parentElement.appendChild(line);
+    return line;
+}
+
+function updateConnectionLine(line, startNode, endNode) {
+    const startRect = startNode.getBoundingClientRect();
+    const endRect = endNode.getBoundingClientRect();
+    const containerRect = startNode.parentElement.getBoundingClientRect();
+
+    const startX = startRect.left + startRect.width / 2 - containerRect.left;
+    const startY = startRect.top + startRect.height / 2 - containerRect.top;
+    const endX = endRect.left + endRect.width / 2 - containerRect.left;
+    const endY = endRect.top + endRect.height / 2 - containerRect.top;
+
+    const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+    const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
+
+    line.style.width = `${length}px`;
+    line.style.left = `${startX}px`;
+    line.style.top = `${startY}px`;
+    line.style.transform = `rotate(${angle}deg)`;
+}
+
+function createNodes() {
+    automatedProcess.innerHTML = '<h2>Automated Process</h2>';
+    manualProcess.innerHTML = '<h2>Manual Process</h2>';
+
+    const industry = industryData[selectedIndustry];
+    const autoNodes = industry.nodes.map(node => createNode(automatedProcess, node.x, node.y, node.name, node.icon, true));
+    const manualNodes = industry.nodes.map(node => createNode(manualProcess, node.x, node.y, node.name, node.icon, false));
+
+    const autoConnections = [];
+    const manualConnections = [];
+    for (let i = 0; i < autoNodes.length - 1; i++) {
+        autoConnections.push(createConnectionLine(autoNodes[i], autoNodes[i + 1]));
+        manualConnections.push(createConnectionLine(manualNodes[i], manualNodes[i + 1]));
+    }
+
+    return { autoNodes, manualNodes, autoConnections, manualConnections };
+}
+
+let { autoNodes, manualNodes, autoConnections, manualConnections } = createNodes();
+
+function moveDataObject(object, startNode, endNode, duration) {
+    return new Promise(resolve => {
+        const startTime = performance.now();
+        const startRect = startNode.getBoundingClientRect();
+        const endRect = endNode.getBoundingClientRect();
+        const containerRect = startNode.parentElement.getBoundingClientRect();
+
+        const startX = startRect.left + startRect.width / 2 - containerRect.left;
+        const startY = startRect.top + startRect.height / 2 - containerRect.top;
+        const endX = endRect.left + endRect.width / 2 - containerRect.left;
+        const endY = endRect.top + endRect.height / 2 - containerRect.top;
+
+        const progressBar = endNode.querySelector('.progress-bar');
+        progressBar.style.width = '0%';
+
+        function animate(currentTime) {
+            if (!isSimulationRunning) {
+                requestAnimationFrame(animate);
+                return;
+            }
+
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            object.style.left = `${startX + (endX - startX) * progress}px`;
+            object.style.top = `${startY + (endY - startY) * progress}px`;
+            
+            progressBar.style.width = `${progress * 100}%`;
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                object.remove();
+                progressBar.style.width = '0%';
+                resolve();
+            }
+        }
+
+        requestAnimationFrame(animate);
+    });
+}
+
+async function simulateProcess(isAutomated) {
+    const nodes = isAutomated ? autoNodes : manualNodes;
+    const process = isAutomated ? automatedProcess : manualProcess;
+    const counter = isAutomated ? autoCounter : manualCounter;
+    const baseDuration = isAutomated ? 2000 : 5000;
+
+    while (true) {
+        if (!isSimulationRunning) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            continue;
+        }
+
+        for (let i = 0; i < nodes.length - 1; i++) {
+            const startNode = nodes[i];
+            const endNode = nodes[i + 1];
+            const industry = industryData[selectedIndustry];
+            const dataTypes = industry.nodes[i].dataTypes;
+            const dataObject = createDataObject(process, dataTypes[Math.floor(Math.random() * dataTypes.length)]);
+            await moveDataObject(dataObject, startNode, endNode, baseDuration / speed);
+
+            if (isAutomated) {
+                autoTaskCount++;
+            } else {
+                manualTaskCount++;
+            }
+            counter.textContent = `Tasks: ${isAutomated ? autoTaskCount : manualTaskCount}`;
+            updateMetrics();
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 500 / speed));
+    }
+}
+
+function updateMetrics() {
+    const industry = industryData[selectedIndustry];
+    const totalTasks = autoTaskCount + manualTaskCount;
+    const efficiency = (autoTaskCount / totalTasks) * 100 * industry.efficiency;
+    const costSavings = autoTaskCount * industry.costSavingRate;
+    const productivity = (autoTaskCount * industry.productivityMultiplier + manualTaskCount) / totalTasks * 100;
+    const roi = (costSavings / (totalTasks * 100)) * 100;
+    const errorRate = (manualTaskCount * industry.errorRate * 2 + autoTaskCount * industry.errorRate) / totalTasks * 100;
+
+    efficiencyMetric.textContent = `${efficiency.toFixed(1)}%`;
+    costSavingMetric.textContent = `$${costSavings.toFixed(0)}`;
+    productivityMetric.textContent = productivity.toFixed(1);
+    roiMetric.textContent = `${roi.toFixed(1)}%`;
+    errorRateMetric.textContent = `${errorRate.toFixed(2)}%`;
+
+    updateAIInsights(efficiency, costSavings, productivity, roi, errorRate);
+}
+
+function updateAIInsights(efficiency, costSavings, productivity, roi, errorRate) {
+    const insights = [
+        `Efficiency: ${efficiency.toFixed(1)}% - ${efficiency > 80 ? 'Excellent' : efficiency > 60 ? 'Good' : 'Needs improvement'}`,
+        `Cost savings: $${costSavings.toFixed(0)} - ${costSavings > 10000 ? 'Significant' : 'Moderate'} financial benefit`,
+        `Productivity: ${productivity.toFixed(1)} - ${productivity > 90 ? 'High' : productivity > 70 ? 'Good' : 'Average'} performance`,
+        `ROI: ${roi.toFixed(1)}% - ${roi > 200 ? 'Excellent' : roi > 150 ? 'Good' : 'Fair'} return on investment`,
+        `Error rate: ${errorRate.toFixed(2)}% - ${errorRate < 1 ? 'Very low' : errorRate < 3 ? 'Acceptable' : 'High'} error frequency`
+    ];
+
+    aiInsightsList.innerHTML = insights.map(insight => `<li>${insight}</li>`).join('');
+}
+
+slowDownBtn.addEventListener('click', () => {
+    if (speed > 0.25) {
+        speed /= 2;
+        speedDisplay.textContent = `Speed: ${speed}x`;
+    }
+});
+
+speedUpBtn.addEventListener('click', () => {
+    if (speed < 8) {
+        speed *= 2;
+        speedDisplay.textContent = `Speed: ${speed}x`;
+    }
+});
+
+toggleBtn.addEventListener('click', () => {
+    isSimulationRunning = !isSimulationRunning;
+    toggleBtn.textContent = isSimulationRunning ? 'Pause' : 'Resume';
+});
+
+industrySelector.addEventListener('change', (e) => {
+    selectedIndustry = e.target.value;
+    ({ autoNodes, manualNodes, autoConnections, manualConnections } = createNodes());
+    autoTaskCount = 0;
+    manualTaskCount = 0;
+    updateMetrics();
+});
+
+window.addEventListener('resize', () => {
+    autoConnections.forEach((line, i) => updateConnectionLine(line, autoNodes[i], autoNodes[i+1]));
+    manualConnections.forEach((line, i) => updateConnectionLine(line, manualNodes[i], manualNodes[i+1]));
+});
+
+simulateProcess(true);  // Automated process
+simulateProcess(false); // Manual process
+</script>
+</body></html>
