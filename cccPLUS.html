@@ -1,0 +1,675 @@
+<html><head><base href="https://websim.art/">
+<title>ZEN Animation Laboratory</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
+
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  background-color: #0a0a1a;
+  margin: 0;
+  padding: 20px;
+  transition: background-color 0.5s ease;
+  color: #e0e0e0;
+}
+
+h1, h2 {
+  color: #4a4ae0;
+  text-align: center;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.animation-box {
+  background-color: #16213e;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.animation-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+}
+
+.animation-demo {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0f3460;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.code-snippet {
+  background-color: #1f4287;
+  border: 1px solid #4a4ae0;
+  border-radius: 6px;
+  padding: 15px;
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin-top: 15px;
+  max-height: 200px;
+  overflow-y: auto;
+  color: #a9a9a9;
+}
+
+button {
+  background-color: #4a4ae0;
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 8px 4px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #3a3ab0;
+}
+
+.trigger-btn {
+  background-color: #e94560;
+}
+
+.trigger-btn:hover {
+  background-color: #c9184a;
+}
+
+/* 3D Glowing ZEN Title */
+.zen-title {
+  font-size: 72px;
+  font-weight: bold;
+  text-align: center;
+  color: #4a4ae0;
+  text-shadow: 
+    0 0 5px #4a4ae0,
+    0 0 10px #4a4ae0,
+    0 0 20px #4a4ae0,
+    0 0 40px #4a4ae0;
+  animation: glow 2s ease-in-out infinite alternate;
+  transform: perspective(500px) rotateX(20deg);
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 
+      0 0 5px #4a4ae0,
+      0 0 10px #4a4ae0,
+      0 0 20px #4a4ae0,
+      0 0 40px #4a4ae0;
+  }
+  to {
+    text-shadow: 
+      0 0 10px #4a4ae0,
+      0 0 20px #4a4ae0,
+      0 0 40px #4a4ae0,
+      0 0 80px #4a4ae0;
+  }
+}
+
+/* Test Environment Styles */
+#test-environment {
+  background-color: #16213e;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  padding: 20px;
+  margin-top: 30px;
+}
+
+#animation-preview {
+  height: 400px;
+  background-color: #0f3460;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+#animation-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+#custom-css, #output-css {
+  width: 100%;
+  height: 150px;
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #4a4ae0;
+  background-color: #1f4287;
+  color: #e0e0e0;
+}
+
+select, input[type="number"], input[type="color"] {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #4a4ae0;
+  background-color: #1f4287;
+  color: #e0e0e0;
+}
+
+/* Animation Keyframes */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes slideInTop { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+@keyframes slideInBottom { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes zoomIn { from { transform: scale(0); } to { transform: scale(1); } }
+@keyframes zoomOut { from { transform: scale(1); } to { transform: scale(0); } }
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-30px); }
+  60% { transform: translateY(-15px); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+@keyframes pulse { 
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+@keyframes flipX { 
+  0% { transform: perspective(400px) rotateX(90deg); }
+  100% { transform: perspective(400px) rotateX(0deg); }
+}
+@keyframes flipY { 
+  0% { transform: perspective(400px) rotateY(90deg); }
+  100% { transform: perspective(400px) rotateY(0deg); }
+}
+@keyframes swing { 
+  20% { transform: rotate(15deg); }
+  40% { transform: rotate(-10deg); }
+  60% { transform: rotate(5deg); }
+  80% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+@keyframes wobble {
+  0% { transform: translateX(0%); }
+  15% { transform: translateX(-25%) rotate(-5deg); }
+  30% { transform: translateX(20%) rotate(3deg); }
+  45% { transform: translateX(-15%) rotate(-3deg); }
+  60% { transform: translateX(10%) rotate(2deg); }
+  75% { transform: translateX(-5%) rotate(-1deg); }
+  100% { transform: translateX(0%); }
+}
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.3); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.3); }
+  70% { transform: scale(1); }
+}
+@keyframes hinge {
+  0% { transform-origin: top left; animation-timing-function: ease-in-out; }
+  20%, 60% { transform: rotate3d(0, 0, 1, 80deg); transform-origin: top left; animation-timing-function: ease-in-out; }
+  40%, 80% { transform: rotate3d(0, 0, 1, 60deg); transform-origin: top left; animation-timing-function: ease-in-out; opacity: 1; }
+  100% { transform: translate3d(0, 700px, 0); opacity: 0; }
+}
+@keyframes jackInTheBox {
+  0% { opacity: 0; transform: scale(0.1) rotate(30deg); transform-origin: center bottom; }
+  50% { transform: rotate(-10deg); }
+  70% { transform: rotate(3deg); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes rollIn {
+  0% { opacity: 0; transform: translate3d(-100%, 0, 0) rotate3d(0, 0, 1, -120deg); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes rollOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(100%, 0, 0) rotate3d(0, 0, 1, 120deg); }
+}
+@keyframes rubberBand {
+  0% { transform: scale3d(1, 1, 1); }
+  30% { transform: scale3d(1.25, 0.75, 1); }
+  40% { transform: scale3d(0.75, 1.25, 1); }
+  50% { transform: scale3d(1.15, 0.85, 1); }
+  65% { transform: scale3d(0.95, 1.05, 1); }
+  75% { transform: scale3d(1.05, 0.95, 1); }
+  100% { transform: scale3d(1, 1, 1); }
+}
+@keyframes floatUpDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+@keyframes spinAndScale {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.5); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-5px, 5px); }
+  40% { transform: translate(-5px, -5px); }
+  60% { transform: translate(5px, 5px); }
+  80% { transform: translate(5px, -5px); }
+  100% { transform: translate(0); }
+}
+@keyframes neonPulse {
+  0%, 100% { 
+    text-shadow: 
+      0 0 5px #fff,
+      0 0 10px #fff,
+      0 0 20px #ff00de,
+      0 0 40px #ff00de,
+      0 0 80px #ff00de;
+  }
+  50% { 
+    text-shadow: 
+      0 0 10px #fff,
+      0 0 20px #fff,
+      0 0 40px #ff00de,
+      0 0 80px #ff00de,
+      0 0 120px #ff00de;
+  }
+}
+@keyframes morphShape {
+  0%, 100% { border-radius: 50%; }
+  25% { border-radius: 50% 0 50% 50%; }
+  50% { border-radius: 50% 50% 0 50%; }
+  75% { border-radius: 0 50% 50% 50%; }
+}
+
+</style>
+</head>
+<body>
+<h1 class="zen-title">ZEN</h1>
+<h2>Advanced Animation Laboratory</h2>
+
+<div id="test-environment">
+  <h2>Animation Test Environment</h2>
+  <div id="animation-preview">
+    <div id="test-element">Animate Me!</div>
+  </div>
+  <div id="animation-controls">
+    <select id="animation-select">
+      <option value="">Select Animation</option>
+      <option value="fadeIn">Fade In</option>
+      <option value="fadeOut">Fade Out</option>
+      <option value="slideInLeft">Slide In Left</option>
+      <option value="slideInRight">Slide In Right</option>
+      <option value="slideInTop">Slide In Top</option>
+      <option value="slideInBottom">Slide In Bottom</option>
+      <option value="zoomIn">Zoom In</option>
+      <option value="zoomOut">Zoom Out</option>
+      <option value="rotate">Rotate</option>
+      <option value="bounce">Bounce</option>
+      <option value="shake">Shake</option>
+      <option value="pulse">Pulse</option>
+      <option value="flipX">Flip X</option>
+      <option value="flipY">Flip Y</option>
+      <option value="swing">Swing</option>
+      <option value="wobble">Wobble</option>
+      <option value="heartBeat">Heart Beat</option>
+      <option value="hinge">Hinge</option>
+      <option value="jackInTheBox">Jack In The Box</option>
+      <option value="rollIn">Roll In</option>
+      <option value="rollOut">Roll Out</option>
+      <option value="rubberBand">Rubber Band</option>
+      <option value="floatUpDown">Float Up Down</option>
+      <option value="spinAndScale">Spin And Scale</option>
+      <option value="glitch">Glitch</option>
+      <option value="neonPulse">Neon Pulse</option>
+      <option value="morphShape">Morph Shape</option>
+    </select>
+    <input type="number" id="duration" placeholder="Duration (s)" value="1" min="0.1" step="0.1">
+    <select id="timing-function">
+      <option value="linear">Linear</option>
+      <option value="ease">Ease</option>
+      <option value="ease-in">Ease In</option>
+      <option value="ease-out">Ease Out</option>
+      <option value="ease-in-out">Ease In Out</option>
+      <option value="cubic-bezier(0.68, -0.55, 0.265, 1.55)">Bouncy</option>
+    </select>
+    <input type="number" id="delay" placeholder="Delay (s)" value="0" min="0" step="0.1">
+    <input type="number" id="iteration-count" placeholder="Iterations" value="1" min="1" step="1">
+    <select id="fill-mode">
+      <option value="none">None</option>
+      <option value="forwards">Forwards</option>
+      <option value="backwards">Backwards</option>
+      <option value="both">Both</option>
+    </select>
+    <input type="color" id="element-color" value="#ffffff">
+    <input type="number" id="element-size" placeholder="Size (px)" value="100" min="10" step="1">
+    <select id="element-shape">
+      <option value="square">Square</option>
+      <option value="circle">Circle</option>
+      <option value="triangle">Triangle</option>
+    </select>
+    <button id="add-element">Add Element</button>
+    <button id="apply-animation">Apply Animation</button>
+    <button id="reset-animation">Reset</button>
+    <button id="combine-animations">Combine Animations</button>
+  </div>
+  <textarea id="custom-css" placeholder="Enter custom CSS here"></textarea>
+  <button id="apply-custom-css">Apply Custom CSS</button>
+  <textarea id="output-css" readonly placeholder="Generated CSS will appear here"></textarea>
+  <button id="copy-css">Copy Generated CSS</button>
+</div>
+
+<div class="gallery">
+  <!-- Basic Animations -->
+  <div class="animation-box">
+    <h3>Fade In</h3>
+    <div class="animation-demo">
+      <div id="fadeIn">Fade In</div>
+    </div>
+    <button class="trigger-btn" onclick="triggerAnimation('fadeIn', 'fadeIn 2s')">Trigger Animation</button>
+    <div class="code-snippet">
+.fade-in {
+  animation: fadeIn 2s;
+}
+    </div>
+    <button onclick="copyToClipboard(this.previousElementSibling.textContent)">Copy Code</button>
+  </div>
+
+  <div class="animation-box">
+    <h3>Fade Out</h3>
+    <div class="animation-demo">
+      <div id="fadeOut">Fade Out</div>
+    </div>
+    <button class="trigger-btn" onclick="triggerAnimation('fadeOut', 'fadeOut 2s')">Trigger Animation</button>
+    <div class="code-snippet">
+.fade-out {
+  animation: fadeOut 2s;
+}
+    </div>
+    <button onclick="copyToClipboard(this.previousElementSibling.textContent)">Copy Code</button>
+  </div>
+
+  <div class="animation-box">
+    <h3>Slide In Left</h3>
+    <div class="animation-demo">
+      <div id="slideInLeft">Slide In Left</div>
+    </div>
+    <button class="trigger-btn" onclick="triggerAnimation('slideInLeft', 'slideInLeft 1s')">Trigger Animation</button>
+    <div class="code-snippet">
+.slide-in-left {
+  animation: slideInLeft 1s;
+}
+    </div>
+    <button onclick="copyToClipboard(this.previousElementSibling.textContent)">Copy Code</button>
+  </div>
+
+  <div class="animation-box">
+    <h3>Slide In Right</h3>
+    <div class="animation-demo">
+      <div id="slideInRight">Slide In Right</div>
+    </div>
+    <button class="trigger-btn" onclick="triggerAnimation('slideInRight', 'slideInRight 1s')">Trigger Animation</button>
+    <div class="code-snippet">
+.slide-in-right {
+  animation: slideInRight 1s;
+}
+    </div>
+    <button onclick="copyToClipboard(this.previousElementSibling.textContent)">Copy Code</button>
+  </div>
+
+  <div class="animation-box">
+    <h3>Zoom In</h3>
+    <div class="animation-demo">
+      <div id="zoomIn">Zoom In</div>
+    </div>
+    <button class="trigger-btn" onclick="triggerAnimation('zoomIn', 'zoomIn 1s')">Trigger Animation</button>
+    <div class="code-snippet">
+.zoom-in {
+  animation: zoomIn 1s;
+}
+    </div>
+    <button onclick="copyToClipboard(this.previousElementSibling.textContent)">Copy Code</button>
+  </div>
+
+  <div class="animation-box">
+    <h3>Zoom Out</h3>
+    <div class="animation-demo">
+      <div id="zoomOut">Zoom Out</div>
+    </div>
+    <button class="trigger-btn" onclick="triggerAnimation('zoomOut', 'zoomOut 1s')">Trigger Animation</button>
+    <div class="code-snippet">
+.zoom-out {
+  animation: zoomOut 1s;
+}
+    </div>
+    <button onclick="copyToClipboard(this.previousElementSibling.textContent)">Copy Code</button>
+  </div>
+
+  <div class="animation-box">
+    <h3>Rotate</h3>
+    <div class="animation-demo">
+      <div id="rotate">Rotate</div>
+    </div>
+    <button class="trigger-btn" onclick="triggerAnimation('rotate', 'rotate 2s linear infinite')">Trigger Animation</button>
+    <div class="code-snippet">
+.rotate {
+  animation: rotate 2s linear infinite;
+}
+    </div>
+    <button onclick="copyToClipboard(this.previousElementSibling.textContent)">Copy Code</button>
+  </div>
+
+  <div class="animation-box">
+    <h3>Bounce</h3>
+    <div class="animation-demo">
+      <div id="bounce">Bounce</div>
+    </div>
+    <button class="trigger-btn" onclick="triggerAnimation('bounce', 'bounce 2s infinite')">Trigger Animation</button>
+    <div class="code-snippet">
+.bounce {
+  animation: bounce 2s infinite;
+}
+    </div>
+    <button onclick="copyToClipboard(this.previousElementSibling.textContent)">Copy Code</button>
+  </div>
+
+  <div class="animation-box">
+    <h3>Shake</h3>
+    <div class="animation-demo">
+      <div id="shake">Shake</div>
+    </div>
+    <button class="trigger-btn" onclick="triggerAnimation('shake', 'shake 0.82s cubic-bezier(.36,.07,.19,.97) both')">Trigger Animation</button>
+    <div class="code-snippet">
+.shake {
+  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+}
+    </div>
+    <button onclick="copyToClipboard(this.previousElementSibling.textContent)">Copy Code</button>
+  </div>
+
+  <div class="animation-box">
+    <h3>Pulse</h3>
+    <div class="animation-demo">
+      <div id="pulse">Pulse</div>
+    </div>
+    <button class="trigger-btn" onclick="triggerAnimation('pulse', 'pulse 1s infinite')">Trigger Animation</button>
+    <div class="code-snippet">
+.pulse {
+  animation: pulse 1s infinite;
+}
+    </div>
+    <button onclick="copyToClipboard(this.previousElementSibling.textContent)">Copy Code</button>
+  </div>
+
+  <!-- More complex animations -->
+  <div class="animation-box">
+    <h3>Glitch</h3>
+    <div class="animation-demo">
+      <div id="glitch">Glitch</div>
+    </div>
+    <button class="trigger-btn" onclick="triggerAnimation('glitch', 'glitch 0.5s infinite')">Trigger Animation</button>
+    <div class="code-snippet">
+.glitch {
+  animation: glitch 0.5s infinite;
+}
+    </div>
+    <button onclick="copyToClipboard(this.previousElementSibling.textContent)">Copy Code</button>
+  </div>
+
+  <div class="animation-box">
+    <h3>Neon Pulse</h3>
+    <div class="animation-demo">
+      <div id="neonPulse" style="color: #fff;">Neon</div>
+    </div>
+    <button class="trigger-btn" onclick="triggerAnimation('neonPulse', 'neonPulse 1.5s ease-in-out infinite')">Trigger Animation</button>
+    <div class="code-snippet">
+.neon-pulse {
+  animation: neonPulse 1.5s ease-in-out infinite;
+}
+    </div>
+    <button onclick="copyToClipboard(this.previousElementSibling.textContent)">Copy Code</button>
+  </div>
+
+  <div class="animation-box">
+    <h3>Morph Shape</h3>
+    <div class="animation-demo">
+      <div id="morphShape" style="width: 100px; height: 100px; background-color: #4a4ae0;"></div>
+    </div>
+    <button class="trigger-btn" onclick="triggerAnimation('morphShape', 'morphShape 5s ease-in-out infinite')">Trigger Animation</button>
+    <div class="code-snippet">
+.morph-shape {
+  animation: morphShape 5s ease-in-out infinite;
+}
+    </div>
+    <button onclick="copyToClipboard(this.previousElementSibling.textContent)">Copy Code</button>
+  </div>
+
+</div>
+
+<script>
+let elements = [];
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Code copied to clipboard!');
+  }).catch(err => {
+    console.error('Error copying text: ', err);
+  });
+}
+
+function triggerAnimation(elementId, animationString) {
+  const element = document.getElementById(elementId);
+  element.style.animation = 'none';
+  element.offsetHeight; // Trigger reflow
+  element.style.animation = animationString;
+}
+
+function createShape(type, size, color) {
+  const element = document.createElement('div');
+  element.style.width = `${size}px`;
+  element.style.height = `${size}px`;
+  element.style.backgroundColor = color;
+
+  switch(type) {
+    case 'circle':
+      element.style.borderRadius = '50%';
+      break;
+    case 'triangle':
+      element.style.width = '0';
+      element.style.height = '0';
+      element.style.borderLeft = `${size/2}px solid transparent`;
+      element.style.borderRight = `${size/2}px solid transparent`;
+      element.style.borderBottom = `${size}px solid ${color}`;
+      element.style.backgroundColor = 'transparent';
+      break;
+  }
+
+  return element;
+}
+
+document.getElementById('add-element').addEventListener('click', () => {
+  const preview = document.getElementById('animation-preview');
+  const color = document.getElementById('element-color').value;
+  const size = document.getElementById('element-size').value;
+  const shape = document.getElementById('element-shape').value;
+
+  const element = createShape(shape, size, color);
+  preview.appendChild(element);
+  elements.push(element);
+});
+
+document.getElementById('apply-animation').addEventListener('click', () => {
+  const animation = document.getElementById('animation-select').value;
+  const duration = document.getElementById('duration').value;
+  const timingFunction = document.getElementById('timing-function').value;
+  const delay = document.getElementById('delay').value;
+  const iterationCount = document.getElementById('iteration-count').value;
+  const fillMode = document.getElementById('fill-mode').value;
+
+  const animationString = `${animation} ${duration}s ${timingFunction} ${delay}s ${iterationCount} ${fillMode}`;
+
+  elements.forEach(element => {
+    element.style.animation = animationString;
+  });
+
+  updateOutputCSS(animationString);
+});
+
+document.getElementById('reset-animation').addEventListener('click', () => {
+  elements.forEach(element => {
+    element.style.animation = 'none';
+    element.offsetHeight; // Trigger reflow
+    element.style.animation = null;
+  });
+  updateOutputCSS('');
+});
+
+document.getElementById('combine-animations').addEventListener('click', () => {
+  const animations = ['fadeIn', 'rotate', 'pulse', 'floatUpDown', 'neonPulse'];
+  let combinedAnimation = '';
+
+  elements.forEach((element, index) => {
+    const randomAnimations = animations.sort(() => 0.5 - Math.random()).slice(0, 2);
+    const animationString = randomAnimations.map(anim => `${anim} 2s ease infinite`).join(', ');
+    element.style.animation = animationString;
+    combinedAnimation += animationString + '\n';
+  });
+
+  updateOutputCSS(combinedAnimation);
+});
+
+document.getElementById('apply-custom-css').addEventListener('click', () => {
+  const customCSS = document.getElementById('custom-css').value;
+  elements.forEach(element => {
+    element.style.cssText += customCSS;
+  });
+  updateOutputCSS(customCSS);
+});
+
+function updateOutputCSS(css) {
+  document.getElementById('output-css').value = css;
+}
+
+document.getElementById('copy-css').addEventListener('click', () => {
+  const outputCSS = document.getElementById('output-css');
+  copyToClipboard(outputCSS.value);
+});
+
+</script>
+</body></html>
