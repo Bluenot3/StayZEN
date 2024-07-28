@@ -1,0 +1,257 @@
+<html><head><base href="https://websimulation/mri-analysis/">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    margin: 0;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .container {
+    width: 100%;
+    max-width: 600px;
+    background-color: #2a2a2a;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
+  }
+  .mri-image-container {
+    position: relative;
+    margin-bottom: 15px;
+  }
+  .mri-image {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+  }
+  .analysis-panel {
+    display: flex;
+    flex-direction: column;
+  }
+  .analysis, .dictation {
+    width: 100%;
+    background-color: #333;
+    border: 1px solid #444;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .ai-highlight {
+    position: absolute;
+    border: 2px solid #ff0;
+    border-radius: 50%;
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+  .ai-identifier {
+    position: absolute;
+    color: #ff0;
+    font-weight: bold;
+    pointer-events: none;
+    font-size: 12px;
+  }
+  .measurement {
+    color: #4CAF50;
+    font-weight: bold;
+  }
+  .ai-assistant {
+    color: #2196F3;
+  }
+  .tools {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  .tool-btn {
+    background-color: #444;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 5px;
+  }
+  .tool-btn:hover {
+    background-color: #555;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.7; }
+  }
+  h1 {
+    text-align: center;
+    color: #4CAF50;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  h2 {
+    font-size: 18px;
+  }
+  @media (min-width: 768px) {
+    body {
+      padding: 20px;
+    }
+    .container {
+      padding: 20px;
+    }
+    .analysis-panel {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+    .analysis, .dictation {
+      width: 48%;
+    }
+  }
+</style>
+</head>
+<body>
+  <h1>ZEN View</h1>
+  <div class="container">
+    <h2>Advanced MRI Analysis with AI Assistance</h2>
+    <div class="mri-image-container" id="aiImageContainer">
+      <img src="https://i.imgur.com/Q42V26E.jpg" alt="MRI scan showing two views of a brain with a visible abnormality" class="mri-image" width="600" height="300">
+      <div id="aiHighlights"></div>
+    </div>
+    <div class="tools">
+      <button class="tool-btn" onclick="toggleTool('zoom')">Zoom</button>
+      <button class="tool-btn" onclick="toggleTool('measure')">Measure</button>
+      <button class="tool-btn" onclick="toggleTool('annotate')">Annotate</button>
+      <button class="tool-btn" onclick="toggleTool('compare')">Compare</button>
+      <button class="tool-btn" onclick="toggleTool('segment')">Segment</button>
+    </div>
+    <div class="analysis-panel">
+      <div class="analysis" id="aiAnalysis"></div>
+      <div class="dictation" id="aiDictation"></div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2>Standard MRI Analysis</h2>
+    <div class="mri-image-container" id="standardImageContainer">
+      <img src="https://i.imgur.com/Q42V26E.jpg" alt="MRI scan showing two views of a brain with a visible abnormality" class="mri-image" width="600" height="300">
+    </div>
+    <div class="tools">
+      <button class="tool-btn" onclick="toggleTool('zoom')">Zoom</button>
+      <button class="tool-btn" onclick="toggleTool('measure')">Measure</button>
+      <button class="tool-btn" onclick="toggleTool('annotate')">Annotate</button>
+    </div>
+    <div class="analysis-panel">
+      <div class="analysis" id="standardAnalysis"></div>
+      <div class="dictation" id="standardDictation"></div>
+    </div>
+  </div>
+
+  <script>
+    const aiAnalysis = document.getElementById('aiAnalysis');
+    const aiDictation = document.getElementById('aiDictation');
+    const standardAnalysis = document.getElementById('standardAnalysis');
+    const standardDictation = document.getElementById('standardDictation');
+    const aiHighlights = document.getElementById('aiHighlights');
+
+    const aiComments = [
+      {text: "T2-weighted image (a) shows hyperintense mass in right temporal lobe.", highlight: {top: "35%", left: "65%", width: "20%", height: "20%"}, label: "T2 hyperintense"},
+      {text: "Contrast-enhanced T1-weighted image (b) confirms enhancing lesion.", highlight: {top: "35%", left: "15%", width: "20%", height: "20%"}, label: "T1 enhancing"},
+      {text: "Lesion measures approximately 2.5cm x 2.2cm.", highlight: {top: "35%", left: "15%", width: "20%", height: "20%"}, label: "2.5cm x 2.2cm"},
+      {text: "Volumetric analysis estimates tumor volume at 6.35 cm³.", highlight: {top: "35%", left: "15%", width: "20%", height: "20%"}, label: "Vol: 6.35 cm³"},
+      {text: "Significant perilesional edema noted, extending 1.2cm from tumor margins.", highlight: {top: "30%", left: "10%", width: "30%", height: "30%"}, label: "Edema"},
+      {text: "No midline shift observed, but mass effect on adjacent structures is evident.", highlight: {top: "20%", left: "50%", width: "40%", height: "40%"}, label: "Mass effect"},
+      {text: "Ventricles appear slightly compressed, particularly the right lateral ventricle.", highlight: {top: "40%", left: "40%", width: "20%", height: "20%"}, label: "Compressed ventricle"},
+      {text: "No additional intracranial lesions identified.", highlight: null},
+      {text: "Texture analysis suggests high cellularity and potential necrotic core.", highlight: {top: "35%", left: "15%", width: "20%", height: "20%"}, label: "Necrotic core"},
+      {text: "Perfusion maps indicate increased rCBV, suggesting high-grade neoplasm.", highlight: {top: "35%", left: "15%", width: "20%", height: "20%"}, label: "High rCBV"},
+      {text: "Diffusion restriction present, consistent with high-grade glioma.", highlight: {top: "35%", left: "15%", width: "20%", height: "20%"}, label: "Diffusion restriction"},
+      {text: "Spectroscopy shows elevated choline and reduced NAA peaks.", highlight: null},
+      {text: "AI model predicts 92% probability of glioblastoma multiforme.", highlight: {top: "35%", left: "15%", width: "20%", height: "20%"}, label: "GBM 92%"},
+      {text: "Recommending functional MRI to assess proximity to language areas.", highlight: {top: "20%", left: "10%", width: "40%", height: "40%"}, label: "Language area proximity"},
+      {text: "Suggesting diffusion tensor imaging for evaluation of white matter tract involvement.", highlight: {top: "10%", left: "10%", width: "80%", height: "80%"}, label: "White matter tracts"},
+    ];
+
+    const radiologistComments = [
+      "Confirming presence of large enhancing mass in right temporal lobe.",
+      "Lesion appears to be approximately 2.5cm in largest diameter.",
+      "Extensive surrounding edema is present.",
+      "Mass effect on adjacent structures, including slight ventricular compression.",
+      "No obvious midline shift at this level.",
+      "No other significant abnormalities noted on these sequences.",
+      "Enhancement pattern is heterogeneous with possible central necrosis.",
+      "FLAIR sequence shows extensive hyperintensity surrounding the lesion.",
+      "DWI sequence demonstrates areas of restricted diffusion within the mass.",
+      "Differential diagnosis includes high-grade glioma (likely glioblastoma) or less likely, metastasis.",
+      "Recommending urgent neurosurgical consult for potential biopsy and resection planning.",
+      "Suggesting additional imaging including perfusion studies and spectroscopy if not contraindicated.",
+    ];
+
+    function addComment(element, comment, isAI = false) {
+      const p = document.createElement('p');
+      p.textContent = comment;
+      if (isAI) p.classList.add('ai-assistant');
+      element.appendChild(p);
+      element.scrollTop = element.scrollHeight;
+    }
+
+    function addHighlight(highlight, label) {
+      if (!highlight) return;
+      
+      const div = document.createElement('div');
+      div.className = 'ai-highlight';
+      div.style.top = highlight.top;
+      div.style.left = highlight.left;
+      div.style.width = highlight.width;
+      div.style.height = highlight.height;
+      div.style.animation = 'pulse 2s infinite';
+      
+      const labelDiv = document.createElement('div');
+      labelDiv.className = 'ai-identifier';
+      labelDiv.textContent = label;
+      labelDiv.style.top = `calc(${highlight.top} - 20px)`;
+      labelDiv.style.left = highlight.left;
+      
+      aiHighlights.appendChild(div);
+      aiHighlights.appendChild(labelDiv);
+    }
+
+    function simulateAnalysis() {
+      let aiIndex = 0;
+      let radiologistIndex = 0;
+
+      const aiInterval = setInterval(() => {
+        if (aiIndex < aiComments.length) {
+          const comment = aiComments[aiIndex];
+          addComment(aiAnalysis, comment.text);
+          addComment(aiDictation, "AI Assistant: " + comment.text, true);
+          addHighlight(comment.highlight, comment.label);
+          aiIndex++;
+        } else {
+          clearInterval(aiInterval);
+        }
+      }, 3000);
+
+      const radiologistInterval = setInterval(() => {
+        if (radiologistIndex < radiologistComments.length) {
+          addComment(standardAnalysis, radiologistComments[radiologistIndex]);
+          addComment(standardDictation, "Radiologist: " + radiologistComments[radiologistIndex]);
+          radiologistIndex++;
+        } else {
+          clearInterval(radiologistInterval);
+        }
+      }, 5000);
+    }
+
+    function toggleTool(tool) {
+      console.log(`${tool} tool activated`);
+      // Implement tool functionality here
+    }
+
+    simulateAnalysis();
+  </script>
+</body></html>
