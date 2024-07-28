@@ -1,0 +1,201 @@
+<html><head><base href="https://websim.ai"/>
+<title>ZEN AI - Immersive 3D Experience</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+<style>
+  body { margin: 0; overflow: hidden; background: #000; }
+  #info { position: absolute; top: 10px; width: 100%; color: #fff; text-align: center; font-family: 'Arial', sans-serif; }
+  #logo-container { position: absolute; top: 20px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; height: 120px; }
+  #logo { width: 100px; height: 100px; }
+  #content { position: absolute; bottom: 20px; left: 20px; right: 20px; color: #fff; font-family: 'Arial', sans-serif; font-size: 16px; line-height: 1.6; text-shadow: 0 0 5px #00ffff; }
+  h1 { font-size: 32px; margin-bottom: 15px; color: #00ffff; }
+  .glow { animation: glow 2s ease-in-out infinite alternate; }
+  @keyframes glow {
+    from { text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff; }
+    to { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff; }
+  }
+</style>
+</head>
+<body>
+<div id="info" class="glow">ZEN AI - Powerful AI Integration</div>
+<div id="logo-container">
+  <img id="logo" src="https://i.imgur.com/xfMdqOW.png" alt="ZEN AI Logo" title="ZEN AI">
+</div>
+<div id="content">
+  <h1 class="glow">ZEN AI: Revolutionizing Integration</h1>
+  <p>Experience the power of our Web Integrated Smart Engine. ZEN AI brings cutting-edge Machine Learning and Computer Vision capabilities to your business, supercharged by the internet and fine-tuned to meet your unique needs. Elevate your marketing, conversion rates, and internal operations with the future of AI integration.</p>
+</div>
+<script>
+let scene, camera, renderer, particles, textMesh, clock;
+const particleCount = 20000;
+
+function init() {
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 50;
+
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.insertBefore(renderer.domElement, document.body.firstChild);
+
+  clock = new THREE.Clock();
+
+  // Particle system
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  const colors = new Float32Array(particleCount * 3);
+
+  for (let i = 0; i < particleCount * 3; i++) {
+    positions[i] = (Math.random() - 0.5) * 100;
+    colors[i] = Math.random();
+  }
+
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+  const material = new THREE.PointsMaterial({
+    size: 0.5,
+    vertexColors: true,
+    blending: THREE.AdditiveBlending,
+    transparent: true
+  });
+
+  particles = new THREE.Points(geometry, material);
+  scene.add(particles);
+
+  // Text
+  const loader = new THREE.FontLoader();
+  loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function(font) {
+    const textGeometry = new THREE.TextGeometry('ZEN AI', {
+      font: font,
+      size: 10,
+      height: 2,
+      curveSegments: 12,
+      bevelEnabled: true,
+      bevelThickness: 0.1,
+      bevelSize: 0.1,
+      bevelOffset: 0,
+      bevelSegments: 5
+    });
+    
+    const textMaterial = new THREE.MeshPhongMaterial({
+      color: 0xffffff,
+      emissive: 0x00ffff,
+      specular: 0x00ffff,
+      shininess: 100
+    });
+    
+    textMesh = new THREE.Mesh(textGeometry, textMaterial);
+    textMesh.position.set(-20, 0, 0);
+    scene.add(textMesh);
+
+    // Animate text appearance
+    gsap.from(textMesh.scale, {duration: 2, x: 0, y: 0, z: 0, ease: "elastic.out(1, 0.3)"});
+  });
+
+  // Lights
+  const ambientLight = new THREE.AmbientLight(0x404040);
+  scene.add(ambientLight);
+
+  const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+  pointLight.position.set(0, 0, 50);
+  scene.add(pointLight);
+
+  animate();
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  const delta = clock.getDelta();
+  const time = clock.getElapsedTime();
+
+  particles.rotation.x += 0.05 * delta;
+  particles.rotation.y += 0.1 * delta;
+
+  const positions = particles.geometry.attributes.position.array;
+  const colors = particles.geometry.attributes.color.array;
+
+  for (let i = 0; i < particleCount; i++) {
+    const i3 = i * 3;
+    positions[i3 + 1] = Math.sin(time + positions[i3]) * 3;
+    colors[i3] = Math.sin(time) * 0.5 + 0.5;
+    colors[i3 + 1] = Math.sin(time + 2) * 0.5 + 0.5;
+    colors[i3 + 2] = Math.sin(time + 4) * 0.5 + 0.5;
+  }
+
+  particles.geometry.attributes.position.needsUpdate = true;
+  particles.geometry.attributes.color.needsUpdate = true;
+
+  if (textMesh) {
+    textMesh.rotation.y = Math.sin(time * 0.5) * 0.1;
+    textMesh.position.y = Math.sin(time) * 2;
+  }
+
+  renderer.render(scene, camera);
+}
+
+init();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Animate logo
+gsap.to("#logo", {
+  duration: 2,
+  scale: 1.1,
+  rotation: 360,
+  repeat: -1,
+  yoyo: true,
+  ease: "power1.inOut"
+});
+
+// Animate content
+gsap.from("#content", {duration: 1, opacity: 0, y: 50, delay: 1});
+
+// Create a glowing effect for the logo
+const glowTimeline = gsap.timeline({repeat: -1, yoyo: true});
+glowTimeline.to("#logo", {
+  duration: 1.5,
+  boxShadow: "0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff",
+  ease: "power1.inOut"
+});
+
+// Particle effect around the logo
+const particleContainer = document.createElement('div');
+particleContainer.style.position = 'absolute';
+particleContainer.style.top = '0';
+particleContainer.style.left = '0';
+particleContainer.style.width = '100%';
+particleContainer.style.height = '100%';
+particleContainer.style.pointerEvents = 'none';
+document.body.appendChild(particleContainer);
+
+for (let i = 0; i < 50; i++) {
+  const particle = document.createElement('div');
+  particle.style.position = 'absolute';
+  particle.style.width = '5px';
+  particle.style.height = '5px';
+  particle.style.backgroundColor = '#00ffff';
+  particle.style.borderRadius = '50%';
+  particleContainer.appendChild(particle);
+
+  gsap.set(particle, {
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight
+  });
+
+  gsap.to(particle, {
+    duration: 'random(2, 4)',
+    x: 'random(0, 100%)' ,
+    y: 'random(0, 100%)',
+    repeat: -1,
+    yoyo: true,
+    ease: 'power1.inOut'
+  });
+}
+</script>
+</body></html>
