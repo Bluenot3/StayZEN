@@ -192,6 +192,10 @@
         </div>
 
         <div class="game-interface">
+            <a href="https://www.zenai.biz/zenagents" class="game-tile">
+                <div class="game-icon">⚙️</div>
+                <div class="game-text">How It Works</div>
+            </a>
             <a href="https://www.zenai.biz/ai-literacy" class="game-tile">
                 <div class="game-icon">🧠</div>
                 <div class="game-text">AI Literacy</div>
@@ -227,10 +231,6 @@
             <a href="https://www.zenai.biz/zenu" class="game-tile">
                 <div class="game-icon">📚</div>
                 <div class="game-text">Courses</div>
-            </a>
-            <a href="https://www.zenai.biz/zenagents" class="game-tile">
-                <div class="game-icon">⚙️</div>
-                <div class="game-text">Services</div>
             </a>
             <a href="https://www.zenai.biz/fuel-of-zen" class="game-tile">
                 <div class="game-icon">⛽️</div>
