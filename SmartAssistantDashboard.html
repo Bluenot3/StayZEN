@@ -1,0 +1,742 @@
+<html><head><base href="https://websim-dashboard.example.com/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zero Effort Network Smart Dash</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+  :root {
+    --primary-bg: #1a1a2e;
+    --secondary-bg: #16213e;
+    --accent-color: #e94560;
+    --text-color: #e0e0e0;
+    --header-bg: #0f3460;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    line-height: 1.6;
+  }
+
+  .dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .app {
+    background-color: var(--secondary-bg);
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .app:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .app-header {
+    background-color: var(--header-bg);
+    color: var(--accent-color);
+    padding: 15px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.2em;
+  }
+
+  .app-content {
+    padding: 20px;
+  }
+
+  button, .ai-action {
+    background-color: var(--accent-color);
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1em;
+    margin: 5px 0;
+    width: 100%;
+  }
+
+  button:hover, .ai-action:hover {
+    background-color: #c13555;
+  }
+
+  input[type="text"], input[type="number"], select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--header-bg);
+    background-color: var(--primary-bg);
+    color: var(--text-color);
+    font-size: 1em;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  li {
+    background-color: var(--header-bg);
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+
+  .ai-suggestion {
+    background-color: var(--header-bg);
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 15px;
+  }
+
+  #meditation-timer, #timer-display {
+    font-size: 2em;
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  #breathing-guide {
+    text-align: center;
+    font-size: 1.5em;
+    margin: 20px 0;
+  }
+
+  #flashcard {
+    background-color: var(--header-bg);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  #flashcard-word {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+  }
+
+  #flashcard-translation {
+    font-size: 1.2em;
+    color: var(--accent-color);
+    display: none;
+  }
+
+  .social-integration {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+  }
+
+  .social-icon {
+    font-size: 24px;
+    color: var(--accent-color);
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    .dashboard {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body>
+<div class="dashboard">
+  <div class="app" id="habit-tracker">
+    <div class="app-header">Habit Tracker</div>
+    <div class="app-content">
+      <input type="text" id="habit-input" placeholder="Add a new habit">
+      <button onclick="addHabit()">Add Habit</button>
+      <ul id="habit-list"></ul>
+      <button onclick="suggestHabit()">Get AI Habit Suggestion</button>
+      <div class="app-integration">
+        <button onclick="syncWithNotion()">Sync with Notion</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" id="todo-app">
+    <div class="app-header">To-Do List</div>
+    <div class="app-content">
+      <input type="text" id="todo-input" placeholder="Add a new task">
+      <button onclick="addTodo()">Add</button>
+      <ul id="todo-list"></ul>
+      <button onclick="prioritizeTasks()">AI Prioritize Tasks</button>
+      <div class="app-integration">
+        <button onclick="syncWithGoogleTasks()">Sync with Google Tasks</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" id="mindfulness">
+    <div class="app-header">Mindfulness</div>
+    <div class="app-content">
+      <div id="meditation-timer">5:00</div>
+      <button onclick="startMeditation()">Start Meditation</button>
+      <div id="breathing-guide"></div>
+      <button onclick="suggestMeditationTechnique()">AI Meditation Technique</button>
+      <div class="app-integration">
+        <button onclick="shareOnInstagram()">Share Progress on Instagram</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" id="mood-tracker">
+    <div class="app-header">Mood Tracker</div>
+    <div class="app-content">
+      <select id="mood-select">
+        <option value="😊">😊 Happy</option>
+        <option value="😐">😐 Neutral</option>
+        <option value="😔">😔 Sad</option>
+        <option value="😠">😠 Angry</option>
+        <option value="😴">😴 Tired</option>
+      </select>
+      <button onclick="logMood()">Log Mood</button>
+      <div id="mood-history"></div>
+      <button onclick="analyzeMoodTrends()">AI Mood Analysis</button>
+      <div class="social-integration">
+        <i class="fab fa-twitter social-icon" onclick="shareMoodOnTwitter()"></i>
+        <i class="fab fa-facebook social-icon" onclick="shareMoodOnFacebook()"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" id="language-learning">
+    <div class="app-header">Language Learning</div>
+    <div class="app-content">
+      <div id="flashcard">
+        <div id="flashcard-word"></div>
+        <div id="flashcard-translation"></div>
+      </div>
+      <button onclick="showTranslation()">Show Translation</button>
+      <button onclick="nextFlashcard()">Next Word</button>
+      <button onclick="generateSentence()">AI Generate Sentence</button>
+      <div class="app-integration">
+        <button onclick="syncWithDuolingo()">Sync with Duolingo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" id="climate-action">
+    <div class="app-header">Climate Action</div>
+    <div class="app-content">
+      <div id="climate-tip"></div>
+      <button onclick="getClimateTip()">Get Eco Tip</button>
+      <button onclick="personalizeEcoTip()">AI Personalized Eco Tip</button>
+      <div id="carbon-footprint"></div>
+      <div class="social-integration">
+        <i class="fab fa-instagram social-icon" onclick="shareEcoTipOnInstagram()"></i>
+        <i class="fab fa-tiktok social-icon" onclick="shareEcoTipOnTikTok()"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" id="study-timer">
+    <div class="app-header">Study Timer</div>
+    <div class="app-content">
+      <div id="timer-display">25:00</div>
+      <div id="timer-controls">
+        <button onclick="startTimer()">Start</button>
+        <button onclick="pauseTimer()">Pause</button>
+        <button onclick="resetTimer()">Reset</button>
+      </div>
+      <select id="timer-duration" onchange="updateTimerDisplay()">
+        <option value="1500">25 minutes</option>
+        <option value="3000">50 minutes</option>
+        <option value="600">10 minutes (break)</option>
+      </select>
+      <button onclick="suggestStudyTechnique()">AI Study Technique</button>
+      <div class="app-integration">
+        <button onclick="syncWithForest()">Sync with Forest App</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" id="skill-share">
+    <div class="app-header">Skill Share</div>
+    <div class="app-content">
+      <input type="text" id="skill-input" placeholder="Share a skill you can teach">
+      <button onclick="addSkill()">Share Skill</button>
+      <ul id="skill-list"></ul>
+      <button onclick="elaborateSkill()">AI Elaborate Skill</button>
+      <div class="social-integration">
+        <i class="fab fa-linkedin social-icon" onclick="shareSkillOnLinkedIn()"></i>
+        <i class="fab fa-github social-icon" onclick="shareSkillOnGitHub()"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" id="mental-health">
+    <div class="app-header">Mental Health Check-in</div>
+    <div class="app-content">
+      <textarea id="journal-entry" placeholder="How are you feeling today?"></textarea>
+      <button onclick="saveJournalEntry()">Save Entry</button>
+      <div id="mood-suggestions"></div>
+      <button onclick="suggestCopingStrategy()">AI Coping Strategy</button>
+      <div class="app-integration">
+        <button onclick="syncWithMindDoc()">Sync with MindDoc</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" id="career-goals">
+    <div class="app-header">Career Goals</div>
+    <div class="app-content">
+      <input type="text" id="goal-input" placeholder="Add a new career goal">
+      <button onclick="addCareerGoal()">Add Goal</button>
+      <ul id="career-goals-list"></ul>
+      <button onclick="suggestSkillsForGoal()">AI Suggest Skills</button>
+      <div class="app-integration">
+        <button onclick="syncWithTrello()">Sync with Trello</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app" id="document-hub">
+    <div class="app-header">Document Hub</div>
+    <div class="app-content">
+      <button onclick="openGoogleDocs()">Open Google Docs</button>
+      <button onclick="openMicrosoftWord()">Open Microsoft Word</button>
+      <button onclick="openNotion()">Open Notion</button>
+      <div id="recent-documents"></div>
+    </div>
+  </div>
+
+  <div class="app" id="social-media-hub">
+    <div class="app-header">Social Media Hub</div>
+    <div class="app-content">
+      <div class="social-integration">
+        <i class="fab fa-instagram social-icon" onclick="openInstagram()"></i>
+        <i class="fab fa-tiktok social-icon" onclick="openTikTok()"></i>
+        <i class="fab fa-twitter social-icon" onclick="openTwitter()"></i>
+        <i class="fab fa-facebook social-icon" onclick="openFacebook()"></i>
+        <i class="fab fa-linkedin social-icon" onclick="openLinkedIn()"></i>
+      </div>
+      <div id="social-feed"></div>
+    </div>
+  </div>
+
+  <div class="app" id="ai-assistant">
+    <div class="app-header">AI Assistant</div>
+    <div class="app-content">
+      <input type="text" id="ai-input" placeholder="Ask me anything...">
+      <button onclick="askAI()">Ask AI</button>
+      <div id="ai-response"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script>
+  const API_KEY = "";
+  const API_URL = "https://api.anthropic.com/v1/conversations";
+
+  // Habit Tracker
+  const habits = [];
+
+  function addHabit() {
+    const input = document.getElementById('habit-input');
+    if (input.value.trim() !== '') {
+      habits.push({ name: input.value, streak: 0 });
+      input.value = '';
+      renderHabits();
+    }
+  }
+
+  function renderHabits() {
+    const list = document.getElementById('habit-list');
+    list.innerHTML = habits.map((habit, index) => `
+      <li>
+        <span>${habit.name}</span>
+        <span>🔥 ${habit.streak}</span>
+        <button onclick="incrementStreak(${index})">✅</button>
+        <button onclick="resetStreak(${index})">🔄</button>
+      </li>
+    `).join('');
+  }
+
+  function incrementStreak(index) {
+    habits[index].streak++;
+    renderHabits();
+  }
+
+  function resetStreak(index) {
+    habits[index].streak = 0;
+    renderHabits();
+  }
+
+  // Todo App
+  function addTodo() {
+    const input = document.getElementById('todo-input');
+    const list = document.getElementById('todo-list');
+    if (input.value.trim() !== '') {
+      const li = document.createElement('li');
+      li.textContent = input.value;
+      list.appendChild(li);
+      input.value = '';
+    }
+  }
+
+  // Mood Tracker
+  function logMood() {
+    const mood = document.getElementById('mood-select').value;
+    const history = document.getElementById('mood-history');
+    const date = new Date().toLocaleDateString();
+    history.innerHTML = `${date}: ${mood}<br>` + history.innerHTML;
+  }
+
+  // Language Learning
+  const flashcards = [
+    { word: "Bonjour", translation: "Hello" },
+    { word: "Merci", translation: "Thank you" },
+    { word: "Au revoir", translation: "Goodbye" },
+    { word: "S'il vous plaît", translation: "Please" },
+    { word: "Comment allez-vous?", translation: "How are you?" }
+  ];
+
+  let currentFlashcardIndex = 0;
+
+  function showFlashcard() {
+    const flashcard = flashcards[currentFlashcardIndex];
+    document.getElementById('flashcard-word').textContent = flashcard.word;
+    document.getElementById('flashcard-translation').textContent = flashcard.translation;
+    document.getElementById('flashcard-translation').style.display = 'none';
+  }
+
+  function showTranslation() {
+    document.getElementById('flashcard-translation').style.display = 'block';
+  }
+
+  function nextFlashcard() {
+    currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcards.length;
+    showFlashcard();
+  }
+
+  // Climate Action
+  function getClimateTip() {
+    const tips = [
+      "Use a reusable water bottle",
+      "Take shorter showers",
+      "Use public transportation",
+      "Eat less meat",
+      "Plant a tree",
+      "Use energy-efficient light bulbs",
+      "Reduce, reuse, recycle"
+    ];
+    document.getElementById('climate-tip').textContent = tips[Math.floor(Math.random() * tips.length)];
+  }
+
+  // Study Timer
+  let studyTimer;
+  let studyTimeLeft = 1500; // 25 minutes by default
+
+  function startTimer() {
+    clearInterval(studyTimer);
+    studyTimer = setInterval(() => {
+      studyTimeLeft--;
+      updateTimerDisplay();
+      if (studyTimeLeft === 0) {
+        clearInterval(studyTimer);
+        alert("Time's up!");
+      }
+    }, 1000);
+  }
+
+  function pauseTimer() {
+    clearInterval(studyTimer);
+  }
+
+  function resetTimer() {
+    clearInterval(studyTimer);
+    studyTimeLeft = parseInt(document.getElementById('timer-duration').value);
+    updateTimerDisplay();
+  }
+
+  function updateTimerDisplay() {
+    const minutes = Math.floor(studyTimeLeft / 60);
+    const seconds = studyTimeLeft % 60;
+    document.getElementById('timer-display').textContent = 
+      `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  // Skill Share
+  const skills = [];
+
+  function addSkill() {
+    const input = document.getElementById('skill-input');
+    if (input.value.trim() !== '') {
+      skills.push(input.value);
+      input.value = '';
+      renderSkills();
+    }
+  }
+
+  function renderSkills() {
+    const list = document.getElementById('skill-list');
+    list.innerHTML = skills.map(skill => `<li>${skill}</li>`).join('');
+  }
+
+  // Mental Health Check-in
+  function saveJournalEntry() {
+    const entry = document.getElementById('journal-entry').value;
+    // In a real app, you'd save this entry securely
+    document.getElementById('mood-suggestions').innerHTML = "Thanks for sharing. Remember to take care of yourself!";
+    document.getElementById('journal-entry').value = '';
+  }
+
+  // Career Goals
+  function addCareerGoal() {
+    const input = document.getElementById('goal-input');
+    const list = document.getElementById('career-goals-list');
+    if (input.value.trim() !== '') {
+      const li = document.createElement('li');
+      li.textContent = input.value;
+      list.appendChild(li);
+      input.value = '';
+    }
+  }
+
+  // AI Assistant
+  async function askAI() {
+    const input = document.getElementById('ai-input').value;
+    const response = document.getElementById('ai-response');
+    response.innerHTML = "Thinking...";
+
+    try {
+      const result = await axios.post(API_URL, {
+        prompt: input,
+        max_tokens_to_sample: 300,
+        model: "claude-v1"
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': API_KEY
+        }
+      });
+
+      response.innerHTML = result.data.completion;
+    } catch (error) {
+      console.error("Error calling AI API:", error);
+      response.innerHTML = "Sorry, I couldn't process that request.";
+    }
+  }
+
+  // AI-enhanced functions
+  async function suggestHabit() {
+    const response = await callAI("Suggest a healthy habit to add to my routine.");
+    const suggestionDiv = document.createElement('div');
+    suggestionDiv.className = 'ai-suggestion';
+    suggestionDiv.innerHTML = `
+      <p>${response}</p>
+      <button class="ai-action" onclick="addSuggestedHabit('${response}')">Add This Habit</button>
+    `;
+    document.querySelector('#habit-tracker .app-content').appendChild(suggestionDiv);
+  }
+
+  function addSuggestedHabit(habit) {
+    document.getElementById('habit-input').value = habit;
+    addHabit();
+  }
+
+  async function prioritizeTasks() {
+    const tasks = Array.from(document.getElementById('todo-list').children).map(li => li.textContent);
+    const response = await callAI(`Prioritize these tasks: ${tasks.join(', ')}`);
+    const suggestionDiv = document.createElement('div');
+    suggestionDiv.className = 'ai-suggestion';
+    suggestionDiv.innerHTML = `
+      <p>Suggested priority:</p>
+      <p>${response}</p>
+      <button class="ai-action" onclick="reorderTasks('${response}')">Apply This Order</button>
+    `;
+    document.querySelector('#todo-app .app-content').appendChild(suggestionDiv);
+  }
+
+  function reorderTasks(order) {
+    const list = document.getElementById('todo-list');
+    const newOrder = order.split(',').map(task => task.trim());
+    const currentItems = Array.from(list.children);
+    list.innerHTML = '';
+    newOrder.forEach(task => {
+      const item = currentItems.find(li => li.textContent.includes(task));
+      if (item) list.appendChild(item);
+    });
+  }
+
+  async function suggestMeditationTechnique() {
+    const response = await callAI("Suggest a meditation technique for beginners.");
+    const suggestionDiv = document.createElement('div');
+    suggestionDiv.className = 'ai-suggestion';
+    suggestionDiv.innerHTML = `
+      <p>${response}</p>
+      <button class="ai-action" onclick="startGuidedMeditation('${response}')">Start Guided Meditation</button>
+    `;
+    document.querySelector('#mindfulness .app-content').appendChild(suggestionDiv);
+  }
+
+  function startGuidedMeditation(technique) {
+    alert(`Starting guided meditation: ${technique}`);
+  }
+
+  async function analyzeMoodTrends() {
+    const moodHistory = document.getElementById('mood-history').innerText;
+    const response = await callAI(`Analyze these mood trends and provide insights: ${moodHistory}`);
+    const analysisDiv = document.createElement('div');
+    analysisDiv.className = 'ai-suggestion';
+    analysisDiv.innerHTML = `
+      <p>Mood Analysis:</p>
+      <p>${response}</p>
+    `;
+    document.querySelector('#mood-tracker .app-content').appendChild(analysisDiv);
+  }
+
+  async function generateSentence() {
+    const word = document.getElementById('flashcard-word').textContent;
+    const response = await callAI(`Generate a simple sentence in French using the word "${word}".`);
+    const sentenceDiv = document.createElement('div');
+    sentenceDiv.className = 'ai-suggestion';
+    sentenceDiv.innerHTML = `
+      <p>Practice sentence:</p>
+      <p>${response}</p>
+    `;
+    document.querySelector('#language-learning .app-content').appendChild(sentenceDiv);
+  }
+
+  async function personalizeEcoTip() {
+    const response = await callAI("Give me a personalized eco-friendly tip based on my urban lifestyle.");
+    document.getElementById('climate-tip').textContent = response;
+  }
+
+  async function suggestStudyTechnique() {
+    const response = await callAI("Suggest an effective study technique for long study sessions.");
+    const suggestionDiv = document.createElement('div');
+    suggestionDiv.className = 'ai-suggestion';
+    suggestionDiv.innerHTML = `
+      <p>${response}</p>
+      <button class="ai-action" onclick="applyStudyTechnique('${response}')">Apply This Technique</button>
+    `;
+    document.querySelector('#study-timer .app-content').appendChild(suggestionDiv);
+  }
+
+  function applyStudyTechnique(technique) {
+    alert(`Applying study technique: ${technique}`);
+  }
+
+  async function elaborateSkill() {
+    const skill = document.getElementById('skill-input').value;
+    const response = await callAI(`Elaborate on how to teach the skill of ${skill}.`);
+    const elaborationDiv = document.createElement('div');
+    elaborationDiv.className = 'ai-suggestion';
+    elaborationDiv.innerHTML = `
+      <p>Teaching method for ${skill}:</p>
+      <p>${response}</p>
+    `;
+    document.querySelector('#skill-share .app-content').appendChild(elaborationDiv);
+  }
+
+  async function suggestCopingStrategy() {
+    const entry = document.getElementById('journal-entry').value;
+    const response = await callAI(`Based on this journal entry, suggest a coping strategy: ${entry}`);
+    document.getElementById('mood-suggestions').innerHTML = `
+      <div class="ai-suggestion">
+        <p>Suggested coping strategy:</p>
+        <p>${response}</p>
+      </div>
+    `;
+  }
+
+  async function suggestSkillsForGoal() {
+    const goal = document.getElementById('goal-input').value;
+    const response = await callAI(`Suggest skills to develop for this career goal: ${goal}`);
+    const suggestionDiv = document.createElement('div');
+    suggestionDiv.className = 'ai-suggestion';
+    suggestionDiv.innerHTML = `
+      <p>Skills to develop:</p>
+      <p>${response}</p>
+    `;
+    document.querySelector('#career-goals .app-content').appendChild(suggestionDiv);
+  }
+
+  // Helper function to call AI API
+  async function callAI(prompt) {
+    try {
+      const result = await axios.post(API_URL, {
+        prompt: prompt,
+        max_tokens_to_sample: 150,
+        model: "claude-v1"
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': API_KEY
+        }
+      });
+
+      return result.data.completion;
+    } catch (error) {
+      console.error("Error calling AI API:", error);
+      return "Sorry, I couldn't process that request.";
+    }
+  }
+
+  // Integration functions (placeholders)
+  function syncWithNotion() { alert("Syncing with Notion..."); }
+  function syncWithGoogleTasks() { alert("Syncing with Google Tasks..."); }
+  function shareOnInstagram() { alert("Sharing on Instagram..."); }
+  function shareMoodOnTwitter() { alert("Sharing mood on Twitter..."); }
+  function shareMoodOnFacebook() { alert("Sharing mood on Facebook..."); }
+  function syncWithDuolingo() { alert("Syncing with Duolingo..."); }
+  function shareEcoTipOnInstagram() { alert("Sharing eco tip on Instagram..."); }
+  function shareEcoTipOnTikTok() { alert("Sharing eco tip on TikTok..."); }
+  function syncWithForest() { alert("Syncing with Forest App..."); }
+  function shareSkillOnLinkedIn() { alert("Sharing skill on LinkedIn..."); }
+  function shareSkillOnGitHub() { alert("Sharing skill on GitHub..."); }
+  function syncWithMindDoc() { alert("Syncing with MindDoc..."); }
+  function syncWithTrello() { alert("Syncing with Trello..."); }
+  function openGoogleDocs() { window.open("https://docs.google.com", "_blank"); }
+  function openMicrosoftWord() { window.open("https://www.office.com/launch/word", "_blank"); }
+  function openNotion() { window.open("https://www.notion.so", "_blank"); }
+  function openInstagram() { window.open("https://www.instagram.com", "_blank"); }
+  function openTikTok() { window.open("https://www.tiktok.com", "_blank"); }
+  function openTwitter() { window.open("https://twitter.com", "_blank"); }
+  function openFacebook() { window.open("https://www.facebook.com", "_blank"); }
+  function openLinkedIn() { window.open("https://www.linkedin.com", "_blank"); }
+
+  // Initialize the dashboard
+  renderHabits();
+  showFlashcard();
+  getClimateTip();
+  updateTimerDisplay();
+
+  // Simulated recent documents
+  const recentDocs = [
+    "Project Proposal.docx",
+    "Meeting Notes.gdoc",
+    "To-Do List.notion"
+  ];
+  document.getElementById('recent-documents').innerHTML = recentDocs.map(doc => `<div>${doc}</div>`).join('');
+
+  // Simulated social feed
+  const socialPosts = [
+    "Just completed a 30-day coding challenge! #CodingLife",
+    "New blog post: '10 Tips for Productivity' - check it out!",
+    "Excited to start my internship next week! #NewBeginnings"
+  ];
+  document.getElementById('social-feed').innerHTML = socialPosts.map(post => `<div>${post}</div>`).join('');
+</script>
+</body></html>
