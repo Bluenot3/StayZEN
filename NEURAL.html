@@ -1,0 +1,557 @@
+<html><head><base href="https://example.com/">
+<title>ZEN Neural Advanced AI Chatbot</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style id="theme-style">
+  :root {
+    --dark-teal: #004d4d;
+    --medium-teal: #006666;
+    --light-teal: #008080;
+    --light-blue: #e6f3ff;
+    --accent-blue: #66c2ff;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: var(--dark-teal);
+    color: var(--light-blue);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 1800px;
+    width: 100%;
+  }
+  .chat-area {
+    flex: 1 1 600px;
+    margin: 0 20px 20px;
+    min-width: 300px;
+  }
+  h1, h2 {
+    text-align: center;
+    color: var(--accent-blue);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+  .chat-container {
+    background-color: var(--medium-teal);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+  }
+  .chat-messages {
+    height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--light-teal);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    background-color: rgba(255,255,255,0.05);
+  }
+  .message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 80%;
+  }
+  .user-message {
+    background-color: var(--light-teal);
+    color: white;
+    margin-left: auto;
+  }
+  .bot-message {
+    background-color: var(--light-blue);
+    color: var(--dark-teal);
+  }
+  .user-input {
+    width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 25px;
+    background-color: var(--light-blue);
+    color: var(--dark-teal);
+    font-size: 16px;
+  }
+  .send-button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--accent-blue);
+    color: var(--dark-teal);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  .send-button:hover {
+    background-color: #4da6ff;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--medium-teal);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--light-teal);
+    border-radius: 5px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-blue);
+  }
+  #options-panel {
+    background-color: var(--medium-teal);
+    border-radius: 15px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    margin: 0 20px 20px;
+  }
+  #options-panel h2 {
+    color: var(--accent-blue);
+    margin-top: 0;
+  }
+  #options-panel label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--light-blue);
+  }
+  #options-panel select, #options-panel input[type="range"], #options-panel input[type="text"] {
+    width: 100%;
+    margin-bottom: 5px;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid var(--light-teal);
+  }
+  .option-group {
+    margin-bottom: 20px;
+  }
+  #tts-toggle {
+    background-color: var(--accent-blue);
+    color: var(--dark-teal);
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  #tts-toggle:hover {
+    background-color: #4da6ff;
+  }
+  .slider-value {
+    text-align: right;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  #bot-interaction-panel {
+    background-color: var(--medium-teal);
+    border-radius: 15px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    margin: 0 20px 20px;
+  }
+  #bot-interaction-panel h2 {
+    color: var(--accent-blue);
+    margin-top: 0;
+  }
+  #bot-chat {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--light-teal);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    background-color: rgba(255,255,255,0.05);
+  }
+  #logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  #zen-logo {
+    width: 200px;
+    height: 200px;
+    filter: drop-shadow(0 0 10px rgba(102, 194, 255, 0.8));
+    animation: pulse 2s infinite ease-in-out;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  @media (max-width: 768px) {
+    .container {
+      flex-direction: column;
+    }
+    .chat-area, #options-panel, #bot-interaction-panel {
+      width: 100%;
+      margin: 0 0 20px;
+    }
+  }
+</style>
+</head>
+<body>
+  <div id="logo-container">
+    <img id="zen-logo" src="https://i.imgur.com/xfMdqOW.png" alt="ZEN Neural Logo" title="ZEN Neural">
+  </div>
+
+  <div class="container">
+    <div class="chat-area">
+      <h1>ZEN Neural Advanced AI Chatbot</h1>
+      <div class="chat-container">
+        <h2>Chat with ZEN LLM 450 BN</h2>
+        <div id="chat-messages" class="chat-messages"></div>
+        <input type="text" id="user-input" class="user-input" placeholder="Type your message here...">
+        <button id="send-button" class="send-button">Send</button>
+      </div>
+      
+      <div class="chat-container">
+        <h2>Code Collaboration with ZEN LLM 450 BN</h2>
+        <div id="code-chat-messages" class="chat-messages"></div>
+        <input type="text" id="code-user-input" class="user-input" placeholder="Discuss code or ask for help...">
+        <button id="code-send-button" class="send-button">Send</button>
+      </div>
+    </div>
+
+    <div id="options-panel">
+      <h2>Options</h2>
+      
+      <div class="option-group">
+        <label for="theme-select">Color Theme:</label>
+        <select id="theme-select">
+          <option value="teal">Teal & Blue</option>
+          <option value="dark">Dark Mode</option>
+          <option value="light">Light Mode</option>
+          <option value="sunset">Sunset</option>
+        </select>
+      </div>
+
+      <div class="option-group">
+        <label for="font-select">Font:</label>
+        <select id="font-select">
+          <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
+          <option value="Arial, sans-serif">Arial</option>
+          <option value="'Times New Roman', serif">Times New Roman</option>
+          <option value="'Courier New', monospace">Courier New</option>
+        </select>
+      </div>
+
+      <div class="option-group">
+        <label for="voice-select">TTS Voice:</label>
+        <select id="voice-select"></select>
+        
+        <label for="volume-control">Volume:</label>
+        <input type="range" id="volume-control" min="0" max="1" step="0.1" value="1">
+        <div id="volume-value" class="slider-value">1.0</div>
+        
+        <label for="speed-control">Speed:</label>
+        <input type="range" id="speed-control" min="0.5" max="2" step="0.1" value="1">
+        <div id="speed-value" class="slider-value">1.0</div>
+        
+        <button id="tts-toggle">Enable TTS</button>
+      </div>
+    </div>
+
+    <div id="bot-interaction-panel">
+      <h2>Multi-Bot Interaction</h2>
+      <div class="option-group">
+        <label for="openai-api-key">OpenAI API Key:</label>
+        <input type="text" id="openai-api-key" placeholder="Enter your OpenAI API key">
+      </div>
+      <div class="option-group">
+        <label for="bot-topic">Topic for Bots:</label>
+        <input type="text" id="bot-topic" placeholder="Enter a topic for bots to discuss">
+      </div>
+      <button id="start-bot-interaction" class="send-button">Start Bot Interaction</button>
+      <div id="bot-chat" class="chat-messages"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script>
+    const chatMessages = document.getElementById('chat-messages');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+    const codeChatMessages = document.getElementById('code-chat-messages');
+    const codeUserInput = document.getElementById('code-user-input');
+    const codeSendButton = document.getElementById('code-send-button');
+    const voiceSelect = document.getElementById('voice-select');
+    const volumeControl = document.getElementById('volume-control');
+    const speedControl = document.getElementById('speed-control');
+    const ttsToggle = document.getElementById('tts-toggle');
+    const themeSelect = document.getElementById('theme-select');
+    const fontSelect = document.getElementById('font-select');
+    const volumeValue = document.getElementById('volume-value');
+    const speedValue = document.getElementById('speed-value');
+    const openaiApiKey = document.getElementById('openai-api-key');
+    const botTopic = document.getElementById('bot-topic');
+    const startBotInteraction = document.getElementById('start-bot-interaction');
+    const botChat = document.getElementById('bot-chat');
+
+    let conversationHistory = [];
+    let codeConversationHistory = [];
+    let ttsEnabled = false;
+    let synth = window.speechSynthesis;
+    let voices = [];
+
+    // Encrypt and embed API key
+    const encryptionKey = 'AI_CHATBOT_SECRET_KEY';
+    const encryptedApiKey = CryptoJS.AES.encrypt('7VNrWaJZeHsaZwzQxDBBQimIesucTjme', encryptionKey).toString();
+
+    function decryptApiKey() {
+      const bytes = CryptoJS.AES.decrypt(encryptedApiKey, encryptionKey);
+      return bytes.toString(CryptoJS.enc.Utf8);
+    }
+
+    function populateVoiceList() {
+      voices = synth.getVoices();
+      voiceSelect.innerHTML = '';
+      voices.forEach((voice, i) => {
+        const option = document.createElement('option');
+        option.textContent = `${voice.name} (${voice.lang})`;
+        option.setAttribute('data-lang', voice.lang);
+        option.setAttribute('data-name', voice.name);
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    populateVoiceList();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
+
+    function speak(text) {
+      if (!ttsEnabled) return;
+      
+      synth.cancel(); // Stop any ongoing speech
+      const utterance = new SpeechSynthesisUtterance(text);
+      const selectedVoice = voices.find(voice => voice.name === voiceSelect.selectedOptions[0].getAttribute('data-name'));
+      utterance.voice = selectedVoice;
+      utterance.volume = volumeControl.value;
+      utterance.rate = speedControl.value;
+      synth.speak(utterance);
+    }
+
+    async function sendMessage(input, messages, history, displayArea) {
+      const userMessage = input.value.trim();
+      if (userMessage === '') return;
+
+      displayMessage(userMessage, 'user-message', displayArea);
+      input.value = '';
+
+      history.push({ role: 'user', content: userMessage });
+
+      try {
+        const API_KEY = decryptApiKey();
+        const response = await axios.post('https://api.deepinfra.com/v1/openai/chat/completions', {
+          model: 'meta-llama/Meta-Llama-3.1-405B-Instruct',
+          stream: false,
+          messages: history
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+          }
+        });
+
+        const botMessage = response.data.choices[0].message.content;
+        displayMessage(botMessage, 'bot-message', displayArea);
+        speak(botMessage);
+
+        history.push({ role: 'assistant', content: botMessage });
+      } catch (error) {
+        console.error('Error:', error);
+        const errorMessage = `Error: ${error.response ? error.response.data.error : error.message}`;
+        displayMessage(errorMessage, 'bot-message', displayArea);
+        speak(errorMessage);
+      }
+    }
+
+    function displayMessage(message, className, displayArea) {
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('message', className);
+      messageElement.textContent = message;
+      displayArea.appendChild(messageElement);
+      displayArea.scrollTop = displayArea.scrollHeight;
+    }
+
+    sendButton.addEventListener('click', () => sendMessage(userInput, chatMessages, conversationHistory, chatMessages));
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage(userInput, chatMessages, conversationHistory, chatMessages);
+    });
+
+    codeSendButton.addEventListener('click', () => sendMessage(codeUserInput, codeChatMessages, codeConversationHistory, codeChatMessages));
+    codeUserInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage(codeUserInput, codeChatMessages, codeConversationHistory, codeChatMessages);
+    });
+
+    ttsToggle.addEventListener('click', () => {
+      ttsEnabled = !ttsEnabled;
+      ttsToggle.textContent = ttsEnabled ? 'Disable TTS' : 'Enable TTS';
+    });
+
+    // Initialize TTS settings
+    volumeControl.addEventListener('input', () => {
+      synth.cancel();
+      volumeValue.textContent = parseFloat(volumeControl.value).toFixed(1);
+    });
+
+    speedControl.addEventListener('input', () => {
+      synth.cancel();
+      speedValue.textContent = parseFloat(speedControl.value).toFixed(1);
+    });
+
+    // Theme changing functionality
+    const themes = {
+      teal: {
+        '--dark-teal': '#004d4d',
+        '--medium-teal': '#006666',
+        '--light-teal': '#008080',
+        '--light-blue': '#e6f3ff',
+        '--accent-blue': '#66c2ff'
+      },
+      dark: {
+        '--dark-teal': '#1a1a1a',
+        '--medium-teal': '#2a2a2a',
+        '--light-teal': '#3a3a3a',
+        '--light-blue': '#e0e0e0',
+        '--accent-blue': '#4a90e2'
+      },
+      light: {
+        '--dark-teal': '#f0f0f0',
+        '--medium-teal': '#e0e0e0',
+        '--light-teal': '#d0d0d0',
+        '--light-blue': '#2a2a2a',
+        '--accent-blue': '#3a81d9'
+      },
+      sunset: {
+        '--dark-teal': '#2c1e4a',
+        '--medium-teal': '#4a3f6b',
+        '--light-teal': '#735290',
+        '--light-blue': '#ffd9b7',
+        '--accent-blue': '#ff9e7d'
+      }
+    };
+
+    function changeTheme(themeName) {
+      const root = document.documentElement;
+      const theme = themes[themeName];
+      for (const [property, value] of Object.entries(theme)) {
+        root.style.setProperty(property, value);
+      }
+    }
+
+    themeSelect.addEventListener('change', (e) => {
+      changeTheme(e.target.value);
+    });
+
+    // Font changing functionality
+    fontSelect.addEventListener('change', (e) => {
+      document.body.style.fontFamily = e.target.value;
+    });
+
+    // Initialize slider values
+    volumeValue.textContent = volumeControl.value;
+    speedValue.textContent = speedControl.value;
+
+    // Bot Interaction
+    startBotInteraction.addEventListener('click', async () => {
+      const apiKey = openaiApiKey.value.trim();
+      const topic = botTopic.value.trim();
+
+      if (!apiKey || !topic) {
+        alert('Please enter both an OpenAI API key and a topic for the bots to discuss.');
+        return;
+      }
+
+      botChat.innerHTML = '';
+      displayMessage(`Starting bot interaction on topic: "${topic}"`, 'bot-message', botChat);
+
+      try {
+        const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+          model: 'gpt-3.5-turbo',
+          messages: [
+            { role: 'system', content: 'You are an AI assistant participating in a multi-bot discussion.' },
+            { role: 'user', content: `Simulate a discussion between three AI bots on the topic: "${topic}". Each bot should have a unique perspective and contribute to the conversation.` }
+          ],
+          max_tokens: 500
+        }, {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const botDiscussion = response.data.choices[0].message.content;
+        displayMessage(botDiscussion, 'bot-message', botChat);
+      } catch (error) {
+        console.error('Error in bot interaction:', error);
+        displayMessage(`Error in bot interaction: ${error.message}`, 'bot-message', botChat);
+      }
+    });
+
+    // Mobile responsiveness
+    function adjustLayoutForMobile() {
+      const container = document.querySelector('.container');
+      if (window.innerWidth <= 768) {
+        container.style.flexDirection = 'column';
+      } else {
+        container.style.flexDirection = 'row';
+      }
+    }
+
+    window.addEventListener('resize', adjustLayoutForMobile);
+    adjustLayoutForMobile();
+
+    // Ensure all features are working
+    document.addEventListener('DOMContentLoaded', () => {
+      // Test theme changing
+      changeTheme('teal');
+      
+      // Test font changing
+      document.body.style.fontFamily = fontSelect.value;
+
+      // Test TTS
+      if ('speechSynthesis' in window) {
+        console.log('Text-to-Speech is supported.');
+      } else {
+        console.warn('Text-to-Speech is not supported in this browser.');
+        ttsToggle.disabled = true;
+      }
+
+      // Test API connection
+      const testApiConnection = async () => {
+        try {
+          const API_KEY = decryptApiKey();
+          await axios.post('https://api.deepinfra.com/v1/openai/chat/completions', {
+            model: 'meta-llama/Meta-Llama-3.1-405B-Instruct',
+            stream: false,
+            messages: [{ role: 'user', content: 'Hello' }]
+          }, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${API_KEY}`
+            }
+          });
+          console.log('API connection successful');
+        } catch (error) {
+          console.error('API connection failed:', error);
+        }
+      };
+      testApiConnection();
+    });
+
+  </script>
+</body></html>
