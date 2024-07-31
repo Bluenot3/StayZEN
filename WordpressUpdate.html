@@ -1,0 +1,333 @@
+<html><head><base href="https://websim.ai">
+<title>WordPress API Interface 2024 - Functional Version</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" rel="stylesheet">
+<style>
+  .sidebar-nav::-webkit-scrollbar {
+    width: 6px;
+  }
+  .sidebar-nav::-webkit-scrollbar-thumb {
+    background-color: #4B5563;
+    border-radius: 3px;
+  }
+  .sidebar-nav::-webkit-scrollbar-track {
+    background-color: #1F2937;
+  }
+  .endpoint-item:hover {
+    background-color: rgba(75, 85, 99, 0.3);
+  }
+  .method-badge {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .method-get { background-color: #10B981; }
+  .method-post { background-color: #3B82F6; }
+  .method-put { background-color: #F59E0B; }
+  .method-delete { background-color: #EF4444; }
+</style>
+</head>
+<body class="bg-gray-100 font-sans">
+<div class="flex h-screen overflow-hidden">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gray-800 text-white overflow-y-auto sidebar-nav">
+    <div class="p-4">
+      <h1 class="text-2xl font-bold mb-4">WordPress API</h1>
+      <input type="text" id="searchInput" placeholder="Search endpoints..." class="w-full px-3 py-2 bg-gray-700 text-white rounded">
+    </div>
+    <nav class="mt-4">
+      <ul id="endpointList">
+        <!-- Endpoint list will be populated here -->
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <main class="flex-1 overflow-y-auto">
+    <div class="p-8">
+      <h2 id="endpointTitle" class="text-3xl font-bold mb-4">Welcome to WordPress API Interface</h2>
+      <div id="endpointDescription" class="mb-6 text-gray-600">
+        Select an endpoint from the sidebar to get started.
+      </div>
+      
+      <!-- Authentication Section -->
+      <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-semibold mb-4">Authentication</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="siteUrl" class="block mb-2">WordPress Site URL:</label>
+            <input type="text" id="siteUrl" placeholder="https://your-wordpress-site.com" class="w-full px-3 py-2 border rounded">
+          </div>
+          <div>
+            <label for="authMethod" class="block mb-2">Authentication Method:</label>
+            <select id="authMethod" class="w-full px-3 py-2 border rounded">
+              <option value="basic">Basic Auth</option>
+              <option value="jwt">JWT</option>
+            </select>
+          </div>
+          <div id="basicAuthFields">
+            <label for="username" class="block mb-2">Username:</label>
+            <input type="text" id="username" class="w-full px-3 py-2 border rounded">
+          </div>
+          <div id="basicAuthFields">
+            <label for="password" class="block mb-2">Password:</label>
+            <input type="password" id="password" class="w-full px-3 py-2 border rounded">
+          </div>
+          <div id="jwtAuthFields" style="display: none;">
+            <label for="jwtToken" class="block mb-2">JWT Token:</label>
+            <input type="text" id="jwtToken" class="w-full px-3 py-2 border rounded">
+          </div>
+        </div>
+      </div>
+
+      <div id="endpointDetails" class="bg-white shadow-md rounded-lg p-6">
+        <h3 class="text-xl font-semibold mb-4">Endpoint Details</h3>
+        <div id="endpointMethod" class="mb-2"></div>
+        <div id="endpointURL" class="mb-4 font-mono bg-gray-100 p-2 rounded"></div>
+        <h4 class="font-semibold mb-2">Parameters:</h4>
+        <div id="endpointParams" class="mb-4"></div>
+        <button id="sendRequest" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Send Request</button>
+        <h4 class="font-semibold mt-4 mb-2">Response:</h4>
+        <pre id="endpointResponse" class="bg-gray-100 p-4 rounded overflow-x-auto"></pre>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+const endpoints = [
+  {
+    name: "Posts",
+    description: "Create, read, update and delete posts",
+    endpoints: [
+      { method: "GET", path: "/wp/v2/posts", description: "List posts" },
+      { method: "POST", path: "/wp/v2/posts", description: "Create a post" },
+      { method: "GET", path: "/wp/v2/posts/<id>", description: "Retrieve a post" },
+      { method: "PUT", path: "/wp/v2/posts/<id>", description: "Update a post" },
+      { method: "DELETE", path: "/wp/v2/posts/<id>", description: "Delete a post" }
+    ]
+  },
+  {
+    name: "Pages",
+    description: "Create, read, update and delete pages",
+    endpoints: [
+      { method: "GET", path: "/wp/v2/pages", description: "List pages" },
+      { method: "POST", path: "/wp/v2/pages", description: "Create a page" },
+      { method: "GET", path: "/wp/v2/pages/<id>", description: "Retrieve a page" },
+      { method: "PUT", path: "/wp/v2/pages/<id>", description: "Update a page" },
+      { method: "DELETE", path: "/wp/v2/pages/<id>", description: "Delete a page" }
+    ]
+  },
+  {
+    name: "Media",
+    description: "Upload and manage media files",
+    endpoints: [
+      { method: "GET", path: "/wp/v2/media", description: "List media items" },
+      { method: "POST", path: "/wp/v2/media", description: "Create a media item" },
+      { method: "GET", path: "/wp/v2/media/<id>", description: "Retrieve a media item" },
+      { method: "PUT", path: "/wp/v2/media/<id>", description: "Update a media item" },
+      { method: "DELETE", path: "/wp/v2/media/<id>", description: "Delete a media item" }
+    ]
+  },
+  {
+    name: "Users",
+    description: "Manage users and their roles",
+    endpoints: [
+      { method: "GET", path: "/wp/v2/users", description: "List users" },
+      { method: "POST", path: "/wp/v2/users", description: "Create a user" },
+      { method: "GET", path: "/wp/v2/users/<id>", description: "Retrieve a user" },
+      { method: "PUT", path: "/wp/v2/users/<id>", description: "Update a user" },
+      { method: "DELETE", path: "/wp/v2/users/<id>", description: "Delete a user" }
+    ]
+  },
+  {
+    name: "Comments",
+    description: "Manage comments on posts",
+    endpoints: [
+      { method: "GET", path: "/wp/v2/comments", description: "List comments" },
+      { method: "POST", path: "/wp/v2/comments", description: "Create a comment" },
+      { method: "GET", path: "/wp/v2/comments/<id>", description: "Retrieve a comment" },
+      { method: "PUT", path: "/wp/v2/comments/<id>", description: "Update a comment" },
+      { method: "DELETE", path: "/wp/v2/comments/<id>", description: "Delete a comment" }
+    ]
+  },
+  {
+    name: "Categories",
+    description: "Manage post categories",
+    endpoints: [
+      { method: "GET", path: "/wp/v2/categories", description: "List categories" },
+      { method: "POST", path: "/wp/v2/categories", description: "Create a category" },
+      { method: "GET", path: "/wp/v2/categories/<id>", description: "Retrieve a category" },
+      { method: "PUT", path: "/wp/v2/categories/<id>", description: "Update a category" },
+      { method: "DELETE", path: "/wp/v2/categories/<id>", description: "Delete a category" }
+    ]
+  },
+  {
+    name: "Tags",
+    description: "Manage post tags",
+    endpoints: [
+      { method: "GET", path: "/wp/v2/tags", description: "List tags" },
+      { method: "POST", path: "/wp/v2/tags", description: "Create a tag" },
+      { method: "GET", path: "/wp/v2/tags/<id>", description: "Retrieve a tag" },
+      { method: "PUT", path: "/wp/v2/tags/<id>", description: "Update a tag" },
+      { method: "DELETE", path: "/wp/v2/tags/<id>", description: "Delete a tag" }
+    ]
+  }
+];
+
+let currentEndpoint = null;
+
+function populateEndpointList() {
+  const endpointList = document.getElementById('endpointList');
+  endpoints.forEach(category => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div class="px-4 py-2 font-semibold text-gray-300">${category.name}</div>
+      <ul class="mb-4">
+        ${category.endpoints.map(endpoint => `
+          <li class="endpoint-item px-4 py-2 cursor-pointer flex items-center">
+            <span class="method-badge method-${endpoint.method.toLowerCase()} mr-2">${endpoint.method}</span>
+            <span>${endpoint.description}</span>
+          </li>
+        `).join('')}
+      </ul>
+    `;
+    endpointList.appendChild(li);
+  });
+}
+
+function showEndpointDetails(category, endpoint) {
+  currentEndpoint = endpoint;
+  document.getElementById('endpointTitle').textContent = `${category.name} - ${endpoint.description}`;
+  document.getElementById('endpointDescription').textContent = category.description;
+  document.getElementById('endpointMethod').innerHTML = `<span class="method-badge method-${endpoint.method.toLowerCase()}">${endpoint.method}</span>`;
+  document.getElementById('endpointURL').textContent = `${document.getElementById('siteUrl').value}/wp-json${endpoint.path}`;
+  
+  // Show relevant parameters based on the endpoint
+  const paramsHtml = `
+    <div class="grid grid-cols-2 gap-4">
+      ${endpoint.path.includes('<id>') ? `
+        <div>
+          <label for="resourceId" class="block mb-2">Resource ID:</label>
+          <input type="text" id="resourceId" class="w-full px-3 py-2 border rounded">
+        </div>
+      ` : ''}
+      ${['GET', 'POST', 'PUT'].includes(endpoint.method) ? `
+        <div>
+          <label for="perPage" class="block mb-2">Per Page:</label>
+          <input type="number" id="perPage" value="10" class="w-full px-3 py-2 border rounded">
+        </div>
+        <div>
+          <label for="page" class="block mb-2">Page:</label>
+          <input type="number" id="page" value="1" class="w-full px-3 py-2 border rounded">
+        </div>
+      ` : ''}
+      ${['POST', 'PUT'].includes(endpoint.method) ? `
+        <div class="col-span-2">
+          <label for="requestBody" class="block mb-2">Request Body (JSON):</label>
+          <textarea id="requestBody" rows="4" class="w-full px-3 py-2 border rounded"></textarea>
+        </div>
+      ` : ''}
+    </div>
+  `;
+  document.getElementById('endpointParams').innerHTML = paramsHtml;
+  
+  document.getElementById('endpointResponse').textContent = 'Response will appear here after sending a request.';
+}
+
+async function sendRequest() {
+  const siteUrl = document.getElementById('siteUrl').value;
+  const authMethod = document.getElementById('authMethod').value;
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  const jwtToken = document.getElementById('jwtToken').value;
+  
+  let url = `${siteUrl}/wp-json${currentEndpoint.path}`;
+  
+  // Replace <id> in URL if present
+  const resourceId = document.getElementById('resourceId')?.value;
+  if (resourceId) {
+    url = url.replace('<id>', resourceId);
+  }
+  
+  // Add query parameters for GET requests
+  if (currentEndpoint.method === 'GET') {
+    const perPage = document.getElementById('perPage').value;
+    const page = document.getElementById('page').value;
+    url += `?per_page=${perPage}&page=${page}`;
+  }
+  
+  const config = {
+    method: currentEndpoint.method,
+    url: url,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  
+  // Add authentication
+  if (authMethod === 'basic') {
+    config.auth = { username, password };
+  } else if (authMethod === 'jwt') {
+    config.headers['Authorization'] = `Bearer ${jwtToken}`;
+  }
+  
+  // Add request body for POST and PUT requests
+  if (['POST', 'PUT'].includes(currentEndpoint.method)) {
+    try {
+      config.data = JSON.parse(document.getElementById('requestBody').value);
+    } catch (error) {
+      alert('Invalid JSON in request body');
+      return;
+    }
+  }
+  
+  try {
+    const response = await axios(config);
+    document.getElementById('endpointResponse').textContent = JSON.stringify(response.data, null, 2);
+  } catch (error) {
+    document.getElementById('endpointResponse').textContent = `Error: ${error.message}\n\n${JSON.stringify(error.response?.data, null, 2)}`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  populateEndpointList();
+  
+  document.getElementById('endpointList').addEventListener('click', (e) => {
+    const endpointItem = e.target.closest('.endpoint-item');
+    if (endpointItem) {
+      const method = endpointItem.querySelector('.method-badge').textContent;
+      const description = endpointItem.textContent.trim().replace(method, '').trim();
+      const category = endpoints.find(cat => cat.endpoints.some(ep => ep.description === description));
+      const endpoint = category.endpoints.find(ep => ep.description === description);
+      showEndpointDetails(category, endpoint);
+    }
+  });
+  
+  document.getElementById('authMethod').addEventListener('change', (e) => {
+    const basicAuthFields = document.getElementById('basicAuthFields');
+    const jwtAuthFields = document.getElementById('jwtAuthFields');
+    if (e.target.value === 'basic') {
+      basicAuthFields.style.display = 'block';
+      jwtAuthFields.style.display = 'none';
+    } else {
+      basicAuthFields.style.display = 'none';
+      jwtAuthFields.style.display = 'block';
+    }
+  });
+  
+  document.getElementById('sendRequest').addEventListener('click', sendRequest);
+  
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    document.querySelectorAll('.endpoint-item').forEach(item => {
+      const text = item.textContent.toLowerCase();
+      item.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+    });
+  });
+});
+</script>
+</body></html>
