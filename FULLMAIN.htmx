@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZEN AI - Animated Integration</title>
+    <title>ZEN AI - Immersive Integration</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
         :root {
             --primary-color: #00ffff;
             --secondary-color: #ff00ff;
-            --background-dark: #1a1a2e;
+            --background-dark: #0a0a1e;
             --background-light: #16213e;
+            --neon-glow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color), 0 0 30px var(--primary-color);
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background: #000;
+            font-family: 'Orbitron', sans-serif;
+            background: var(--background-dark);
             margin: 0;
             padding: 0;
             color: #fff;
@@ -30,7 +32,7 @@
 
         #canvas-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1400px;
             padding: 20px;
             box-sizing: border-box;
             position: relative;
@@ -55,11 +57,12 @@
             justify-content: center;
             position: relative;
             overflow: hidden;
-            transition: height 0.5s ease;
+            transition: height 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             cursor: pointer;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
         }
 
         .embedded-bot-container.expanded {
@@ -70,17 +73,21 @@
             position: absolute;
             bottom: 10px;
             right: 10px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(0, 255, 255, 0.2);
             border: none;
             color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
+            padding: 8px 15px;
+            border-radius: 30px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .expand-button:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(0, 255, 255, 0.4);
+            box-shadow: var(--neon-glow);
         }
 
         .game-interface {
@@ -90,9 +97,9 @@
         }
 
         .game-tile {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
             text-align: center;
             cursor: pointer;
             transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -101,6 +108,7 @@
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(5px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .game-tile::before {
@@ -110,28 +118,28 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            background: radial-gradient(circle, rgba(0,255,255,0.2) 0%, rgba(0,255,255,0) 70%);
             opacity: 0;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.5s ease, transform 0.5s ease;
             transform: scale(0.1);
         }
 
         .game-tile:hover::before {
             opacity: 1;
             transform: scale(1);
-            transition: transform 0.5s ease, opacity 0.5s ease;
         }
 
         .game-tile:hover {
             transform: translateY(-10px) scale(1.05);
             box-shadow: 0 15px 30px rgba(0, 255, 255, 0.4);
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .game-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
+            font-size: 54px;
+            margin-bottom: 20px;
             transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            text-shadow: var(--neon-glow);
         }
 
         .game-tile:hover .game-icon {
@@ -142,12 +150,15 @@
             font-size: 18px;
             opacity: 0.8;
             transition: all 0.5s ease;
-            font-weight: 300;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .game-tile:hover .game-text {
             opacity: 1;
             transform: scale(1.1);
+            text-shadow: var(--neon-glow);
         }
 
         @media (max-width: 768px) {
@@ -156,11 +167,11 @@
             }
 
             .embedded-bot-container {
-                height: 200px;
+                height: 250px;
             }
 
             .embedded-bot-container.expanded {
-                height: 500px;
+                height: 550px;
             }
 
             .game-interface {
@@ -174,11 +185,11 @@
             }
 
             .embedded-bot-container {
-                height: 150px;
+                height: 200px;
             }
 
             .embedded-bot-container.expanded {
-                height: 400px;
+                height: 450px;
             }
         }
     </style>
@@ -187,13 +198,13 @@
     <div id="animation-container"></div>
     <div id="canvas-container">
         <div class="embedded-bot-container" id="bot-container">
-            <iframe id="IHJHO913T7" loading="eager" src="https://embed.pickaxeproject.com/axe?id=ZENX_HCYZ5&mode=embed_gold&host=beta&theme=custom&opacity=100&font_header=Libre+Franklin&size_header=32&font_body=Quicksand&size_body=16&font_labels=Quicksand&size_labels=20&font_button=Quicksand&size_button=16&c_fb=040101&c_ff=01070E&c_fbd=FFFFFF&c_rb=019FEF&c_bb=FFFFFF&c_bt=000000&c_t=FFFFFF&s_ffo=100&s_rbo=100&s_bbo=100&s_f=minimalist&s_b=filled&s_t=0.5&s_to=1&s_r=3" width="100%" height="100%" style="border:1px solid rgba(0, 0, 0, 1);transition:.3s;border-radius:4px;" frameBorder="0"></iframe>
+            <iframe id="IHJHO913T7" loading="eager" src="https://embed.pickaxeproject.com/axe?id=ZENX_HCYZ5&mode=embed_gold&host=beta&theme=custom&opacity=100&font_header=Orbitron&size_header=32&font_body=Orbitron&size_body=16&font_labels=Orbitron&size_labels=20&font_button=Orbitron&size_button=16&c_fb=040101&c_ff=01070E&c_fbd=FFFFFF&c_rb=019FEF&c_bb=FFFFFF&c_bt=000000&c_t=FFFFFF&s_ffo=100&s_rbo=100&s_bbo=100&s_f=minimalist&s_b=filled&s_t=0.5&s_to=1&s_r=3" width="100%" height="100%" style="border:1px solid rgba(0, 255, 255, 0.3);transition:.3s;border-radius:20px;" frameBorder="0"></iframe>
             <button class="expand-button" id="expand-button">Expand</button>
         </div>
 
         <div class="game-interface">
             <a href="https://www.zenai.biz/zenagents" class="game-tile">
-                <div class="game-icon">⚙️</div>
+                <div class="game-icon">🔬</div>
                 <div class="game-text">How It Works</div>
             </a>
             <a href="https://www.zenai.biz/ai-literacy" class="game-tile">
@@ -201,7 +212,7 @@
                 <div class="game-text">AI Literacy</div>
             </a>
             <a href="https://www.zenai.biz/coin-bubble" class="game-tile">
-                <div class="game-icon">🪙</div>
+                <div class="game-icon">💎</div>
                 <div class="game-text">Coin Bubble</div>
             </a>
             <a href="https://sites.google.com/view/zen-collective/home" class="game-tile">
@@ -212,9 +223,9 @@
                 <div class="game-icon">🤖</div>
                 <div class="game-text">AI Arena</div>
             </a>
-            <a href="https://www.zenai.biz/account/zenfren" class="game-tile">
-                <div class="game-icon">📱</div>
-                <div class="game-text">AI/ML Apps</div>
+            <a href="https://www.zenai.biz/careers" class="game-tile">
+                <div class="game-icon">📡</div>
+                <div class="game-text">About ZEN</div>
             </a>
             <a href="https://www.zenai.biz/profile/royaltokens/profile" class="game-tile">
                 <div class="game-icon">🔗</div>
@@ -233,7 +244,7 @@
                 <div class="game-text">Courses</div>
             </a>
             <a href="https://www.zenai.biz/fuel-of-zen" class="game-tile">
-                <div class="game-icon">⛽️</div>
+                <div class="game-icon">⚡</div>
                 <div class="game-text">ZEN Fuel</div>
             </a>
             <a href="https://www.zenai.biz/profile/royaltokens/profile" class="game-tile">
@@ -241,7 +252,7 @@
                 <div class="game-text">ZENDash</div>
             </a>
             <a href="https://www.zenai.biz/zenagents" class="game-tile">
-                <div class="game-icon">💼</div>
+                <div class="game-icon">🏢</div>
                 <div class="game-text">Businesses</div>
             </a>
             <a href="https://zenai.biz/legal" class="game-tile">
@@ -252,16 +263,16 @@
                 <div class="game-icon">🛒</div>
                 <div class="game-text">Shop</div>
             </a>
-            <a href="https://www.zenai.biz/ai-tv" class="game-tile">
-                <div class="game-icon">📺</div>
-                <div class="game-text">ZEN Stream</div>
+            <a href="https://www.zenai.biz/services" class="game-tile">
+                <div class="game-icon">🚀</div>
+                <div class="game-text">Projects & Services</div>
             </a>
         </div>
     </div>
 
     <script>
         let scene, camera, renderer, particles, textMesh;
-        const particleCount = 5000;
+        const particleCount = 8000;
 
         function init() {
             scene = new THREE.Scene();
@@ -389,10 +400,20 @@
             toggleExpand();
         });
 
-        function startGame(game) {
-            console.log(`Starting game: ${game}`);
-            // Add game logic here
-        }
+        // Add hover animations for game tiles
+        const gameTiles = document.querySelectorAll('.game-tile');
+        gameTiles.forEach(tile => {
+            tile.addEventListener('mouseenter', () => {
+                gsap.to(tile, {duration: 0.3, scale: 1.05, y: -10, boxShadow: '0 15px 30px rgba(0, 255, 255, 0.4)'});
+                gsap.to(tile.querySelector('.game-icon'), {duration: 0.3, scale: 1.2, rotate: 15});
+                gsap.to(tile.querySelector('.game-text'), {duration: 0.3, scale: 1.1, opacity: 1});
+            });
+            tile.addEventListener('mouseleave', () => {
+                gsap.to(tile, {duration: 0.3, scale: 1, y: 0, boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'});
+                gsap.to(tile.querySelector('.game-icon'), {duration: 0.3, scale: 1, rotate: 0});
+                gsap.to(tile.querySelector('.game-text'), {duration: 0.3, scale: 1, opacity: 0.8});
+            });
+        });
     </script>
 </body>
 </html>
