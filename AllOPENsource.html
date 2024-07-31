@@ -1,54 +1,55 @@
-<!DOCTYPE html><html><head><base href="https://websim.ai/ai-llm-chat"><title>AI LLM Chat - WebSim</title><style>
+<html><head><base href="https://websim.ai/ai-llm-chat"><title>ZEN Open Arena</title><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
   body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 0;
     background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
   }
   .container {
-    display: flex;
-    max-width: 1400px;
-    width: 100%;
+    max-width: 100%;
+    padding: 10px;
+  }
+  .header {
+    text-align: center;
+    padding: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .logo {
+    max-width: 100%;
+    height: auto;
+  }
+  .chat-panel {
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  .conversation-list {
-    flex: 1;
-    padding: 20px;
-    border-right: 1px solid #ddd;
-    overflow-y: auto;
-    max-height: 90vh;
-  }
-  .chat-panel {
-    flex: 2;
-    padding: 20px;
-    border-right: 1px solid #ddd;
-  }
-  .settings-panel {
-    flex: 1;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 0 8px 8px 0;
-    overflow-y: auto;
-    max-height: 90vh;
-  }
-  h1, h2 {
-    color: #333;
-    text-align: center;
-    margin-top: 0;
-    font-size: 1.5em;
-    font-weight: bold;
+    margin-top: 20px;
+    padding: 10px;
   }
   .chat-container {
-    height: 400px;
+    height: 300px;
     overflow-y: auto;
     border: 1px solid #ddd;
     padding: 10px;
-    margin-bottom: 20px;
-    background-color: #fff;
+    margin-bottom: 10px;
+  }
+  .input-container {
+    display: flex;
+  }
+  #user-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+  }
+  #send-button {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
   }
   .message {
     margin-bottom: 10px;
@@ -62,43 +63,12 @@
   .ai-message {
     background-color: #f0f4c3;
   }
-  .input-container {
-    display: flex;
-  }
-  #user-input, #new-memory-input {
-    flex-grow: 1;
+  .settings-panel {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 20px;
     padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px 0 0 4px;
-  }
-  #send-button, #add-memory-button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 0 4px 4px 0;
-    cursor: pointer;
-  }
-  #send-button:hover, #add-memory-button:hover {
-    background-color: #45a049;
-  }
-  .settings-group {
-    margin-bottom: 20px;
-  }
-  .settings-group h2 {
-    font-size: 1.5em;
-    font-weight: bold;
-    margin-bottom: 10px;
-    cursor: pointer;
-  }
-  .settings-group.collapsed h2::after {
-    content: ' ▶';
-  }
-  .settings-group-content {
-    display: none;
-  }
-  .settings-group.expanded .settings-group-content {
-    display: block;
   }
   select, input[type="number"], input[type="text"] {
     width: 100%;
@@ -111,231 +81,71 @@
     display: block;
     margin-bottom: 5px;
   }
-  .conversation-item, .memory-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-  }
-  .conversation-item:hover, .memory-item:hover {
-    background-color: #f0f0f0;
-  }
-  .conversation-title, .memory-content {
-    cursor: pointer;
-    flex-grow: 1;
-  }
-  .trash-can {
-    cursor: pointer;
-    color: #ff4444;
+  .settings-group h2 {
     font-size: 1.2em;
-    margin-left: 10px;
+    margin-bottom: 10px;
+  }
+  .settings-group-content {
+    display: none;
+  }
+  .settings-group.expanded .settings-group-content {
+    display: block;
   }
   #new-conversation, #memory-bank-button {
-    width: 50%;
+    width: 100%;
     padding: 10px;
-    margin: 0 auto 20px;
-    display: block;
+    margin-top: 10px;
     background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
   }
-  #new-conversation:hover, #memory-bank-button:hover {
-    background-color: #45a049;
-  }
-  .generated-image {
-    max-width: 100%;
-    height: auto;
-    margin-top: 10px;
-    border-radius: 4px;
-  }
-  #remove-all-conversations-and-memories {
-    width: 100%;
-    padding: 10px;
-    margin-top: 20px;
-    background-color: #ff4444;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  #remove-all-conversations-and-memories:hover {
-    background-color: #ff0000;
-  }
-  #model-select {
-    width: 66.67%;
-    padding: 8px;
-    margin: 0 auto 10px;
-    display: block;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
-    background-repeat: no-repeat;
-    background-position: right 8px center;
-    background-size: 16px;
-    padding-right: 30px;
-  }
-  .image-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 10px;
-    margin-top: 10px;
-  }
-  .image-grid img {
-    width: 100%;
-    height: auto;
-    border-radius: 4px;
-  }
-  #memory-bank-modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-  }
-  .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-    border-radius: 8px;
-  }
-  .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-  }
-  .close:hover,
-  .close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  #memory-list {
-    margin-top: 20px;
-  }
-  .empty-memory {
-    text-align: center;
-    color: #888;
-    font-style: italic;
-  }
-  /* Updated styles for code formatting and buttons */
-  pre {
-    background-color: #f4f4f4;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 10px;
-    margin: 10px 0;
-    overflow-x: auto;
-    position: relative;
-  }
-  code {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 14px;
-    line-height: 1.5;
-  }
-  .code-buttons {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-  }
-  .copy-button, .gui-preview-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 5px 10px;
-    font-size: 12px;
-    cursor: pointer;
-    margin-left: 5px;
-  }
-  .copy-button:hover, .gui-preview-button:hover {
-    background-color: #45a049;
-  }
-  .audio-player {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-  }
-  #gui-preview-modal {
-    display: none;
-    position: fixed;
-    z-index: 2;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-  }
-  #gui-preview-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 90%;
-    height: 80%;
-    max-width: 1200px;
-    border-radius: 8px;
-  }
-  #gui-preview-iframe {
-    width: 100%;
-    height: calc(100% - 40px);
-    border: none;
-  }
-</style></head><body>
+</style>
+</head>
+<body>
   <div class="container">
-    <div class="conversation-list">
-      <h2>Conversations</h2>
-      <button id="new-conversation">New Conversation</button>
-      <div id="conversation-list-container"></div>
+    <div class="header">
+      <img src="https://i.imgur.com/xfMdqOW.png" alt="ZEN Open Arena Logo" class="logo">
+      <h1>ZEN Open Arena</h1>
     </div>
+    
     <div class="chat-panel">
-      <h1>AI LLM Chat</h1>
       <div id="chat-container" class="chat-container"></div>
       <div class="input-container">
         <input type="text" id="user-input" placeholder="Type your message here...">
         <button id="send-button">Send</button>
       </div>
     </div>
+    
     <div class="settings-panel">
       <div class="settings-group">
         <h2>Model Selection</h2>
         <select id="model-select">
-<option value="cognitivecomputations/dolphin-2.9.1-llama-3-70b">Dolphin-2.9.1-llama-3-70b</option>
-  <option value="google/gemma-1.1-7b-it">Gemma-1.1-7B-IT</option>
-  <option value="google/gemma-2-27b-it">Gemma-2-27B-IT</option>
-  <option value="google/gemma-2-9b-it">Gemma-2-9B-IT</option>
-  <option value="lizpreciatior/lzlv_70b_fp16_hf">lzlv_70b_fp16_hf</option>
-  <option value="llava-hf/llava-1.5-7b-hf">LLaVA-1.5-7B-HF</option>
-  <option value="meta-llama/Meta-Llama-3-70B-Instruct">Llama-3-70B-Instruct</option>
-  <option value="meta-llama/Meta-Llama-3-8B-Instruct">Llama-3-8B-Instruct</option>
-  <option value="meta-llama/Meta-Llama-3.1-405B-Instruct">Llama-3.1-405B-Instruct</option>
-  <option value="microsoft/Phi-3-medium-4k-instruct">Phi-3-medium-4k</option>
-  <option value="microsoft/WizardLM-2-7B">WizardLM-2-7B</option>
-  <option value="microsoft/WizardLM-2-8x22B">WizardLM-2-8x22B</option>
-  <option value="mistralai/Mistral-7B-Instruct-v0.3">Mistral-7B-Instruct-v0.3</option>
-  <option value="mistralai/Mixtral-8x22B-Instruct-v0.1">Mixtral-8x22B-Instruct</option>
-  <option value="nvidia/Nemotron-4-340B-Instruct">Nemotron-4-340B</option>
-  <option value="openchat/openchat-3.6-8b">OpenChat-3.6-8B</option>
-  <option value="Qwen/Qwen2-72B-Instruct">Qwen2-72B-Instruct</option>
-</select>
+          <option value="cognitivecomputations/dolphin-2.9.1-llama-3-70b">Dolphin-2.9.1-llama-3-70b</option>
+          <option value="google/gemma-1.1-7b-it">Gemma-1.1-7B-IT</option>
+          <option value="google/gemma-2-27b-it">Gemma-2-27B-IT</option>
+          <option value="google/gemma-2-9b-it">Gemma-2-9B-IT</option>
+          <option value="lizpreciatior/lzlv_70b_fp16_hf">lzlv_70b_fp16_hf</option>
+          <option value="llava-hf/llava-1.5-7b-hf">LLaVA-1.5-7B-HF</option>
+          <option value="meta-llama/Meta-Llama-3-70B-Instruct">Llama-3-70B-Instruct</option>
+          <option value="meta-llama/Meta-Llama-3-8B-Instruct">Llama-3-8B-Instruct</option>
+          <option value="meta-llama/Meta-Llama-3.1-405B-Instruct">Llama-3.1-405B-Instruct</option>
+          <option value="microsoft/Phi-3-medium-4k-instruct">Phi-3-medium-4k</option>
+          <option value="microsoft/WizardLM-2-7B">WizardLM-2-7B</option>
+          <option value="microsoft/WizardLM-2-8x22B">WizardLM-2-8x22B</option>
+          <option value="mistralai/Mistral-7B-Instruct-v0.3">Mistral-7B-Instruct-v0.3</option>
+          <option value="mistralai/Mixtral-8x22B-Instruct-v0.1">Mixtral-8x22B-Instruct</option>
+          <option value="nvidia/Nemotron-4-340B-Instruct">Nemotron-4-340B</option>
+          <option value="openchat/openchat-3.6-8b">OpenChat-3.6-8B</option>
+          <option value="Qwen/Qwen2-72B-Instruct">Qwen2-72B-Instruct</option>
+        </select>
       </div>
+      
+      <button id="new-conversation">New Conversation</button>
       <button id="memory-bank-button">Memory Bank</button>
-      <div class="settings-group collapsed">
+      
+      <div class="settings-group">
         <h2>Model Parameters</h2>
         <div class="settings-group-content">
           <label for="temperature">Temperature:</label>
@@ -357,7 +167,8 @@
           <input type="number" id="repetition-penalty" min="0.1" max="2" step="0.1" value="1">
         </div>
       </div>
-      <div class="settings-group collapsed">
+      
+      <div class="settings-group">
         <h2>Image Generation</h2>
         <div class="settings-group-content">
           <label for="negative-prompt">Negative Prompt:</label>
@@ -409,7 +220,8 @@
           <input type="number" id="refine-steps" placeholder="Number of steps to refine">
         </div>
       </div>
-      <div class="settings-group collapsed">
+      
+      <div class="settings-group">
         <h2>Advanced Settings</h2>
         <div class="settings-group-content">
           <label for="system-message">System Message:</label>
@@ -419,30 +231,11 @@
           <input type="text" id="stop-sequences" placeholder="Enter stop sequences (comma-separated)">
         </div>
       </div>
-      <button id="remove-all-conversations-and-memories">Remove all conversations and memories</button>
     </div>
   </div>
 
-  <div id="memory-bank-modal" class="modal">
-    <div class="modal-content">
-      <span class="close">×</span>
-      <h2>Memory Bank</h2>
-      <div class="input-container">
-        <input type="text" id="new-memory-input" placeholder="Add a new memory...">
-        <button id="add-memory-button">Add</button>
-      </div>
-      <div id="memory-list"></div>
-    </div>
-  </div>
-
-  <div id="gui-preview-modal">
-    <div id="gui-preview-content">
-      <span class="close">×</span>
-      <iframe id="gui-preview-iframe"></iframe>
-    </div>
-  </div>
-
-  <script>const chatContainer = document.getElementById('chat-container');
+  <script>
+    const chatContainer = document.getElementById('chat-container');
     const userInput = document.getElementById('user-input');
     const sendButton = document.getElementById('send-button');
     const modelSelect = document.getElementById('model-select');
@@ -455,285 +248,19 @@
     const systemMessageInput = document.getElementById('system-message');
     const stopSequencesInput = document.getElementById('stop-sequences');
     const newConversationButton = document.getElementById('new-conversation');
-    const conversationListContainer = document.getElementById('conversation-list-container');
-    const removeAllConversationsAndMemoriesButton = document.getElementById('remove-all-conversations-and-memories');
     const memoryBankButton = document.getElementById('memory-bank-button');
-    const memoryBankModal = document.getElementById('memory-bank-modal');
-    const memoryListContainer = document.getElementById('memory-list');
-    const closeMemoryBankButton = document.querySelector('.close');
-    const newMemoryInput = document.getElementById('new-memory-input');
-    const addMemoryButton = document.getElementById('add-memory-button');
-    const guiPreviewModal = document.getElementById('gui-preview-modal');
-    const guiPreviewIframe = document.getElementById('gui-preview-iframe');
-    const closeGuiPreviewButton = guiPreviewModal.querySelector('.close');
-
-    // Image generation inputs
-    const negativePromptInput = document.getElementById('negative-prompt');
-    const widthInput = document.getElementById('width');
-    const heightInput = document.getElementById('height');
-    const numOutputsInput = document.getElementById('num-outputs');
-    const schedulerSelect = document.getElementById('scheduler');
-    const numInferenceStepsInput = document.getElementById('num-inference-steps');
-    const guidanceScaleInput = document.getElementById('guidance-scale');
-    const promptStrengthInput = document.getElementById('prompt-strength');
-    const seedInput = document.getElementById('seed');
-    const refineSelect = document.getElementById('refine');
-    const highNoiseFracInput = document.getElementById('high-noise-frac');
-    const refineStepsInput = document.getElementById('refine-steps');
 
     let conversationHistory = [];
     let currentConversationId = null;
     let memoryBank = [];
 
-    function saveConversations() {
-      localStorage.setItem('conversations', JSON.stringify(conversationHistory));
-    }
-
-    function loadConversations() {
-      const savedConversations = localStorage.getItem('conversations');
-      if (savedConversations) {
-        conversationHistory = JSON.parse(savedConversations);
-        updateConversationList();
-      }
-    }
-
-    function saveMemories() {
-      localStorage.setItem('memories', JSON.stringify(memoryBank));
-    }
-
-    function loadMemories() {
-      const savedMemories = localStorage.getItem('memories');
-      if (savedMemories) {
-        memoryBank = JSON.parse(savedMemories);
-        updateMemoryList();
-      }
-    }
-
-    function updateConversationList() {
-      conversationListContainer.innerHTML = '';
-      conversationHistory.forEach((conversation, index) => {
-        const conversationItem = document.createElement('div');
-        conversationItem.classList.add('conversation-item');
-        
-        const conversationTitle = document.createElement('div');
-        conversationTitle.classList.add('conversation-title');
-        conversationTitle.textContent = `Conversation ${index + 1}`;
-        conversationTitle.addEventListener('click', () => loadConversation(index));
-        
-        const trashCan = document.createElement('span');
-        trashCan.classList.add('trash-can');
-        trashCan.innerHTML = '🗑️';
-        trashCan.addEventListener('click', (e) => {
-          e.stopPropagation();
-          removeConversation(index);
-        });
-        
-        conversationItem.appendChild(conversationTitle);
-        conversationItem.appendChild(trashCan);
-        conversationListContainer.appendChild(conversationItem);
-      });
-    }
-
-    function updateMemoryList() {
-      memoryListContainer.innerHTML = '';
-      if (memoryBank.length === 0) {
-        const emptyMessage = document.createElement('div');
-        emptyMessage.classList.add('empty-memory');
-        emptyMessage.textContent = 'Your memory bank is empty.';
-        memoryListContainer.appendChild(emptyMessage);
-      } else {
-        memoryBank.forEach((memory, index) => {
-          const memoryItem = document.createElement('div');
-          memoryItem.classList.add('memory-item');
-          
-          const memoryContent = document.createElement('div');
-          memoryContent.classList.add('memory-content');
-          memoryContent.textContent = memory;
-          
-          const trashCan = document.createElement('span');
-          trashCan.classList.add('trash-can');
-          trashCan.innerHTML = '🗑️';
-          trashCan.addEventListener('click', () => removeMemory(index));
-          
-          memoryItem.appendChild(memoryContent);
-          memoryItem.appendChild(trashCan);
-          memoryListContainer.appendChild(memoryItem);
-        });
-      }
-    }
-
-    function removeConversation(index) {
-      conversationHistory.splice(index, 1);
-      saveConversations();
-      updateConversationList();
-      if (currentConversationId === index) {
-        if (conversationHistory.length > 0) {
-          loadConversation(conversationHistory.length - 1);
-        } else {
-          newConversation();
-        }
-      } else if (currentConversationId > index) {
-        currentConversationId--;
-      }
-    }
-
-    function removeMemory(index) {
-      memoryBank.splice(index, 1);
-      saveMemories();
-      updateMemoryList();
-    }
-
-    function addMessage(content, isUser, imageUrls = []) {
+    function addMessage(content, isUser) {
       const messageDiv = document.createElement('div');
       messageDiv.classList.add('message');
       messageDiv.classList.add(isUser ? 'user-message' : 'ai-message');
-      
-      // Check if the content contains code and format it
-      if (content.includes('```')) {
-        const parts = content.split('```');
-        parts.forEach((part, index) => {
-          if (index % 2 === 0) {
-            // This is regular text
-            messageDiv.appendChild(document.createTextNode(part));
-          } else {
-            // This is code
-            const preElement = document.createElement('pre');
-            const codeElement = document.createElement('code');
-            codeElement.textContent = part.trim();
-            preElement.appendChild(codeElement);
-            
-            // Add code buttons
-            const codeButtons = document.createElement('div');
-            codeButtons.classList.add('code-buttons');
-            
-            const copyButton = document.createElement('button');
-            copyButton.textContent = 'Copy';
-            copyButton.classList.add('copy-button');
-            copyButton.addEventListener('click', () => {
-              navigator.clipboard.writeText(part.trim()).then(() => {
-                copyButton.textContent = 'Copied!';
-                setTimeout(() => {
-                  copyButton.textContent = 'Copy';
-                }, 2000);
-              });
-            });
-            
-            const guiPreviewButton = document.createElement('button');
-            guiPreviewButton.textContent = 'GUI Preview';
-            guiPreviewButton.classList.add('gui-preview-button');
-            guiPreviewButton.addEventListener('click', () => {
-              showGuiPreview(part.trim());
-            });
-            
-            codeButtons.appendChild(copyButton);
-            codeButtons.appendChild(guiPreviewButton);
-            preElement.appendChild(codeButtons);
-            
-            messageDiv.appendChild(preElement);
-          }
-        });
-      } else {
-        messageDiv.textContent = content;
-      }
-
-      if (!isUser) {
-        const audioPlayerDiv = document.createElement('div');
-        audioPlayerDiv.classList.add('audio-player');
-      
-        const audioElement = document.createElement('audio');
-        audioElement.src = `https://texttospeech.responsivevoice.org/v1/text:synthesize?lang=en-GB&engine=g1&pitch=0.5&rate=0.5&volume=1&key=kvfbSITh&gender=male&text=${encodeURIComponent(content)}`;
-        audioElement.controls = true;
-        audioElement.style.display = "none";
-      
-        const audioPlayButton = document.createElement('button');
-        audioPlayButton.innerHTML = '🔊';
-        audioPlayButton.onclick = () => {
-          if (audioElement.paused) {
-            audioElement.play();
-          } else {
-            audioElement.pause();
-          }
-        };
-      
-        audioPlayerDiv.appendChild(audioElement);
-        audioPlayerDiv.appendChild(audioPlayButton);
-        messageDiv.appendChild(audioPlayerDiv);
-      }
-      
+      messageDiv.textContent = content;
       chatContainer.appendChild(messageDiv);
-
-      if (imageUrls.length > 0) {
-        const imageGrid = document.createElement('div');
-        imageGrid.classList.add('image-grid');
-        imageUrls.forEach(url => {
-          const imageElement = document.createElement('img');
-          imageElement.src = url;
-          imageElement.alt = 'Generated image based on AI prompt';
-          imageElement.classList.add('generated-image');
-          imageGrid.appendChild(imageElement);
-        });
-        chatContainer.appendChild(imageGrid);
-
-        // Scroll to bottom after images load
-        const lastImage = imageGrid.lastElementChild;
-        lastImage.onload = () => {
-          chatContainer.scrollTop = chatContainer.scrollHeight;
-        };
-      }
-
-      // Scroll to bottom immediately for text messages
       chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-    function showGuiPreview(code) {
-      const blob = new Blob([code], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      guiPreviewIframe.src = url;
-      guiPreviewModal.style.display = 'block';
-    }
-
-    async function generateImage(prompt) {
-      const payload = {
-        input: {
-          prompt: prompt,
-          negative_prompt: negativePromptInput.value,
-          width: parseInt(widthInput.value),
-          height: parseInt(heightInput.value),
-          num_outputs: parseInt(numOutputsInput.value),
-          scheduler: schedulerSelect.value,
-          num_inference_steps: parseInt(numInferenceStepsInput.value),
-          guidance_scale: parseFloat(guidanceScaleInput.value),
-          prompt_strength: parseFloat(promptStrengthInput.value),
-          seed: seedInput.value ? parseInt(seedInput.value) : undefined,
-          refine: refineSelect.value,
-          high_noise_frac: parseFloat(highNoiseFracInput.value),
-          apply_watermark: false
-        }
-      };
-
-      if (refineSelect.value === 'base_image_refiner' && refineStepsInput.value) {
-        payload.input.refine_steps = parseInt(refineStepsInput.value);
-      }
-
-      try {
-        const response = await fetch('https://api.deepinfra.com/v1/inference/stability-ai/sdxl', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-          throw new Error('Image generation failed');
-        }
-
-        const data = await response.json();
-        return data.output;
-      } catch (error) {
-        console.error('Error generating image:', error);
-        return null;
-      }
     }
 
     async function sendMessage() {
@@ -744,11 +271,11 @@
       userInput.value = '';
 
       const systemMessage = systemMessageInput.value.trim();
-      if (systemMessage && conversationHistory[currentConversationId].messages.length === 0) {
-        conversationHistory[currentConversationId].messages.push({ role: 'system', content: systemMessage });
+      if (systemMessage && conversationHistory.length === 0) {
+        conversationHistory.push({ role: 'system', content: systemMessage });
       }
 
-      conversationHistory[currentConversationId].messages.push({ role: 'user', content: userMessage });
+      conversationHistory.push({ role: 'user', content: userMessage });
 
       const selectedModel = modelSelect.value;
       const temperature = parseFloat(temperatureInput.value);
@@ -759,12 +286,6 @@
       const repetitionPenalty = parseFloat(repetitionPenaltyInput.value);
       const stopSequences = stopSequencesInput.value.split(',').map(s => s.trim()).filter(s => s);
 
-      // Prepare messages including memories
-      const messages = [
-        { role: 'system', content: `You are an AI assistant capable of generating images and writing code. When asked to create or generate an image, respond with a detailed prompt for the image, starting with 'Generate an image:' followed by the description. When asked for code, provide properly formatted and indented code within triple backticks. Here are some things you know about me: ${memoryBank.join('. ')}` },
-        ...conversationHistory[currentConversationId].messages
-      ];
-
       try {
         const response = await fetch('https://api.deepinfra.com/v1/openai/chat/completions', {
           method: 'POST',
@@ -773,7 +294,7 @@
           },
           body: JSON.stringify({
             model: selectedModel,
-            messages: messages,
+            messages: conversationHistory,
             temperature,
             top_p: topP,
             max_tokens: maxTokens,
@@ -791,25 +312,8 @@
         const data = await response.json();
         const aiMessage = data.choices[0].message.content;
 
-        let imageUrls = [];
-        if (aiMessage.toLowerCase().startsWith('generate an image:')) {
-          const imagePrompt = aiMessage.split(':')[1].trim();
-          const generatedImages = await generateImage(imagePrompt);
-          if (generatedImages) {
-            imageUrls = generatedImages;
-          } else {
-            addMessage('Sorry, I could not generate the image(s) at this time.', false);
-          }
-        }
-
-        addMessage(aiMessage, false, imageUrls);
-        conversationHistory[currentConversationId].messages.push({ 
-          role: 'assistant', 
-          content: aiMessage,
-          imageUrls: imageUrls
-        });
-
-        saveConversations();
+        addMessage(aiMessage, false);
+        conversationHistory.push({ role: 'assistant', content: aiMessage });
 
       } catch (error) {
         console.error('Error:', error);
@@ -819,30 +323,8 @@
 
     function newConversation() {
       currentConversationId = conversationHistory.length;
-      conversationHistory.push({ messages: [] });
+      conversationHistory = [];
       chatContainer.innerHTML = '';
-      updateConversationList();
-      saveConversations();
-    }
-
-    function loadConversation(index) {
-      currentConversationId = index;
-      chatContainer.innerHTML = '';
-      conversationHistory[index].messages.forEach(message => {
-        if (message.role !== 'system') {
-          addMessage(message.content, message.role === 'user', message.imageUrls || []);
-        }
-      });
-    }
-
-    function addMemory() {
-      const newMemory = newMemoryInput.value.trim();
-      if (newMemory !== '') {
-        memoryBank.push(newMemory);
-        saveMemories();
-        updateMemoryList();
-        newMemoryInput.value = '';
-      }
     }
 
     sendButton.addEventListener('click', sendMessage);
@@ -853,67 +335,8 @@
     });
     newConversationButton.addEventListener('click', newConversation);
 
-    memoryBankButton.addEventListener('click', () => {
-      memoryBankModal.style.display = 'block';
-      updateMemoryList();
-    });
-
-    closeMemoryBankButton.addEventListener('click', () => {
-      memoryBankModal.style.display = 'none';
-    });
-
-    closeGuiPreviewButton.addEventListener('click', () => {
-      guiPreviewModal.style.display = 'none';
-      guiPreviewIframe.src = '';
-    });
-
-    window.addEventListener('click', (event) => {
-      if (event.target === memoryBankModal) {
-        memoryBankModal.style.display = 'none';
-      }
-      if (event.target === guiPreviewModal) {
-        guiPreviewModal.style.display = 'none';
-        guiPreviewIframe.src = '';
-      }
-    });
-
-    addMemoryButton.addEventListener('click', addMemory);
-    newMemoryInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        addMemory();
-      }
-    });
-
-    function removeAllConversationsAndMemories() {
-      if (confirm('Are you sure you want to delete all conversations and memories? This action cannot be undone.')) {
-        localStorage.removeItem('conversations');
-        localStorage.removeItem('memories');
-        conversationHistory = [];
-        memoryBank = [];
-        updateConversationList();
-        updateMemoryList();
-        newConversation();
-        alert('All conversations and memories have been deleted.');
-      }
-    }
-
-    removeAllConversationsAndMemoriesButton.addEventListener('click', removeAllConversationsAndMemories);
-
-    document.querySelectorAll('.settings-group h2').forEach(header => {
-      header.addEventListener('click', () => {
-        header.parentElement.classList.toggle('collapsed');
-        header.parentElement.classList.toggle('expanded');
-      });
-    });
-
-    loadConversations();
-    loadMemories();
-    if (conversationHistory.length === 0) {
-      newConversation();
-    } else {
-      loadConversation(conversationHistory.length - 1);
-    }
-
+    // Initialize
+    newConversation();
     systemMessageInput.value = "You are an AI assistant capable of generating images and writing code. When asked to create or generate an image, respond with a detailed prompt for the image, starting with 'Generate an image:' followed by the description. When asked for code, provide properly formatted and indented code within triple backticks.";
   </script>
 </body></html>
