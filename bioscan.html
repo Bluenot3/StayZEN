@@ -1,0 +1,186 @@
+<html><head><base href="https://websim.creationengine.ai/qr-innovator/" /><title>ZEN AI Co - Biometric QR Smart Solution</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+  }
+  h1, h2 {
+    color: #333;
+    text-align: center;
+  }
+  #qr-details {
+    margin-top: 30px;
+    text-align: left;
+  }
+  .detail-section {
+    margin-bottom: 20px;
+  }
+  .detail-section h3 {
+    color: #4CAF50;
+  }
+  #enlarged-qr {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto 20px;
+    border: 1px solid #ccc;
+  }
+  #upload-section {
+    text-align: center;
+    margin-top: 20px;
+  }
+  #upload-button, #generate-button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  #fingerprint-input {
+    display: none;
+  }
+  .trial-notice {
+    background-color: #ffffd9;
+    border: 1px solid #e7e7e7;
+    padding: 10px;
+    margin-top: 20px;
+    text-align: center;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>ZEN AI Co - Biometric QR Smart Solution</h1>
+    <h2>Next-Gen Access Control for Businesses</h2>
+    <img id="enlarged-qr" src="https://websim.creationengine.ai/qr-innovator/biometric-qr-enlarged.svg" alt="Enlarged Biometric QR Code" width="400" height="400">
+    <div id="qr-details">
+      <div class="detail-section">
+        <h3>What is the Biometric QR Smart Solution?</h3>
+        <p>Our Biometric QR Smart Solution is an advanced access control system that incorporates biometric data, such as fingerprints or facial recognition patterns, into a QR code. This cutting-edge technology provides businesses with a secure, efficient, and user-friendly method for managing access to physical and digital resources.</p>
+      </div>
+      <div class="detail-section">
+        <h3>How It Works</h3>
+        <ol>
+          <li>Biometric data (e.g., fingerprint) is captured from the user.</li>
+          <li>The data is encrypted and encoded into a unique QR code structure.</li>
+          <li>The resulting QR code contains both standard encoded information and biometric data.</li>
+          <li>When scanned, the system verifies both the encoded information and the biometric data.</li>
+        </ol>
+      </div>
+      <div class="detail-section">
+        <h3>Benefits for Businesses</h3>
+        <ul>
+          <li>Single-touch access: Simplifies entry to buildings, offices, and secure areas.</li>
+          <li>Streamlined sign-in: Quick and secure authentication for company systems and devices.</li>
+          <li>Enhanced security: Adds a layer of biometric authentication to prevent unauthorized access.</li>
+          <li>Digital infrastructure protection: Secures access to sensitive company data and systems.</li>
+          <li>Customizable: Can be tailored to fit any business size or security requirement.</li>
+          <li>User-friendly: Easy to implement and use for employees and visitors alike.</li>
+        </ul>
+      </div>
+      <div class="detail-section">
+        <h3>Applications</h3>
+        <ul>
+          <li>Office building access control</li>
+          <li>Secure workstation login</li>
+          <li>VPN and remote access authentication</li>
+          <li>Time and attendance tracking</li>
+          <li>Restricted area access management</li>
+          <li>Secure document signing and verification</li>
+        </ul>
+      </div>
+      <div class="detail-section">
+        <h3>Privacy and Security Considerations</h3>
+        <p>ZEN AI Co prioritizes data protection. Our Biometric QR Smart Solution employs state-of-the-art encryption and follows strict data handling protocols to ensure compliance with global privacy regulations.</p>
+      </div>
+    </div>
+    <div id="upload-section">
+      <input type="file" id="fingerprint-input" accept="image/*">
+      <button id="upload-button">Upload Fingerprint</button>
+      <button id="generate-button">Generate Biometric QR</button>
+    </div>
+    <div class="trial-notice">
+      <p>This is a trial version of the Biometric QR Smart Solution by ZEN AI Co. Our team can customize and implement this solution for any business or entity. Contact us to learn more about how we can enhance your organization's security and efficiency.</p>
+    </div>
+  </div>
+
+  <script>
+    const fingerprintInput = document.getElementById('fingerprint-input');
+    const uploadButton = document.getElementById('upload-button');
+    const generateButton = document.getElementById('generate-button');
+    const enlargedQR = document.getElementById('enlarged-qr');
+
+    uploadButton.addEventListener('click', () => {
+      fingerprintInput.click();
+    });
+
+    fingerprintInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        uploadButton.textContent = 'Fingerprint Uploaded';
+        uploadButton.style.backgroundColor = '#4CAF50';
+      }
+    });
+
+    generateButton.addEventListener('click', () => {
+      if (fingerprintInput.files.length > 0) {
+        // In a real implementation, this would process the fingerprint and generate a unique QR code
+        // For this demo, we'll just show a placeholder image
+        enlargedQR.src = 'https://websim.creationengine.ai/qr-innovator/generated-biometric-qr.svg';
+        alert('Biometric QR Code generated! (Demo version)');
+      } else {
+        alert('Please upload a fingerprint image first.');
+      }
+    });
+
+    // Check if the device has fingerprint scanning capability
+    if (navigator.credentials && navigator.credentials.create) {
+      navigator.credentials.create({publicKey: {
+        challenge: new Uint8Array(32),
+        rp: { name: "ZEN AI Co" },
+        user: {
+          id: new Uint8Array(16),
+          name: "demo@zenai.co",
+          displayName: "Demo User",
+        },
+        pubKeyCredParams: [{alg: -7, type: "public-key"}],
+        authenticatorSelection: {
+          authenticatorAttachment: "platform",
+          requireResidentKey: false,
+          userVerification: "required"
+        },
+        timeout: 60000,
+      }}).then(() => {
+        uploadButton.textContent = 'Scan Fingerprint';
+        uploadButton.onclick = () => {
+          alert('Fingerprint scanning initiated! (Demo version)');
+          uploadButton.textContent = 'Fingerprint Scanned';
+          uploadButton.style.backgroundColor = '#4CAF50';
+        };
+      }).catch(() => {
+        // Fingerprint scanning not available, keep file upload as fallback
+      });
+    }
+  </script>
+</body></html>
