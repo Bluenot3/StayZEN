@@ -1,0 +1,205 @@
+<html><head><base href="https://websimcreations.com/ai-chatbot-interface/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Chatbot Interface</title>
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f0f0;
+        height: 100%;
+        overflow: hidden;
+    }
+    .container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background-image: url('https://i.imgur.com/xfMdqOW.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    .chat-window {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 15px;
+        margin: 20px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    .message {
+        margin-bottom: 15px;
+        padding: 10px 15px;
+        border-radius: 20px;
+        max-width: 80%;
+        animation: fadeIn 0.5s ease-out;
+    }
+    .user-message {
+        background-color: #DCF8C6;
+        align-self: flex-end;
+        margin-left: auto;
+    }
+    .bot-message {
+        background-color: #E5E5EA;
+        align-self: flex-start;
+    }
+    .input-area {
+        display: flex;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-top: 1px solid #ddd;
+    }
+    #user-input {
+        flex-grow: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        background-color: #f0f0f0;
+    }
+    #send-button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin-left: 10px;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    #send-button:hover {
+        background-color: #45a049;
+    }
+    .settings-panel {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    select, input[type="range"] {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="chat-window" id="chat-window"></div>
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="Type your message here...">
+        <button id="send-button">Send</button>
+    </div>
+</div>
+
+<div class="settings-panel">
+    <h3>Settings</h3>
+    <label for="model-select">AI Model:</label>
+    <select id="model-select">
+        <option value="groq">Groq AI</option>
+        <option value="claude">Claude 3.5 Sonnet</option>
+        <option value="openai">OpenAI GPT-4</option>
+    </select>
+    <label for="temperature">Temperature:</label>
+    <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7">
+    <span id="temperature-value">0.7</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script>
+const chatWindow = document.getElementById('chat-window');
+const userInput = document.getElementById('user-input');
+const sendButton = document.getElementById('send-button');
+const modelSelect = document.getElementById('model-select');
+const temperatureSlider = document.getElementById('temperature');
+const temperatureValue = document.getElementById('temperature-value');
+
+const API_KEYS = {
+    groq: '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',
+    claude: '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',
+    openai: 'sk-proj-BTfYkmy4bbNVOjOhvKwHT3BlbkFJvWUIWb9Xh1HtG9mXhTuo'
+};
+
+let conversationHistory = [];
+
+temperatureSlider.addEventListener('input', () => {
+    temperatureValue.textContent = temperatureSlider.value;
+});
+
+function addMessage(content, isUser = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message');
+    messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+    messageDiv.textContent = content;
+    chatWindow.appendChild(messageDiv);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+async function sendMessage() {
+    const userMessage = userInput.value.trim();
+    if (userMessage === '') return;
+
+    addMessage(userMessage, true);
+    userInput.value = '';
+
+    conversationHistory.push({ role: 'user', content: userMessage });
+
+    const selectedModel = modelSelect.value;
+    const temperature = parseFloat(temperatureSlider.value);
+
+    try {
+        let response;
+        switch (selectedModel) {
+            case 'groq':
+                response = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
+                    model: 'mixtral-8x7b-32768',
+                    messages: conversationHistory,
+                    temperature: temperature
+                }, {
+                    headers: { 'Authorization': `Bearer ${API_KEYS.groq}` }
+                });
+                break;
+            case 'claude':
+                response = await axios.post('https://api.anthropic.com/v1/messages', {
+                    model: 'claude-3-sonnet-20240229',
+                    messages: conversationHistory,
+                    temperature: temperature
+                }, {
+                    headers: { 'x-api-key': API_KEYS.claude }
+                });
+                break;
+            case 'openai':
+                response = await axios.post('https://api.openai.com/v1/chat/completions', {
+                    model: 'gpt-4',
+                    messages: conversationHistory,
+                    temperature: temperature
+                }, {
+                    headers: { 'Authorization': `Bearer ${API_KEYS.openai}` }
+                });
+                break;
+        }
+
+        const botReply = response.data.choices[0].message.content;
+        addMessage(botReply);
+        conversationHistory.push({ role: 'assistant', content: botReply });
+    } catch (error) {
+        console.error('Error:', error);
+        addMessage('Sorry, there was an error processing your request.');
+    }
+}
+
+sendButton.addEventListener('click', sendMessage);
+userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+});
+</script>
+</body>
+</html>
