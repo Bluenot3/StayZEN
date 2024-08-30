@@ -1,0 +1,554 @@
+<html><head><base href="https://example.com/">
+<title>ZEN Neural Advanced AI Chatbot - Refined Edition</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style id="theme-style">
+  :root {
+    --dark-teal: #004d4d;
+    --medium-teal: #006666;
+    --light-teal: #008080;
+    --light-blue: #e6f3ff;
+    --accent-blue: #66c2ff;
+    --text-color: #333333;
+  }
+  body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--light-blue);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .chat-area, .code-area, .visualization-area {
+    flex: 1;
+    margin: 0 10px 20px;
+    min-width: 300px;
+    background-color: var(--dark-teal);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  h1, h2 {
+    color: var(--accent-blue);
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
+  .chat-messages, .code-editor, #visualization {
+    height: 400px;
+    border: 1px solid var(--light-teal);
+    border-radius: 10px;
+    overflow: auto;
+    margin-bottom: 15px;
+    background-color: var(--medium-teal);
+  }
+  .message {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 80%;
+  }
+  .user-message {
+    background-color: var(--light-teal);
+    color: white;
+    align-self: flex-end;
+  }
+  .bot-message {
+    background-color: var(--light-blue);
+    color: var(--dark-teal);
+    align-self: flex-start;
+  }
+  .input-area {
+    display: flex;
+    margin-top: 10px;
+  }
+  .user-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 25px 0 0 25px;
+    font-size: 16px;
+  }
+  .send-button {
+    padding: 10px 20px;
+    background-color: var(--accent-blue);
+    color: white;
+    border: none;
+    border-radius: 0 25px 25px 0;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  .send-button:hover {
+    background-color: #4da6ff;
+  }
+  #options-panel {
+    background-color: var(--dark-teal);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .option-group {
+    margin-bottom: 15px;
+  }
+  label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--accent-blue);
+  }
+  select, input[type="range"], input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid var(--light-teal);
+    background-color: var(--light-blue);
+    color: var(--text-color);
+  }
+  #tts-toggle {
+    background-color: var(--accent-blue);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  #tts-toggle:hover {
+    background-color: #4da6ff;
+  }
+  #logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  #zen-logo {
+    width: 200px;
+    height: 200px;
+    filter: drop-shadow(0 0 10px rgba(102, 194, 255, 0.8));
+    animation: pulse 2s infinite ease-in-out;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  #visualization {
+    background-color: white;
+  }
+  .code-editor {
+    position: relative;
+    height: 300px;
+    width: 100%;
+  }
+  #code-output {
+    background-color: var(--light-blue);
+    color: var(--text-color);
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    white-space: pre-wrap;
+  }
+  .slider-value {
+    text-align: right;
+    font-size: 14px;
+    color: var(--accent-blue);
+  }
+</style>
+</head>
+<body>
+  <div id="logo-container">
+    <img id="zen-logo" src="https://i.imgur.com/xfMdqOW.png" alt="ZEN Neural Logo" title="ZEN Neural">
+  </div>
+
+  <div class="container">
+    <div class="chat-area">
+      <h1>ZEN Neural Advanced AI Chatbot</h1>
+      <div id="chat-messages" class="chat-messages"></div>
+      <div class="input-area">
+        <input type="text" id="user-input" class="user-input" placeholder="Type your message here...">
+        <button id="send-button" class="send-button">Send</button>
+      </div>
+    </div>
+
+    <div class="code-area">
+      <h2>Code Collaboration</h2>
+      <div id="code-editor" class="code-editor"></div>
+      <div class="input-area">
+        <input type="text" id="code-input" class="user-input" placeholder="Describe code changes or ask for help...">
+        <button id="code-send-button" class="send-button">Send</button>
+      </div>
+      <div id="code-output"></div>
+    </div>
+
+    <div class="visualization-area">
+      <h2>Data Visualization</h2>
+      <canvas id="visualization"></canvas>
+      <div class="input-area">
+        <input type="text" id="data-input" class="user-input" placeholder="Describe data to visualize...">
+        <button id="visualize-button" class="send-button">Visualize</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="options-panel">
+    <h2>Options</h2>
+    
+    <div class="option-group">
+      <label for="theme-select">Color Theme:</label>
+      <select id="theme-select">
+        <option value="default">Default</option>
+        <option value="dark">Dark Mode</option>
+        <option value="light">Light Mode</option>
+        <option value="nature">Nature</option>
+      </select>
+    </div>
+
+    <div class="option-group">
+      <label for="font-select">Font:</label>
+      <select id="font-select">
+        <option value="'Roboto', sans-serif">Roboto</option>
+        <option value="'Arial', sans-serif">Arial</option>
+        <option value="'Georgia', serif">Georgia</option>
+        <option value="'Courier New', monospace">Courier New</option>
+      </select>
+    </div>
+
+    <div class="option-group">
+      <label for="voice-select">TTS Voice:</label>
+      <select id="voice-select"></select>
+      
+      <label for="volume-control">Volume:</label>
+      <input type="range" id="volume-control" min="0" max="1" step="0.1" value="1">
+      <div id="volume-value" class="slider-value">1.0</div>
+      
+      <label for="speed-control">Speed:</label>
+      <input type="range" id="speed-control" min="0.5" max="2" step="0.1" value="1">
+      <div id="speed-value" class="slider-value">1.0</div>
+      
+      <button id="tts-toggle">Enable TTS</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script>
+    // Initialize variables
+    let conversationHistory = [];
+    let ttsEnabled = false;
+    let synth = window.speechSynthesis;
+    let voices = [];
+
+    // DOM elements
+    const chatMessages = document.getElementById('chat-messages');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+    const codeEditor = ace.edit("code-editor");
+    const codeInput = document.getElementById('code-input');
+    const codeSendButton = document.getElementById('code-send-button');
+    const codeOutput = document.getElementById('code-output');
+    const dataInput = document.getElementById('data-input');
+    const visualizeButton = document.getElementById('visualize-button');
+    const voiceSelect = document.getElementById('voice-select');
+    const volumeControl = document.getElementById('volume-control');
+    const speedControl = document.getElementById('speed-control');
+    const ttsToggle = document.getElementById('tts-toggle');
+    const themeSelect = document.getElementById('theme-select');
+    const fontSelect = document.getElementById('font-select');
+    const volumeValue = document.getElementById('volume-value');
+    const speedValue = document.getElementById('speed-value');
+
+    // Initialize Ace editor
+    codeEditor.setTheme("ace/theme/monokai");
+    codeEditor.session.setMode("ace/mode/javascript");
+
+    // Encrypt and embed API key
+    const encryptionKey = 'ZEN_NEURAL_SECRET_KEY';
+    const encryptedApiKey = CryptoJS.AES.encrypt('7VNrWaJZeHsaZwzQxDBBQimIesucTjme', encryptionKey).toString();
+
+    function decryptApiKey() {
+      const bytes = CryptoJS.AES.decrypt(encryptedApiKey, encryptionKey);
+      return bytes.toString(CryptoJS.enc.Utf8);
+    }
+
+    // TTS functions
+    function populateVoiceList() {
+      voices = synth.getVoices();
+      voiceSelect.innerHTML = '';
+      voices.forEach((voice, i) => {
+        const option = document.createElement('option');
+        option.textContent = `${voice.name} (${voice.lang})`;
+        option.setAttribute('data-lang', voice.lang);
+        option.setAttribute('data-name', voice.name);
+        voiceSelect.appendChild(option);
+      });
+    }
+
+    populateVoiceList();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
+
+    function speak(text) {
+      if (!ttsEnabled) return;
+      
+      synth.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      const selectedVoice = voices.find(voice => voice.name === voiceSelect.selectedOptions[0].getAttribute('data-name'));
+      utterance.voice = selectedVoice;
+      utterance.volume = volumeControl.value;
+      utterance.rate = speedControl.value;
+      synth.speak(utterance);
+    }
+
+    // Chat functions
+    async function sendMessage(input, displayArea, history) {
+      const userMessage = input.value.trim();
+      if (userMessage === '') return;
+
+      displayMessage(userMessage, 'user-message', displayArea);
+      input.value = '';
+
+      history.push({ role: 'user', content: userMessage });
+
+      try {
+        const API_KEY = decryptApiKey();
+        const response = await axios.post('https://api.deepinfra.com/v1/openai/chat/completions', {
+          model: 'meta-llama/Meta-Llama-3.1-405B-Instruct',
+          stream: false,
+          messages: history
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+          }
+        });
+
+        const botMessage = response.data.choices[0].message.content;
+        displayMessage(botMessage, 'bot-message', displayArea);
+        speak(botMessage);
+
+        history.push({ role: 'assistant', content: botMessage });
+      } catch (error) {
+        console.error('Error:', error);
+        const errorMessage = `Error: ${error.response ? error.response.data.error : error.message}`;
+        displayMessage(errorMessage, 'bot-message', displayArea);
+        speak(errorMessage);
+      }
+    }
+
+    function displayMessage(message, className, displayArea) {
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('message', className);
+      messageElement.textContent = message;
+      displayArea.appendChild(messageElement);
+      displayArea.scrollTop = displayArea.scrollHeight;
+    }
+
+    // Code collaboration functions
+    async function handleCodeInput() {
+      const userPrompt = codeInput.value.trim();
+      if (userPrompt === '') return;
+
+      codeInput.value = '';
+      codeOutput.textContent = 'Processing...';
+
+      try {
+        const API_KEY = decryptApiKey();
+        const response = await axios.post('https://api.deepinfra.com/v1/openai/chat/completions', {
+          model: 'meta-llama/Meta-Llama-3.1-405B-Instruct',
+          stream: false,
+          messages: [
+            { role: 'system', content: 'You are a helpful coding assistant. Provide code snippets and explanations.' },
+            { role: 'user', content: userPrompt }
+          ]
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+          }
+        });
+
+        const botResponse = response.data.choices[0].message.content;
+        codeOutput.textContent = botResponse;
+
+        // Extract code from the response and update the editor
+        const codeMatch = botResponse.match(/```[\s\S]*?```/);
+        if (codeMatch) {
+          const code = codeMatch[0].replace(/```/g, '').trim();
+          codeEditor.setValue(code);
+          codeEditor.clearSelection();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        codeOutput.textContent = `Error: ${error.response ? error.response.data.error : error.message}`;
+      }
+    }
+
+    // Data visualization functions
+    async function handleDataVisualization() {
+      const userPrompt = dataInput.value.trim();
+      if (userPrompt === '') return;
+
+      dataInput.value = '';
+
+      try {
+        const API_KEY = decryptApiKey();
+        const response = await axios.post('https://api.deepinfra.com/v1/openai/chat/completions', {
+          model: 'meta-llama/Meta-Llama-3.1-405B-Instruct',
+          stream: false,
+          messages: [
+            { role: 'system', content: 'You are a data visualization assistant. Provide Chart.js configuration for visualizations.' },
+            { role: 'user', content: userPrompt }
+          ]
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+          }
+        });
+
+        const botResponse = response.data.choices[0].message.content;
+
+        // Extract Chart.js configuration from the response
+        const configMatch = botResponse.match(/```javascript([\s\S]*?)```/);
+        if (configMatch) {
+          const config = configMatch[1].trim();
+          // Execute the configuration to create the chart
+          eval(`
+            const ctx = document.getElementById('visualization').getContext('2d');
+            new Chart(ctx, ${config});
+          `);
+        } else {
+          console.error('No valid Chart.js configuration found in the response');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert(`Error: ${error.response ? error.response.data.error : error.message}`);
+      }
+    }
+
+    // Event listeners
+    sendButton.addEventListener('click', () => sendMessage(userInput, chatMessages, conversationHistory));
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage(userInput, chatMessages, conversationHistory);
+    });
+
+    codeSendButton.addEventListener('click', handleCodeInput);
+    codeInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleCodeInput();
+    });
+
+    visualizeButton.addEventListener('click', handleDataVisualization);
+    dataInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleDataVisualization();
+    });
+
+    ttsToggle.addEventListener('click', () => {
+      ttsEnabled = !ttsEnabled;
+      ttsToggle.textContent = ttsEnabled ? 'Disable TTS' : 'Enable TTS';
+    });
+
+    // Theme changing functionality
+    const themes = {
+      default: {
+        '--dark-teal': '#004d4d',
+        '--medium-teal': '#006666',
+        '--light-teal': '#008080',
+        '--light-blue': '#e6f3ff',
+        '--accent-blue': '#66c2ff',
+        '--text-color': '#333333'
+      },
+      dark: {
+        '--dark-teal': '#1a1a1a',
+        '--medium-teal': '#2a2a2a',
+        '--light-teal': '#3a3a3a',
+        '--light-blue': '#121212',
+        '--accent-blue': '#4a90e2',
+        '--text-color': '#ffffff'
+      },
+      light: {
+        '--dark-teal': '#ffffff',
+        '--medium-teal': '#f0f0f0',
+        '--light-teal': '#e0e0e0',
+        '--light-blue': '#fafafa',
+        '--accent-blue': '#3a81d9',
+        '--text-color': '#333333'
+      },
+      nature: {
+        '--dark-teal': '#2c5e1a',
+        '--medium-teal': '#367c24',
+        '--light-teal': '#4caf50',
+        '--light-blue': '#e8f5e9',
+        '--accent-blue': '#81c784',
+        '--text-color': '#1b5e20'
+      }
+    };
+
+    function changeTheme(themeName) {
+      const root = document.documentElement;
+      const theme = themes[themeName];
+      for (const [property, value] of Object.entries(theme)) {
+        root.style.setProperty(property, value);
+      }
+    }
+
+    themeSelect.addEventListener('change', (e) => {
+      changeTheme(e.target.value);
+    });
+
+    // Font changing functionality
+    fontSelect.addEventListener('change', (e) => {
+      document.body.style.fontFamily = e.target.value;
+    });
+
+    // Initialize TTS settings
+    volumeControl.addEventListener('input', () => {
+      volumeValue.textContent = parseFloat(volumeControl.value).toFixed(1);
+    });
+
+    speedControl.addEventListener('input', () => {
+      speedValue.textContent = parseFloat(speedControl.value).toFixed(1);
+    });
+
+    // Mobile responsiveness
+    function adjustLayoutForMobile() {
+      const container = document.querySelector('.container');
+      if (window.innerWidth <= 768) {
+        container.style.flexDirection = 'column';
+      } else {
+        container.style.flexDirection = 'row';
+      }
+    }
+
+    window.addEventListener('resize', adjustLayoutForMobile);
+    adjustLayoutForMobile();
+
+    // Initial setup
+    document.addEventListener('DOMContentLoaded', () => {
+      changeTheme('default');
+      document.body.style.fontFamily = fontSelect.value;
+
+      if ('speechSynthesis' in window) {
+        console.log('Text-to-Speech is supported.');
+      } else {
+        console.warn('Text-to-Speech is not supported in this browser.');
+        ttsToggle.disabled = true;
+      }
+
+      // Welcome message
+      displayMessage("Welcome to ZEN Neural Advanced AI Chatbot! How can I assist you today?", 'bot-message', chatMessages);
+    });
+  </script>
+</body></html>
